@@ -1,0 +1,8 @@
+{
+    "name": "Flutter Lokalisation",
+    "hello_world": "Hej världen",
+    "example_text": "Detta är ett exempel på lokalisation i Flutter",
+    "world_text": "Den här världen är så vacker",
+    "language": "Språk",
+    "changeLanguage": "Ändra språk"
+}
