@@ -1,3 +1,4 @@
+import 'package:appwrite/appwrite.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:isar/isar.dart';
@@ -22,6 +23,14 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  Client client = Client();
+  client
+      .setEndpoint('http://localhost/v1')
+      .setProject('community-app')
+      .setSelfSigned(
+          status:
+              true); // For self signed certificates, only use for development
+
   final dir = await getApplicationDocumentsDirectory();
   final isar = await Isar.open([LanguageModelSchema, ThemeModelSchema],
       directory: dir.path);
