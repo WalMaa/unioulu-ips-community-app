@@ -3,19 +3,19 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../presentation/bloc/auth_bloc.dart';
 import '../bloc/auth_event.dart';
 import '../bloc/auth_state.dart';
-import 'password_reset_screen.dart';
 
-class LoginPage extends StatelessWidget {
+class RegisterPage extends StatelessWidget {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  final TextEditingController nameController = TextEditingController();
 
-  LoginPage({super.key});
+  RegisterPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Login'),
+        title: const Text('Register'),
       ),
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
@@ -32,6 +32,10 @@ class LoginPage extends StatelessWidget {
           child: Column(
             children: [
               TextField(
+                controller: nameController,
+                decoration: const InputDecoration(labelText: 'Name'),
+              ),
+              TextField(
                 controller: emailController,
                 decoration: const InputDecoration(labelText: 'Email'),
               ),
@@ -42,24 +46,10 @@ class LoginPage extends StatelessWidget {
               ),
               ElevatedButton(
                 onPressed: () {
-                  context.read<AuthBloc>().add(LoginEvent(
+                  context.read<AuthBloc>().add(RegisterEvent(
+                      name: nameController.text,
                       email: emailController.text,
                       password: passwordController.text));
-                },
-                child: const Text('Login'),
-              ),
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                        builder: (context) => ResetPasswordPage()),
-                  );
-                },
-                child: const Text('Forgot Password?'),
-              ),
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pushNamed('/register');
                 },
                 child: const Text('Register'),
               ),

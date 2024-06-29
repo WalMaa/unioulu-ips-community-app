@@ -1,8 +1,21 @@
 import 'package:appwrite/appwrite.dart';
+import 'package:community/features/auth/presentation/pages/register_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get_it/get_it.dart';
 import 'package:isar/isar.dart';
 import 'package:path_provider/path_provider.dart';
+import 'features/auth/data/datasources/auth_remote_data_source.dart';
+import 'features/auth/data/models/user_model.dart';
+import 'features/auth/data/repositories/auth_repository_impl.dart';
+import 'features/auth/domain/usecases/authenticate_anonymous.dart';
+import 'features/auth/domain/usecases/login.dart';
+import 'features/auth/domain/usecases/logout.dart';
+import 'features/auth/domain/usecases/register.dart';
+import 'features/auth/domain/usecases/update_profile.dart';
+import 'features/auth/presentation/bloc/auth_bloc.dart';
+import 'features/auth/presentation/pages/login_screen.dart';
+import 'features/home/presentation/pages/home_page.dart';
 import 'features/language/presentation/bloc/language_event.dart';
 import 'features/theme/presentation/bloc/theme_bloc.dart';
 import 'features/theme/data/datasources/theme_local_data_source.dart';
@@ -15,76 +28,114 @@ import 'features/language/data/repositories/language_repository_impl.dart';
 import 'features/language/domain/usecases/get_languages.dart';
 import 'features/language/domain/usecases/set_language.dart';
 import 'features/language/domain/usecases/get_saved_language.dart';
-import 'features/language/presentation/pages/language_page.dart';
 import 'core/theme/app_theme.dart';
 import 'features/language/data/models/language_model.dart';
 import 'features/theme/data/models/theme_model.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+GetIt locator = GetIt.instance;
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  Client client = Client();
+
+  // Initialize Isar database
+  final dir = await getApplicationDocumentsDirectory();
+  final isar = await Isar.open(
+      [LanguageModelSchema, ThemeModelSchema, UserModelSchema],
+      directory: dir.path);
+  locator.registerSingleton<Isar>(isar);
+
+  // Initialize Appwrite client
+  final client = Client();
   client
-      .setEndpoint('http://localhost/v1')
+      .setEndpoint('http://192.168.0.221/v1')
       .setProject('community-app')
       .setSelfSigned(
           status:
               true); // For self signed certificates, only use for development
+  Account account = Account(client);
+  locator.registerSingleton<Account>(account);
+  locator.registerSingleton<Client>(client);
 
-  final dir = await getApplicationDocumentsDirectory();
-  final isar = await Isar.open([LanguageModelSchema, ThemeModelSchema],
-      directory: dir.path);
+  // Register dependencies
+  locator.registerLazySingleton<GetTheme>(() {
+    final themeLocalDataSource = ThemeLocalDataSourceImpl(isar);
+    final themeRepository = ThemeRepositoryImpl(themeLocalDataSource);
+    return GetTheme(themeRepository);
+  });
 
-  final themeLocalDataSource = ThemeLocalDataSourceImpl(isar);
-  final themeRepository = ThemeRepositoryImpl(themeLocalDataSource);
-  final getTheme = GetTheme(themeRepository);
-  final setTheme = SetTheme(themeRepository);
+  locator.registerLazySingleton<SetTheme>(() {
+    final themeLocalDataSource = ThemeLocalDataSourceImpl(isar);
+    final themeRepository = ThemeRepositoryImpl(themeLocalDataSource);
+    return SetTheme(themeRepository);
+  });
 
-  final languageLocalDataSource = LanguageLocalDataSourceImpl(isar);
-  final languageRepository = LanguageRepositoryImpl(languageLocalDataSource);
-  final getLanguages = GetLanguages(languageRepository);
-  final setLanguage = SetLanguage(languageRepository);
-  final getSavedLanguage = GetSavedLanguage(languageRepository);
+  locator.registerLazySingleton<GetLanguages>(() {
+    final languageLocalDataSource = LanguageLocalDataSourceImpl(isar);
+    final languageRepository = LanguageRepositoryImpl(languageLocalDataSource);
+    return GetLanguages(languageRepository);
+  });
 
-  runApp(MyApp(
-    getTheme: getTheme,
-    setTheme: setTheme,
-    getLanguages: getLanguages,
-    setLanguage: setLanguage,
-    getSavedLanguage: getSavedLanguage,
-  ));
+  locator.registerLazySingleton<SetLanguage>(() {
+    final languageLocalDataSource = LanguageLocalDataSourceImpl(isar);
+    final languageRepository = LanguageRepositoryImpl(languageLocalDataSource);
+    return SetLanguage(languageRepository);
+  });
+
+  locator.registerLazySingleton<GetSavedLanguage>(() {
+    final languageLocalDataSource = LanguageLocalDataSourceImpl(isar);
+    final languageRepository = LanguageRepositoryImpl(languageLocalDataSource);
+    return GetSavedLanguage(languageRepository);
+  });
+
+  final authRemoteDataSource = AuthRemoteDataSource(account);
+  final authRepository = AuthRepositoryImpl(
+    authRemoteDataSource,
+    isar,
+  );
+
+  locator.registerSingleton<AuthRemoteDataSource>(authRemoteDataSource);
+  locator.registerSingleton<AuthRepositoryImpl>(authRepository);
+
+  locator.registerSingleton<Login>(Login(authRepository));
+  locator.registerSingleton<Logout>(Logout(authRepository));
+  locator.registerSingleton<Register>(Register(authRepository));
+  locator.registerSingleton<UpdateProfile>(UpdateProfile(authRepository));
+  locator.registerSingleton<AuthenticateAnonymous>(
+      AuthenticateAnonymous(authRepository));
+
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  final GetTheme getTheme;
-  final SetTheme setTheme;
-  final GetLanguages getLanguages;
-  final SetLanguage setLanguage;
-  final GetSavedLanguage getSavedLanguage;
-
-  const MyApp({
-    super.key,
-    required this.getTheme,
-    required this.setTheme,
-    required this.getLanguages,
-    required this.setLanguage,
-    required this.getSavedLanguage,
-  });
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (context) => ThemeBloc(getTheme: getTheme, setTheme: setTheme)
-            ..add(LoadThemeEvent()),
+          create: (context) => ThemeBloc(
+            getTheme: locator<GetTheme>(),
+            setTheme: locator<SetTheme>(),
+          )..add(LoadThemeEvent()),
         ),
         BlocProvider(
           create: (context) => LocalizationBloc(
-              getLanguages: getLanguages,
-              setLanguage: setLanguage,
-              getSavedLanguage: getSavedLanguage)
-            ..add(LoadSavedLocalization()),
+            getLanguages: locator<GetLanguages>(),
+            setLanguage: locator<SetLanguage>(),
+            getSavedLanguage: locator<GetSavedLanguage>(),
+          )..add(LoadSavedLocalization()),
+        ),
+        BlocProvider(
+          create: (context) => AuthBloc(
+            login: locator<Login>(),
+            logout: locator<Logout>(),
+            register: locator<Register>(),
+            updateProfile: locator<UpdateProfile>(),
+            authenticateAnonymous: locator<AuthenticateAnonymous>(),
+            account: locator<Account>(),
+          ),
         ),
       ],
       child: BlocBuilder<ThemeBloc, ThemeState>(
@@ -101,93 +152,14 @@ class MyApp extends StatelessWidget {
                 context.select((LocalizationBloc bloc) => bloc.state.locale),
             supportedLocales: AppLocalizations.supportedLocales,
             localizationsDelegates: AppLocalizations.localizationsDelegates,
-            home: const HomeScreen(),
+            initialRoute: '/',
+            routes: {
+              '/': (context) => LoginPage(),
+              '/register': (context) => RegisterPage(),
+              '/home': (context) => const HomePage(),
+            },
           );
         },
-      ),
-    );
-  }
-}
-
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.name),
-        actions: [
-          IconButton(
-              color: Theme.of(context).textTheme.headlineSmall!.color,
-              onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return const LanguagePage();
-                }));
-              },
-              icon: const Icon(Icons.language)),
-          BlocBuilder<ThemeBloc, ThemeState>(
-            builder: (context, state) {
-              return IconButton(
-                color: Theme.of(context).textTheme.headlineSmall!.color,
-                icon: Icon(
-                  state is ThemeLoaded && state.theme == AppTheme.Dark
-                      ? Icons.wb_sunny
-                      : Icons.nightlight_round,
-                ),
-                onPressed: () {
-                  context.read<ThemeBloc>().add(ChangeThemeEvent(
-                      state is ThemeLoaded && state.theme == AppTheme.Dark
-                          ? AppTheme.Light
-                          : AppTheme.Dark));
-                },
-              );
-            },
-          ),
-        ],
-      ),
-      body: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              AppLocalizations.of(context)!.hello_world,
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-            Text(
-              AppLocalizations.of(context)!.hello_world,
-              style: TextStyle(
-                color: Theme.of(context).textTheme.headlineMedium!.color,
-                fontSize: 28.0,
-              ),
-            ),
-            Text(
-              AppLocalizations.of(context)!.example_text,
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-            Text(
-              AppLocalizations.of(context)!.example_text,
-              style: TextStyle(
-                color: Theme.of(context).textTheme.titleMedium!.color,
-                fontSize: 16.0,
-              ),
-            ),
-            Text(
-              AppLocalizations.of(context)!.world_text,
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-            Text(
-              AppLocalizations.of(context)!.world_text,
-              style: TextStyle(
-                color: Theme.of(context).textTheme.titleMedium!.color,
-                fontSize: 16.0,
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }
