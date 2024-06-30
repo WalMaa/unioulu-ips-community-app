@@ -1,14 +1,8 @@
-// Splash Page that will also check if the user is logged in or not under the hood using the AuthBloc.
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../features/auth/presentation/bloc/auth_bloc.dart';
 import '../../features/auth/presentation/bloc/auth_event.dart';
 import '../../features/auth/presentation/bloc/auth_state.dart';
-import '../../features/language/presentation/pages/language_page.dart';
-import '../../features/theme/presentation/bloc/theme_bloc.dart';
-import '../theme/app_theme.dart';
 
 class SplashPage extends StatelessWidget {
   const SplashPage({super.key});
