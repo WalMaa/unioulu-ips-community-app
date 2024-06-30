@@ -1,13 +1,13 @@
-import 'package:appwrite/appwrite.dart';
-import 'package:community/features/auth/presentation/pages/register_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:isar/isar.dart';
+import 'package:appwrite/appwrite.dart';
+import 'package:community/features/auth/presentation/pages/register_screen.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:path_provider/path_provider.dart';
-import 'features/auth/data/datasources/auth_remote_data_source.dart';
+import 'core/pages/splash_page.dart';
+import 'core/services/dependency_injection.dart';
 import 'features/auth/data/models/user_model.dart';
-import 'features/auth/data/repositories/auth_repository_impl.dart';
 import 'features/auth/domain/usecases/authenticate_anonymous.dart';
 import 'features/auth/domain/usecases/login.dart';
 import 'features/auth/domain/usecases/logout.dart';
@@ -18,13 +18,9 @@ import 'features/auth/presentation/pages/login_screen.dart';
 import 'features/home/presentation/pages/home_page.dart';
 import 'features/language/presentation/bloc/language_event.dart';
 import 'features/theme/presentation/bloc/theme_bloc.dart';
-import 'features/theme/data/datasources/theme_local_data_source.dart';
-import 'features/theme/data/repositories/theme_repository_impl.dart';
 import 'features/theme/domain/usecases/get_theme.dart';
 import 'features/theme/domain/usecases/set_theme.dart';
 import 'features/language/presentation/bloc/language_bloc.dart';
-import 'features/language/data/datasources/language_local_data_source.dart';
-import 'features/language/data/repositories/language_repository_impl.dart';
 import 'features/language/domain/usecases/get_languages.dart';
 import 'features/language/domain/usecases/set_language.dart';
 import 'features/language/domain/usecases/get_saved_language.dart';
@@ -57,52 +53,8 @@ void main() async {
   locator.registerSingleton<Account>(account);
   locator.registerSingleton<Client>(client);
 
-  // Register dependencies
-  locator.registerLazySingleton<GetTheme>(() {
-    final themeLocalDataSource = ThemeLocalDataSourceImpl(isar);
-    final themeRepository = ThemeRepositoryImpl(themeLocalDataSource);
-    return GetTheme(themeRepository);
-  });
-
-  locator.registerLazySingleton<SetTheme>(() {
-    final themeLocalDataSource = ThemeLocalDataSourceImpl(isar);
-    final themeRepository = ThemeRepositoryImpl(themeLocalDataSource);
-    return SetTheme(themeRepository);
-  });
-
-  locator.registerLazySingleton<GetLanguages>(() {
-    final languageLocalDataSource = LanguageLocalDataSourceImpl(isar);
-    final languageRepository = LanguageRepositoryImpl(languageLocalDataSource);
-    return GetLanguages(languageRepository);
-  });
-
-  locator.registerLazySingleton<SetLanguage>(() {
-    final languageLocalDataSource = LanguageLocalDataSourceImpl(isar);
-    final languageRepository = LanguageRepositoryImpl(languageLocalDataSource);
-    return SetLanguage(languageRepository);
-  });
-
-  locator.registerLazySingleton<GetSavedLanguage>(() {
-    final languageLocalDataSource = LanguageLocalDataSourceImpl(isar);
-    final languageRepository = LanguageRepositoryImpl(languageLocalDataSource);
-    return GetSavedLanguage(languageRepository);
-  });
-
-  final authRemoteDataSource = AuthRemoteDataSource(account);
-  final authRepository = AuthRepositoryImpl(
-    authRemoteDataSource,
-    isar,
-  );
-
-  locator.registerSingleton<AuthRemoteDataSource>(authRemoteDataSource);
-  locator.registerSingleton<AuthRepositoryImpl>(authRepository);
-
-  locator.registerSingleton<Login>(Login(authRepository));
-  locator.registerSingleton<Logout>(Logout(authRepository));
-  locator.registerSingleton<Register>(Register(authRepository));
-  locator.registerSingleton<UpdateProfile>(UpdateProfile(authRepository));
-  locator.registerSingleton<AuthenticateAnonymous>(
-      AuthenticateAnonymous(authRepository));
+  // Setup dependency injection
+  setupLocator();
 
   runApp(const MyApp());
 }
@@ -152,11 +104,12 @@ class MyApp extends StatelessWidget {
                 context.select((LocalizationBloc bloc) => bloc.state.locale),
             supportedLocales: AppLocalizations.supportedLocales,
             localizationsDelegates: AppLocalizations.localizationsDelegates,
-            initialRoute: '/',
+            initialRoute: '/splash',
             routes: {
-              '/': (context) => LoginPage(),
+              '/splash': (context) => const SplashPage(),
+              '/': (context) => const HomePage(),
               '/register': (context) => RegisterPage(),
-              '/home': (context) => const HomePage(),
+              '/login': (context) => LoginPage(),
             },
           );
         },

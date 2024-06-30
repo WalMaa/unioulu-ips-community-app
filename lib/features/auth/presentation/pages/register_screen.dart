@@ -20,7 +20,8 @@ class RegisterPage extends StatelessWidget {
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is AuthAuthenticated) {
-            Navigator.of(context).pushReplacementNamed('/home');
+            Navigator.of(context)
+                .pushNamedAndRemoveUntil('/', (route) => false);
           } else if (state is AuthError) {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               content: Text(state.message),

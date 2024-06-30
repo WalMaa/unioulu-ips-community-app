@@ -29,6 +29,11 @@ class AuthRemoteDataSource {
     return await account.updateName(name: name);
   }
 
+  Future<appwrite.Token> resetPassword(String email) async {
+    return await account.createRecovery(
+        email: email, url: 'https://example.com');
+  }
+
   Future<appwrite.User> getUser() async {
     return await account.get();
   }

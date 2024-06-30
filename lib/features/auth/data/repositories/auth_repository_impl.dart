@@ -17,6 +17,7 @@ class AuthRepositoryImpl implements AuthRepository {
         await remoteDataSource.register(email, password, name);
     final userModel = UserModel.fromAppwriteUser(user);
     await isar.writeTxn(() async {
+      await isar.userModels.clear();
       await isar.userModels.put(userModel);
     });
     return userModel.toEntity();
@@ -29,6 +30,7 @@ class AuthRepositoryImpl implements AuthRepository {
     final appwrite.User user = await remoteDataSource.getUser();
     final userModel = UserModel.fromAppwriteUser(user);
     await isar.writeTxn(() async {
+      await isar.userModels.clear();
       await isar.userModels.put(userModel);
     });
     return userModel.toEntity();
@@ -49,6 +51,7 @@ class AuthRepositoryImpl implements AuthRepository {
     final appwrite.User user = await remoteDataSource.getUser();
     final userModel = UserModel.fromAppwriteUser(user);
     await isar.writeTxn(() async {
+      await isar.userModels.clear();
       await isar.userModels.put(userModel);
     });
     return userModel.toEntity();
@@ -66,7 +69,6 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<void> resetPassword(String email) {
-    // TODO: implement resetPassword
-    throw UnimplementedError();
+    return remoteDataSource.resetPassword(email);
   }
 }

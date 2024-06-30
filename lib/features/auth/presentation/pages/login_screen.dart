@@ -13,6 +13,9 @@ class LoginPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    //TODO: remove test logout code
+    // perform logout
+    // context.read<AuthBloc>().add(LogoutEvent());
     return Scaffold(
       appBar: AppBar(
         title: const Text('Login'),
@@ -20,7 +23,8 @@ class LoginPage extends StatelessWidget {
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is AuthAuthenticated) {
-            Navigator.of(context).pushReplacementNamed('/home');
+            Navigator.of(context)
+                .pushNamedAndRemoveUntil('/', (route) => false);
           } else if (state is AuthError) {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               content: Text(state.message),

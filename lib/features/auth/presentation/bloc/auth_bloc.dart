@@ -1,5 +1,6 @@
 import 'package:appwrite/appwrite.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../data/models/user_model.dart';
 import '../../domain/usecases/authenticate_anonymous.dart';
 import '../../domain/usecases/login.dart';
 import '../../domain/usecases/logout.dart';
@@ -14,6 +15,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final Register register;
   final UpdateProfile updateProfile;
   final AuthenticateAnonymous authenticateAnonymous;
+  final Account account;
 
   AuthBloc({
     required this.login,
@@ -21,13 +23,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     required this.register,
     required this.updateProfile,
     required this.authenticateAnonymous,
-    required Account account,
+    required this.account,
   }) : super(AuthInitial()) {
     on<LoginEvent>(_onLogin);
     on<LogoutEvent>(_onLogout);
     on<RegisterEvent>(_onRegister);
     on<UpdateProfileEvent>(_onUpdateProfile);
     on<AuthenticateAnonymousEvent>(_onAuthenticateAnonymous);
+    on<CheckAuthenticationEvent>(_onCheckAuthentication);
   }
 
   void _onLogin(LoginEvent event, Emitter<AuthState> emit) async {
@@ -35,6 +38,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     try {
       final user = await login.execute(event.email, event.password);
       emit(AuthAuthenticated(user: user));
+      final result = await account.get();
+      final fuser = UserModel.fromAppwriteUser(result).toEntity();
+
+      //TODO: remove print statement
+      print('Login: ${fuser.name}');
     } catch (e) {
       emit(AuthError(message: e.toString()));
     }
@@ -45,6 +53,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     try {
       await logout.execute();
       emit(AuthInitial());
+      //TODO: remove print statement
+      print('Logout: ${event.toString()}');
     } catch (e) {
       emit(AuthError(message: e.toString()));
     }
@@ -53,9 +63,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   void _onRegister(RegisterEvent event, Emitter<AuthState> emit) async {
     emit(AuthLoading());
     try {
-      final user =
-          await register.execute(event.email, event.password, event.name);
+      await register.execute(event.email, event.password, event.name);
+      final user = await login.execute(event.email, event.password);
       emit(AuthAuthenticated(user: user));
+      //TODO: remove print statement
+      print('Register: ${user.toString()}');
     } catch (e) {
       emit(AuthError(message: e.toString()));
     }
@@ -80,6 +92,25 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(AuthAuthenticated(user: user));
     } catch (e) {
       emit(AuthError(message: e.toString()));
+    }
+  }
+
+  void _onCheckAuthentication(
+      CheckAuthenticationEvent event, Emitter<AuthState> emit) async {
+    emit(AuthLoading());
+    try {
+      final appwriteUser = await account.get();
+      if (appwriteUser.email.isEmpty) {
+        emit(AuthInitial());
+      } else {
+        final user = UserModel.fromAppwriteUser(appwriteUser).toEntity();
+        emit(AuthAuthenticated(user: user));
+
+        //TODO: remove print statement
+        print('CheckAuthentication: ${user.email}');
+      }
+    } catch (e) {
+      emit(AuthInitial());
     }
   }
 }

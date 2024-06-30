@@ -39,3 +39,14 @@ class UpdateProfileEvent extends AuthEvent {
 }
 
 class AuthenticateAnonymousEvent extends AuthEvent {}
+
+class ResetPasswordEvent extends AuthEvent {
+  final String email;
+
+  ResetPasswordEvent({required this.email});
+
+  @override
+  List<Object?> get props => [email];
+}
+
+class CheckAuthenticationEvent extends AuthEvent {}
