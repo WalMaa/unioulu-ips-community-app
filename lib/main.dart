@@ -45,7 +45,7 @@ void main() async {
   final client = Client();
   client
       .setEndpoint('http://192.168.0.221/v1')
-      // .setEndpoint('http://172.23.144.1/v1')
+      // .setEndpoint('http://192.168.0.100/v1')
       .setProject('community-app')
       .setSelfSigned(
           status:
