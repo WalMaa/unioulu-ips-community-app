@@ -1,8 +1,9 @@
-import 'package:appwrite/appwrite.dart';
-import 'package:community/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../core/constants.dart';
 import '../../presentation/bloc/auth_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../bloc/auth_event.dart';
 import '../bloc/auth_state.dart';
 
 class ResetPasswordPage extends StatelessWidget {
@@ -14,7 +15,7 @@ class ResetPasswordPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Reset Password'),
+        title: Text(AppLocalizations.of(context)!.resetPassword),
       ),
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
@@ -29,32 +30,39 @@ class ResetPasswordPage extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              TextField(
+              TextFormField(
                 controller: emailController,
-                decoration: const InputDecoration(labelText: 'Email'),
+                keyboardType: TextInputType.emailAddress,
+                textInputAction: TextInputAction.next,
+                cursorColor: kPrimaryColor,
+                decoration: InputDecoration(
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: const BorderSide(
+                      color: Colors.indigo,
+                    ),
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  hintText: AppLocalizations.of(context)!.yourEmail,
+                  prefixIcon: Padding(
+                    padding: const EdgeInsets.all(defaultPadding),
+                    child: Icon(
+                      Icons.email_outlined,
+                      color: Theme.of(context).textTheme.headlineSmall!.color,
+                    ),
+                  ),
+                ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 16),
               ElevatedButton(
-                onPressed: () async {
-                  final email = emailController.text;
-                  try {
-                    // Add Appwrite account instance
-                    final account = locator<Account>();
-
-                    // Request password reset
-                    await account.createRecovery(
-                        email: email, url: 'http://localhost/reset-password');
-
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                      content: Text('Password reset link sent to your email.'),
-                    ));
-                  } catch (e) {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text('Error: ${e.toString()}'),
-                    ));
-                  }
+                onPressed: () {
+                  context.read<AuthBloc>().add(ResetPasswordEvent(
+                        email: emailController.text,
+                      ));
                 },
-                child: const Text('Send Reset Link'),
+                child: Text(AppLocalizations.of(context)!.resetPassword),
               ),
             ],
           ),

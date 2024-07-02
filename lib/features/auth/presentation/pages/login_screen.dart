@@ -1,6 +1,13 @@
+import 'package:community/features/auth/presentation/pages/register_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
+import '../../../../core/constants.dart';
+import '../../../../core/theme/app_theme.dart';
+import '../../../language/presentation/pages/language_page.dart';
+import '../../../theme/presentation/bloc/theme_bloc.dart';
 import '../../presentation/bloc/auth_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../bloc/auth_event.dart';
 import '../bloc/auth_state.dart';
 import 'password_reset_screen.dart';
@@ -16,58 +23,216 @@ class LoginPage extends StatelessWidget {
     //TODO: remove test logout code
     // perform logout
     // context.read<AuthBloc>().add(LogoutEvent());
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Login'),
-      ),
-      body: BlocListener<AuthBloc, AuthState>(
-        listener: (context, state) {
-          if (state is AuthAuthenticated) {
-            Navigator.of(context)
-                .pushNamedAndRemoveUntil('/', (route) => false);
-          } else if (state is AuthError) {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text(state.message),
-            ));
-          }
-        },
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              TextField(
-                controller: emailController,
-                decoration: const InputDecoration(labelText: 'Email'),
-              ),
-              TextField(
-                controller: passwordController,
-                decoration: const InputDecoration(labelText: 'Password'),
-                obscureText: true,
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  context.read<AuthBloc>().add(LoginEvent(
-                      email: emailController.text,
-                      password: passwordController.text));
-                },
-                child: const Text('Login'),
-              ),
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                        builder: (context) => ResetPasswordPage()),
-                  );
-                },
-                child: const Text('Forgot Password?'),
-              ),
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pushNamed('/register');
-                },
-                child: const Text('Register'),
-              ),
-            ],
+    return BlocListener<AuthBloc, AuthState>(
+      listener: (context, state) {
+        if (state is AuthAuthenticated) {
+          Navigator.of(context).pushNamedAndRemoveUntil('/', (route) => false);
+        }
+      },
+      child: Scaffold(
+        body: SafeArea(
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    IconButton(
+                      color: Theme.of(context).textTheme.headlineSmall!.color,
+                      onPressed: () {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) {
+                          return const LanguagePage();
+                        }));
+                      },
+                      icon: const Icon(Icons.language),
+                    ),
+                    BlocBuilder<ThemeBloc, ThemeState>(
+                      builder: (context, state) {
+                        return IconButton(
+                          color:
+                              Theme.of(context).textTheme.headlineSmall!.color,
+                          icon: Icon(
+                            state is ThemeLoaded && state.theme == AppTheme.Dark
+                                ? Icons.wb_sunny
+                                : Icons.nightlight_round,
+                          ),
+                          onPressed: () {
+                            context.read<ThemeBloc>().add(ChangeThemeEvent(
+                                state is ThemeLoaded &&
+                                        state.theme == AppTheme.Dark
+                                    ? AppTheme.Light
+                                    : AppTheme.Dark));
+                          },
+                        );
+                      },
+                    ),
+                  ],
+                ),
+                const SizedBox(height: defaultPadding),
+                Column(
+                  children: [
+                    Text(
+                      AppLocalizations.of(context)!.login,
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold, fontSize: 25),
+                    ),
+                    const SizedBox(height: defaultPadding * 2),
+                    Row(
+                      children: [
+                        const Spacer(),
+                        Expanded(
+                          flex: 8,
+                          child: SvgPicture.asset("assets/icons/login.svg"),
+                        ),
+                        const Spacer(),
+                      ],
+                    ),
+                    const SizedBox(height: defaultPadding * 2),
+                  ],
+                ),
+                Row(
+                  children: [
+                    const Spacer(),
+                    Expanded(
+                      flex: 8,
+                      child: Form(
+                        child: Column(
+                          children: [
+                            TextFormField(
+                              controller: emailController,
+                              keyboardType: TextInputType.emailAddress,
+                              textInputAction: TextInputAction.next,
+                              cursorColor: kPrimaryColor,
+                              decoration: InputDecoration(
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: const BorderSide(
+                                    color: Colors.indigo,
+                                  ),
+                                ),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                hintText:
+                                    AppLocalizations.of(context)!.yourEmail,
+                                prefixIcon: Padding(
+                                  padding: const EdgeInsets.all(defaultPadding),
+                                  child: Icon(
+                                    Icons.email_outlined,
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .headlineSmall!
+                                        .color,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: defaultPadding),
+                              child: TextFormField(
+                                controller: passwordController,
+                                textInputAction: TextInputAction.done,
+                                obscureText: true,
+                                cursorColor: kPrimaryColor,
+                                decoration: InputDecoration(
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                    borderSide: const BorderSide(
+                                      color: Colors.indigo,
+                                    ),
+                                  ),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  hintText: AppLocalizations.of(context)!
+                                      .yourPassword,
+                                  prefixIcon: Padding(
+                                    padding:
+                                        const EdgeInsets.all(defaultPadding),
+                                    child: Icon(
+                                      Icons.lock_outline,
+                                      color: Theme.of(context)
+                                          .textTheme
+                                          .headlineSmall!
+                                          .color,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: defaultPadding),
+                            ElevatedButton(
+                              onPressed: () {
+                                print(
+                                    "Login button pressed: ${emailController.text} ${passwordController.text}");
+                                context.read<AuthBloc>().add(LoginEvent(
+                                    email: emailController.text,
+                                    password: passwordController.text));
+                              },
+                              child: Text(
+                                AppLocalizations.of(context)!
+                                    .login
+                                    .toUpperCase(),
+                              ),
+                            ),
+                            const SizedBox(height: defaultPadding),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Text(
+                                  "${AppLocalizations.of(context)!.dontHaveAnAccount} ",
+                                  style: const TextStyle(color: kPrimaryColor),
+                                ),
+                                GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) {
+                                          return RegisterPage();
+                                        },
+                                      ),
+                                    );
+                                  },
+                                  child: Text(
+                                    AppLocalizations.of(context)!.register,
+                                    style: const TextStyle(
+                                      color: kPrimaryColor,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: defaultPadding),
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) => ResetPasswordPage(),
+                                  ),
+                                );
+                              },
+                              child: Text(
+                                AppLocalizations.of(context)!.forgotPassword,
+                                style: const TextStyle(
+                                  color: kPrimaryColor,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const Spacer(),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),

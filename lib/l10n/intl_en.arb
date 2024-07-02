@@ -1,8 +1,19 @@
 {
-    "name": "Flutter Localization",
-    "hello_world": "Hello World",
-    "example_text": "This is example of localization in flutter",
-    "world_text": "This world is so beautiful",
-    "language": "Language",
-    "changeLanguage": "Change Language"
+    "welcome": "Welcome",
+    "appName": "IPS Community",
+    "changeLanguage": "Change Language",
+    "name": "Name",
+    "login": "Login",
+    "register": "Register",
+    "logout": "Logout",
+    "email": "Email",
+    "password": "Password",
+    "forgotPassword": "Forgot Password",
+    "sendResetLink": "Send Reset Link",
+    "resetPassword": "Reset Password",
+    "dontHaveAnAccount": "Don't have an account?",
+    "alreadyHaveAnAccount": "Already have an account?",
+    "yourName": "Your Name",
+    "yourEmail": "Your Email",
+    "yourPassword": "Your Password"
 }

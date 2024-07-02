@@ -1,8 +1,19 @@
 {
-    "name": "Flutter Lokalisaatiosta",
-    "hello_world": "Hei maailma",
-    "example_text": "Tämä on esimerkki lokalisaatiosta Flutterissa",
-    "world_text": "Tämä maailma on niin kaunis",
-    "language": "Kieli",
-    "changeLanguage": "Vaihda kieltä"
+    "welcome": "Tervetuloa",
+    "appName": "IPS Yhteisö",
+    "changeLanguage": "Vaihda kieltä",
+    "name": "Nimi",
+    "login": "Kirjaudu sisään",
+    "register": "Rekisteröidy",
+    "logout": "Kirjaudu ulos",
+    "email": "Sähköposti",
+    "password": "Salasana",
+    "forgotPassword": "Unohditko salasanasi",
+    "sendResetLink": "Lähetä palautuslinkki",
+    "resetPassword": "Nollaa salasana",
+    "dontHaveAnAccount": "Eikö sinulla ole tiliä?",
+    "alreadyHaveAnAccount": "Onko sinulla jo tili?",
+    "yourName": "Nimesi",
+    "yourEmail": "Sähköpostisi",
+    "yourPassword": "Salasanasi"
 }

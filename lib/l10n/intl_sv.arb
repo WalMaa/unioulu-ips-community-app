@@ -1,8 +1,19 @@
 {
-    "name": "Flutter Lokalisation",
-    "hello_world": "Hej världen",
-    "example_text": "Detta är ett exempel på lokalisation i Flutter",
-    "world_text": "Den här världen är så vacker",
-    "language": "Språk",
-    "changeLanguage": "Ändra språk"
+    "welcome": "Välkommen",
+    "appName": "IPS Community",
+    "changeLanguage": "Byt språk",
+    "name": "Namn",
+    "login": "Logga in",
+    "register": "Registrera",
+    "logout": "Logga ut",
+    "email": "E-post",
+    "password": "Lösenord",
+    "forgotPassword": "Glömt lösenord",
+    "sendResetLink": "Skicka återställningslänk",
+    "resetPassword": "Återställ lösenord",
+    "dontHaveAnAccount": "Har du inget konto?",
+    "alreadyHaveAnAccount": "Har du redan ett konto?",
+    "yourName": "Ditt namn",
+    "yourEmail": "Din e-post",
+    "yourPassword": "Ditt lösenord"
 }
