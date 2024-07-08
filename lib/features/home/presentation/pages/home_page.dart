@@ -46,59 +46,13 @@ class HomePage extends StatelessWidget {
           ),
         ],
       ),
-      body:
-          // BlocListener<AuthBloc, AuthState>(
-          //   listener: (context, state) {
-          //     if (state is AuthInitial) {
-          //       Navigator.of(context)
-          //           .pushNamedAndRemoveUntil('/splash', (route) => false);
-          //     } else if (state is AuthError) {
-          //       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          //         content: Text(state.message),
-          //       ));
-          //     }
-          //   },
-          //   child:
-          Container(
+      body: Container(
         width: double.infinity,
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Text(
-            //   AppLocalizations.of(context)!.hello_world,
-            //   style: Theme.of(context).textTheme.headlineMedium,
-            // ),
-            // Text(
-            //   AppLocalizations.of(context)!.hello_world,
-            //   style: TextStyle(
-            //     color: Theme.of(context).textTheme.headlineMedium!.color,
-            //     fontSize: 28.0,
-            //   ),
-            // ),
-            // Text(
-            //   AppLocalizations.of(context)!.example_text,
-            //   style: Theme.of(context).textTheme.titleMedium,
-            // ),
-            // Text(
-            //   AppLocalizations.of(context)!.example_text,
-            //   style: TextStyle(
-            //     color: Theme.of(context).textTheme.titleMedium!.color,
-            //     fontSize: 16.0,
-            //   ),
-            // ),
-            // Text(
-            //   AppLocalizations.of(context)!.world_text,
-            //   style: Theme.of(context).textTheme.titleMedium,
-            // ),
-            // Text(
-            //   AppLocalizations.of(context)!.world_text,
-            //   style: TextStyle(
-            //     color: Theme.of(context).textTheme.titleMedium!.color,
-            //     fontSize: 16.0,
-            //   ),
-            // ),
             const SizedBox(height: 16.0),
             BlocBuilder<AuthBloc, AuthState>(
               builder: (context, state) {
@@ -118,6 +72,5 @@ class HomePage extends StatelessWidget {
         ),
       ),
     );
-    // );
   }
 }
