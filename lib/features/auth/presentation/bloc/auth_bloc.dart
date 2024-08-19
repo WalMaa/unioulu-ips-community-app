@@ -44,7 +44,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       //TODO: remove print statement
       print('Login: ${fuser.name}');
     } catch (e) {
-      emit(AuthError(message: e.toString()));
+      emit(AuthError(message: 'Invalid email or password. Please try again.'));
     }
   }
 

@@ -1,12 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import '../../../../core/theme/app_theme.dart';
-import '../../../auth/presentation/bloc/auth_bloc.dart';
-import '../../../auth/presentation/bloc/auth_event.dart';
-import '../../../auth/presentation/bloc/auth_state.dart';
-import '../../../language/presentation/pages/language_page.dart';
-import '../../../theme/presentation/bloc/theme_bloc.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -14,61 +6,94 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.appName),
-        actions: [
-          IconButton(
-            color: Theme.of(context).textTheme.headlineSmall!.color,
-            onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) {
-                return const LanguagePage();
-              }));
-            },
-            icon: const Icon(Icons.language),
-          ),
-          BlocBuilder<ThemeBloc, ThemeState>(
-            builder: (context, state) {
-              return IconButton(
-                color: Theme.of(context).textTheme.headlineSmall!.color,
-                icon: Icon(
-                  state is ThemeLoaded && state.theme == AppTheme.Dark
-                      ? Icons.wb_sunny
-                      : Icons.nightlight_round,
+      // appBar: AppBar(
+      //   title: const Text('Home'),
+      // ),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    const Expanded(
+                      flex: 2,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Text('Hello,', style: TextStyle(fontSize: 16.0)),
+                          Text(
+                            'Salman F',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 22.0,
+                            ),
+                          ),
+                          Text(
+                            'Let\'s explore the what\'s new...',
+                            style: TextStyle(
+                              fontSize: 16.0,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 2,
+                          ),
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                      flex: 1,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            onPressed: () {},
+                            icon: const Icon(Icons.favorite),
+                          ),
+                          IconButton(
+                            onPressed: () {},
+                            icon: const Icon(Icons.settings),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-                onPressed: () {
-                  context.read<ThemeBloc>().add(ChangeThemeEvent(
-                      state is ThemeLoaded && state.theme == AppTheme.Dark
-                          ? AppTheme.Light
-                          : AppTheme.Dark));
-                },
-              );
-            },
-          ),
-        ],
-      ),
-      body: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 16.0),
-            BlocBuilder<AuthBloc, AuthState>(
-              builder: (context, state) {
-                return ElevatedButton(
-                  onPressed: () {
-                    context.read<AuthBloc>().add(LogoutEvent());
-                    Navigator.of(context)
-                        .pushNamedAndRemoveUntil('/login', (route) => false);
-                  },
-                  child: Text(
-                    AppLocalizations.of(context)!.logout.toUpperCase(),
+                const SizedBox(height: 10.0),
+                Center(
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: Colors.white,
+                      backgroundColor: Theme.of(context).primaryColor,
+                    ),
+                    onPressed: () {},
+                    child: const Text(
+                      'Announcements',
+                      style: TextStyle(
+                        fontSize: 16.0,
+                      ),
+                    ),
                   ),
-                );
-              },
+                ),
+                const SizedBox(height: 10.0),
+                const Text(
+                  'Topics',
+                  style: TextStyle(
+                    fontSize: 16.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );

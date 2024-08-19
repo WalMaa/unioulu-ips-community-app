@@ -29,6 +29,7 @@ class AuthRemoteDataSource {
     return await account.updateName(name: name);
   }
 
+//TODO: Implement the resetPassword method
   Future<appwrite.Token> resetPassword(String email) async {
     return await account.createRecovery(
         email: email, url: 'https://example.com');

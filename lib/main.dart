@@ -1,3 +1,4 @@
+import 'package:community/core/pages/main_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:isar/isar.dart';
@@ -15,7 +16,6 @@ import 'features/auth/domain/usecases/register.dart';
 import 'features/auth/domain/usecases/update_profile.dart';
 import 'features/auth/presentation/bloc/auth_bloc.dart';
 import 'features/auth/presentation/pages/login_screen.dart';
-import 'features/home/presentation/pages/home_page.dart';
 import 'features/language/presentation/bloc/language_event.dart';
 import 'features/theme/presentation/bloc/theme_bloc.dart';
 import 'features/theme/domain/usecases/get_theme.dart';
@@ -108,7 +108,7 @@ class MyApp extends StatelessWidget {
             initialRoute: '/splash',
             routes: {
               '/splash': (context) => const SplashPage(),
-              '/': (context) => const HomePage(),
+              '/': (context) => const MainPage(),
               '/register': (context) => RegisterPage(),
               '/login': (context) => LoginPage(),
             },
