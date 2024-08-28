@@ -8,6 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:path_provider/path_provider.dart';
 import 'core/pages/splash_page.dart';
 import 'core/services/dependency_injection.dart';
+import 'core/utils/config.dart';
 import 'features/auth/data/models/user_model.dart';
 import 'features/auth/domain/usecases/authenticate_anonymous.dart';
 import 'features/auth/domain/usecases/login.dart';
@@ -29,35 +30,38 @@ import 'features/language/data/models/language_model.dart';
 import 'features/theme/data/models/theme_model.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-GetIt locator = GetIt.instance;
+final GetIt locator = GetIt.instance;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize Isar database
-  final dir = await getApplicationDocumentsDirectory();
-  final isar = await Isar.open(
-      [LanguageModelSchema, ThemeModelSchema, UserModelSchema],
-      directory: dir.path);
-  locator.registerSingleton<Isar>(isar);
-
-  // Initialize Appwrite client
-  final client = Client();
-  client
-      .setEndpoint('http://192.168.0.221/v1')
-      // .setEndpoint('http://192.168.0.100/v1')
-      .setProject('community-app')
-      .setSelfSigned(
-          status:
-              true); // For self signed certificates, only use for development
-  Account account = Account(client);
-  locator.registerSingleton<Account>(account);
-  locator.registerSingleton<Client>(client);
-
-  // Setup dependency injection
+  await _initializeDatabase();
+  _initializeAppwrite();
   setupLocator();
 
   runApp(const MyApp());
+}
+
+Future<void> _initializeDatabase() async {
+  final dir = await getApplicationDocumentsDirectory();
+  final isar = await Isar.open(
+    [LanguageModelSchema, ThemeModelSchema, UserModelSchema],
+    directory: dir.path,
+  );
+  locator.registerSingleton<Isar>(isar);
+}
+
+void _initializeAppwrite() {
+  final client = Client()
+    ..setEndpoint(appwriteEndpoint)
+    ..setProject(appwriteProjectId)
+    ..setSelfSigned(status: true); // Only for development
+
+  // Register Client and Databases as Singletons
+  locator.registerSingleton<Client>(client);
+  locator.registerSingleton<Account>(Account(client));
+  locator
+      .registerSingleton<Databases>(Databases(client)); // Registering Databases
 }
 
 class MyApp extends StatelessWidget {

@@ -1,4 +1,5 @@
 import 'package:appwrite/appwrite.dart';
+import 'package:get_it/get_it.dart';
 import 'package:isar/isar.dart';
 import '../../features/auth/data/datasources/auth_remote_data_source.dart';
 import '../../features/auth/data/repositories/auth_repository_impl.dart';
@@ -16,10 +17,18 @@ import '../../features/theme/data/datasources/theme_local_data_source.dart';
 import '../../features/theme/data/repositories/theme_repository_impl.dart';
 import '../../features/theme/domain/usecases/get_theme.dart';
 import '../../features/theme/domain/usecases/set_theme.dart';
-import '../../main.dart';
+import 'http_appwrite_service.dart';
+
+final GetIt locator = GetIt.instance;
 
 void setupLocator() {
-  // Register dependencies
+  _registerThemeDependencies();
+  _registerLanguageDependencies();
+  _registerAuthDependencies();
+  _registerCommonServices();
+}
+
+void _registerThemeDependencies() {
   locator.registerLazySingleton<GetTheme>(() {
     final themeLocalDataSource = ThemeLocalDataSourceImpl(locator<Isar>());
     final themeRepository = ThemeRepositoryImpl(themeLocalDataSource);
@@ -31,7 +40,9 @@ void setupLocator() {
     final themeRepository = ThemeRepositoryImpl(themeLocalDataSource);
     return SetTheme(themeRepository);
   });
+}
 
+void _registerLanguageDependencies() {
   locator.registerLazySingleton<GetLanguages>(() {
     final languageLocalDataSource =
         LanguageLocalDataSourceImpl(locator<Isar>());
@@ -52,20 +63,25 @@ void setupLocator() {
     final languageRepository = LanguageRepositoryImpl(languageLocalDataSource);
     return GetSavedLanguage(languageRepository);
   });
+}
 
+void _registerAuthDependencies() {
   final authRemoteDataSource = AuthRemoteDataSource(locator<Account>());
-  final authRepository = AuthRepositoryImpl(
-    authRemoteDataSource,
-    locator<Isar>(),
-  );
+  final authRepository =
+      AuthRepositoryImpl(authRemoteDataSource, locator<Isar>());
 
   locator.registerSingleton<AuthRemoteDataSource>(authRemoteDataSource);
   locator.registerSingleton<AuthRepositoryImpl>(authRepository);
 
-  locator.registerSingleton<Login>(Login(authRepository));
-  locator.registerSingleton<Logout>(Logout(authRepository));
-  locator.registerSingleton<Register>(Register(authRepository));
-  locator.registerSingleton<UpdateProfile>(UpdateProfile(authRepository));
-  locator.registerSingleton<AuthenticateAnonymous>(
-      AuthenticateAnonymous(authRepository));
+  locator.registerLazySingleton<Login>(() => Login(authRepository));
+  locator.registerLazySingleton<Logout>(() => Logout(authRepository));
+  locator.registerLazySingleton<Register>(() => Register(authRepository));
+  locator.registerLazySingleton<UpdateProfile>(
+      () => UpdateProfile(authRepository));
+  locator.registerLazySingleton<AuthenticateAnonymous>(
+      () => AuthenticateAnonymous(authRepository));
+}
+
+void _registerCommonServices() {
+  locator.registerLazySingleton<AppwriteService>(() => AppwriteService());
 }
