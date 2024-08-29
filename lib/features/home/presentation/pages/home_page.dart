@@ -1,10 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get_it/get_it.dart';
+import '../../../../core/services/http_appwrite_service.dart';
+import '../../../language/presentation/bloc/language_bloc.dart';
+import '../widgets/topic_list_widget.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // Get the current locale from LocalizationBloc
+    final currentLocale = context
+        .select((LocalizationBloc bloc) => bloc.state.locale.languageCode);
+    final appwriteService = GetIt.instance<AppwriteService>();
+
     return Scaffold(
       // appBar: AppBar(
       //   title: const Text('Home'),
@@ -91,61 +101,9 @@ class HomePage extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(
-                  height: 150.0,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: 7,
-                    itemBuilder: (context, index) {
-                      // Example data for demonstration
-                      final List<Map<String, dynamic>> topics = [
-                        {'icon': Icons.group_work, 'text': 'Work'},
-                        {'icon': Icons.sports, 'text': 'Sports'},
-                        {'icon': Icons.book, 'text': 'Academy'},
-                        {'icon': Icons.campaign, 'text': 'Party'},
-                        {'icon': Icons.campaign, 'text': 'Some'},
-                        {'icon': Icons.campaign, 'text': 'Another'},
-                        {'icon': Icons.campaign, 'text': 'Party'},
-                      ];
-                      return Container(
-                        width: 90.0,
-                        margin: const EdgeInsets.only(right: 10.0),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(20),
-                              decoration: BoxDecoration(
-                                color:
-                                    Theme.of(context).scaffoldBackgroundColor,
-                                shape: BoxShape.circle,
-                                boxShadow: const [
-                                  BoxShadow(
-                                    color: Colors.black12,
-                                    blurRadius: 5,
-                                    offset: Offset(0, 3),
-                                  ),
-                                ],
-                              ),
-                              child: Icon(
-                                topics[index]['icon'],
-                                color: Colors.blue,
-                                size: 40.0,
-                              ),
-                            ),
-                            const SizedBox(height: 8.0),
-                            Text(
-                              topics[index]['text'],
-                              style: const TextStyle(
-                                color: Colors.blue,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
+                TopicListWidget(
+                  currentLocale: currentLocale,
+                  appwriteService: appwriteService,
                 ),
                 const SizedBox(height: 10.0),
                 const Text(

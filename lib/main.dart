@@ -1,4 +1,3 @@
-import 'package:community/core/pages/main_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:isar/isar.dart';
@@ -6,6 +5,7 @@ import 'package:appwrite/appwrite.dart';
 import 'package:community/features/auth/presentation/pages/register_screen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:path_provider/path_provider.dart';
+import 'core/pages/main_page.dart';
 import 'core/pages/splash_page.dart';
 import 'core/services/dependency_injection.dart';
 import 'core/utils/config.dart';
@@ -17,6 +17,8 @@ import 'features/auth/domain/usecases/register.dart';
 import 'features/auth/domain/usecases/update_profile.dart';
 import 'features/auth/presentation/bloc/auth_bloc.dart';
 import 'features/auth/presentation/pages/login_screen.dart';
+import 'features/events/data/models/event_model.dart';
+import 'features/home/data/models/topic_model.dart';
 import 'features/language/presentation/bloc/language_event.dart';
 import 'features/theme/presentation/bloc/theme_bloc.dart';
 import 'features/theme/domain/usecases/get_theme.dart';
@@ -45,7 +47,13 @@ void main() async {
 Future<void> _initializeDatabase() async {
   final dir = await getApplicationDocumentsDirectory();
   final isar = await Isar.open(
-    [LanguageModelSchema, ThemeModelSchema, UserModelSchema],
+    [
+      LanguageModelSchema,
+      ThemeModelSchema,
+      UserModelSchema,
+      TopicModelSchema,
+      EventModelSchema,
+    ],
     directory: dir.path,
   );
   locator.registerSingleton<Isar>(isar);

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -49,5 +51,24 @@ class AppwriteService {
     }
 
     return response;
+  }
+
+  // Method to upload a file
+  Future<http.Response> uploadFile(
+      String endpointPath, File file, String fileId) async {
+    final url = Uri.parse('$endpoint/$endpointPath');
+
+    final request = http.MultipartRequest('POST', url)
+      ..headers.addAll({
+        'X-Appwrite-Project': projectId,
+        'X-Appwrite-Key': apiKey,
+        'X-Appwrite-Response-Format': '1.5.0',
+      })
+      ..fields['fileId'] =
+          fileId // Optional: Use `ID.unique()` to auto-generate a unique ID in Appwrite
+      ..files.add(await http.MultipartFile.fromPath('file', file.path));
+
+    final response = await request.send();
+    return await http.Response.fromStream(response);
   }
 }
