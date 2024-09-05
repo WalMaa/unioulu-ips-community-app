@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import '../../../../core/services/http_appwrite_service.dart';
+import '../../../../core/utils/config.dart';
 
 class EventForm extends StatefulWidget {
   const EventForm({super.key});
@@ -19,7 +20,8 @@ class _EventFormState extends State<EventForm> {
   final _locationEnController = TextEditingController();
   final _locationFiController = TextEditingController();
   final _locationSvController = TextEditingController();
-  final _dateTimeController = TextEditingController();
+  final _dateController = TextEditingController();
+  final _timeController = TextEditingController();
   final _priceController = TextEditingController();
   final _organizerNameController = TextEditingController();
   final _detailsEnController = TextEditingController();
@@ -29,8 +31,35 @@ class _EventFormState extends State<EventForm> {
   final _ticketDetailsFiController = TextEditingController();
   final _ticketDetailsSvController = TextEditingController();
   final _locationUrlController = TextEditingController();
-
+  List<Map<String, dynamic>> _topics = [];
+  List<String> _selectedTags = [];
   File? _selectedPosterPhoto;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchTopics();
+  }
+
+  void _fetchTopics() async {
+    final appwriteService = AppwriteService();
+    final response = await appwriteService.makeRequest(
+        'GET', 'databases/communitydb/collections/topics/documents', null);
+
+    if (response.statusCode == 200) {
+      final List<dynamic> jsonData = jsonDecode(response.body)['documents'];
+      setState(() {
+        _topics = jsonData
+            .map((json) => {'id': json['\$id'], 'text': json['text_en']})
+            .toList();
+      });
+    } else {
+      // Handle error
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Failed to fetch topics.')),
+      );
+    }
+  }
 
   @override
   void dispose() {
@@ -40,7 +69,8 @@ class _EventFormState extends State<EventForm> {
     _locationEnController.dispose();
     _locationFiController.dispose();
     _locationSvController.dispose();
-    _dateTimeController.dispose();
+    _dateController.dispose();
+    _timeController.dispose();
     _priceController.dispose();
     _organizerNameController.dispose();
     _detailsEnController.dispose();
@@ -78,7 +108,7 @@ class _EventFormState extends State<EventForm> {
     if (response.statusCode == 201) {
       final responseData = jsonDecode(response.body);
       final fileId = responseData['\$id'];
-      return '${appwriteService.endpoint}/storage/buckets/storage/files/$fileId/view';
+      return '${appwriteService.endpoint}/storage/buckets/storage/files/$fileId/view?project=$appwriteProjectId&mode=admin';
     } else {
       // Log the error response for debugging purposes
       print('Error uploading file: ${response.body}');
@@ -121,9 +151,11 @@ class _EventFormState extends State<EventForm> {
         'location_sv': _locationSvController.text.isNotEmpty
             ? _locationSvController.text
             : 'Standardplats',
-        'dateTime': _dateTimeController.text.isNotEmpty
-            ? _dateTimeController.text
-            : DateTime.now().toIso8601String(),
+        'date': _dateController.text.isNotEmpty
+            ? _dateController.text
+            : '2024-01-01',
+        'time':
+            _timeController.text.isNotEmpty ? _timeController.text : '12:00',
         'price':
             _priceController.text.isNotEmpty ? _priceController.text : 'Free',
         'organizerName': _organizerNameController.text.isNotEmpty
@@ -150,6 +182,8 @@ class _EventFormState extends State<EventForm> {
         'locationUrl': _locationUrlController.text.isNotEmpty
             ? _locationUrlController.text
             : 'https://example.com',
+        'topics': _selectedTags.join(','),
+        'updatedAt': DateTime.now().toIso8601String(),
       };
 
       // Make the request to create a new document
@@ -200,6 +234,23 @@ class _EventFormState extends State<EventForm> {
                     child:
                         Text('Selected Photo: ${_selectedPosterPhoto!.path}'),
                   ),
+                const SizedBox(height: 16.0),
+                DropdownButtonFormField<String>(
+                  items: _topics.map((topic) {
+                    return DropdownMenuItem<String>(
+                      value: topic['id'],
+                      child: Text(topic['text']),
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      _selectedTags = value != null ? [value] : [];
+                    });
+                  },
+                  decoration: const InputDecoration(labelText: 'Select Topic'),
+                  isExpanded: true,
+                  value: _selectedTags.isNotEmpty ? _selectedTags.first : null,
+                ),
                 TextFormField(
                   controller: _titleEnController,
                   decoration:
@@ -231,19 +282,23 @@ class _EventFormState extends State<EventForm> {
                       const InputDecoration(labelText: 'Location (Swedish)'),
                 ),
                 TextFormField(
-                  controller: _dateTimeController,
-                  decoration: const InputDecoration(labelText: 'Date and Time'),
+                  controller: _dateController,
+                  decoration: const InputDecoration(labelText: 'Date'),
                   onTap: () async {
                     DateTime? dateTime = await showDatePicker(
                       context: context,
                       initialDate: DateTime.now(),
-                      firstDate: DateTime(2000),
-                      lastDate: DateTime(2101),
+                      firstDate: DateTime(2024),
+                      lastDate: DateTime(2050),
                     );
                     setState(() {
-                      _dateTimeController.text = dateTime!.toIso8601String();
+                      _dateController.text = dateTime!.toIso8601String();
                     });
                   },
+                ),
+                TextFormField(
+                  controller: _timeController,
+                  decoration: const InputDecoration(labelText: 'Time'),
                 ),
                 TextFormField(
                   controller: _priceController,

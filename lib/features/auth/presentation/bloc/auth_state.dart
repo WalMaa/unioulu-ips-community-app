@@ -12,8 +12,8 @@ class AuthLoading extends AuthState {}
 
 class AuthAuthenticated extends AuthState {
   final User user;
-
-  AuthAuthenticated({required this.user});
+  final List<String> labels;
+  AuthAuthenticated({required this.user, required this.labels});
 
   @override
   List<Object> get props => [user];

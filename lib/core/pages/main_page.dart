@@ -7,11 +7,11 @@ import '../../features/more/presentation/pages/more_page.dart';
 import '../bloc/bottom_nav_bar_bloc.dart';
 
 class MainPage extends StatelessWidget {
-  static const List<Widget> _pages = <Widget>[
-    HomePage(),
-    EventsPage(),
+  static final List<Widget> _pages = <Widget>[
+    const HomePage(),
+    const EventsPage(),
     CommunityPage(),
-    MorePage(),
+    const MorePage(),
   ];
 
   const MainPage({super.key});

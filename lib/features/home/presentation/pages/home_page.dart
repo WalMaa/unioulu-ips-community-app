@@ -2,7 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import '../../../../core/services/http_appwrite_service.dart';
+import '../../../announcement/presentation/pages/announcement_page.dart';
+import '../../../announcement/presentation/widgets/announcement_form.dart';
+import '../../../auth/presentation/bloc/auth_bloc.dart';
+import '../../../auth/presentation/bloc/auth_state.dart';
+import '../../../community/presentation/widgets/latest_community_posts_widget.dart';
+import '../../../events/presentation/widgets/add_event_form.dart';
 import '../../../language/presentation/bloc/language_bloc.dart';
+import '../widgets/add_topic_form.dart';
+import '../widgets/latest_event.dart';
 import '../widgets/topic_list_widget.dart';
 
 class HomePage extends StatelessWidget {
@@ -15,10 +23,165 @@ class HomePage extends StatelessWidget {
         .select((LocalizationBloc bloc) => bloc.state.locale.languageCode);
     final appwriteService = GetIt.instance<AppwriteService>();
 
+    return BlocBuilder<AuthBloc, AuthState>(
+      builder: (context, state) {
+        if (state is AuthAuthenticated) {
+          final isAdmin = state.labels.contains('admin');
+          final isModerator = state.labels.contains('moderator');
+          final isUser = state.labels.contains('user');
+
+          if (isAdmin) {
+            return _buildAdminScaffold(context, currentLocale, appwriteService);
+          } else if (isModerator) {
+            return _buildModeratorScaffold(
+                context, currentLocale, appwriteService);
+          } else if (isUser) {
+            return _buildUserScaffold(
+                context, currentLocale, appwriteService, state.user.name);
+          }
+        }
+
+        // If not authenticated, show a default scaffold or login prompt
+        return const Scaffold(
+          body: Center(
+            child: Text('Please log in to access the home page.'),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildModeratorScaffold(BuildContext context, String currentLocale,
+      AppwriteService appwriteService) {
     return Scaffold(
-      // appBar: AppBar(
-      //   title: const Text('Home'),
-      // ),
+      appBar: AppBar(
+        title: const Text('Moderator Dashboard'),
+      ),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Welcome, Moderator',
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const EventForm()),
+                    );
+                  },
+                  child: const Text('Add New Event'),
+                ),
+                const SizedBox(height: 10),
+                ElevatedButton(
+                  onPressed: () {
+                    // Navigate to content management page
+                  },
+                  child: const Text('Manage Content'),
+                ),
+                const SizedBox(height: 20),
+                const Text(
+                  'Quick Stats',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                // Add some moderator-specific stats or widgets here
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAdminScaffold(BuildContext context, String currentLocale,
+      AppwriteService appwriteService) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Admin Dashboard'),
+      ),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Welcome, Admin',
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const EventForm()),
+                    );
+                  },
+                  child: const Text('Add New Event'),
+                ),
+                const SizedBox(height: 10),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const AddAnnouncementForm(),
+                      ),
+                    );
+                  },
+                  child: const Text('Add New Announcement'),
+                ),
+                const SizedBox(height: 10),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const TopicForm()),
+                    );
+                  },
+                  child: const Text('Add New Topic'),
+                ),
+                const SizedBox(height: 10),
+                ElevatedButton(
+                  onPressed: () {
+                    // Navigate to user management page
+                  },
+                  child: const Text('Manage Users'),
+                ),
+                const SizedBox(height: 10),
+                ElevatedButton(
+                  onPressed: () {
+                    // Navigate to content management page
+                  },
+                  child: const Text('Manage Content'),
+                ),
+                const SizedBox(height: 20),
+                const Text(
+                  'Quick Stats',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                // Add some admin-specific stats or widgets here
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildUserScaffold(BuildContext context, String currentLocale,
+      AppwriteService appwriteService, String userName) {
+    return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -32,22 +195,23 @@ class HomePage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.max,
                   children: [
-                    const Expanded(
+                    Expanded(
                       flex: 2,
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          Text('Hello,', style: TextStyle(fontSize: 16.0)),
+                          const Text('Hello,',
+                              style: TextStyle(fontSize: 16.0)),
                           Text(
-                            'Salman F',
-                            style: TextStyle(
+                            userName,
+                            style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 22.0,
                             ),
                           ),
-                          Text(
-                            'Let\'s explore the what\'s new...',
+                          const Text(
+                            'Let\'s explore what\'s new...',
                             style: TextStyle(
                               fontSize: 16.0,
                             ),
@@ -84,7 +248,14 @@ class HomePage extends StatelessWidget {
                       foregroundColor: Colors.white,
                       backgroundColor: Theme.of(context).primaryColor,
                     ),
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const AnnouncementsPage(),
+                        ),
+                      );
+                    },
                     child: const Text(
                       'Announcements',
                       style: TextStyle(
@@ -113,171 +284,7 @@ class HomePage extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(
-                  height: 240.0, // Adjust the height to fit the content
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: 2,
-                    itemBuilder: (context, index) {
-                      final List<Map<String, dynamic>> events = [
-                        {
-                          'image':
-                              'https://www.keyweo.com/wp-content/uploads/2022/04/google-logo-history.jpg',
-                          'title': 'Volunteer Event in Oulu  jlkjlj lkjl!',
-                          'location': 'Oulu, Finland',
-                          'price': 'Free',
-                        },
-                        {
-                          'image':
-                              'https://www.keyweo.com/wp-content/uploads/2022/04/google-logo-history.jpg',
-                          'title': 'Oulu Sports Extravaganza',
-                          'location': 'University of Oulu',
-                          'price': '€5',
-                        },
-                        // Add more events as needed
-                      ];
-                      final event = events[index];
-                      return GestureDetector(
-                        onTap: () {
-                          // Navigate to event details page
-                          // Navigator.push(context, MaterialPageRoute(builder: (context) => EventDetailsPage(event: event)));
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.all(3.0),
-                          child: Container(
-                            width: 250.0, // Adjust width as needed
-                            margin: const EdgeInsets.only(right: 10.0),
-                            decoration: BoxDecoration(
-                              color: Theme.of(context).scaffoldBackgroundColor,
-                              borderRadius: BorderRadius.circular(15.0),
-                              boxShadow: const [
-                                BoxShadow(
-                                  color: Colors.black12,
-                                  blurRadius: 5,
-                                  offset: Offset(0, 3),
-                                ),
-                              ],
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(
-                                  8.0), // Padding inside the card
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  // Photo container
-                                  Container(
-                                    height:
-                                        150.0, // Adjust the height as needed
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10.0),
-                                      boxShadow: const [
-                                        BoxShadow(
-                                          color: Colors.black12,
-                                          blurRadius: 5,
-                                          offset: Offset(0, 3),
-                                        ),
-                                      ],
-                                    ),
-                                    child: Stack(
-                                      children: [
-                                        ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(10.0),
-                                          child: Image.network(
-                                            event['image'],
-                                            width: double.infinity,
-                                            height: double.infinity,
-                                            fit: BoxFit.cover,
-                                          ),
-                                        ),
-                                        Positioned(
-                                          top: 8.0,
-                                          right: 8.0,
-                                          child: GestureDetector(
-                                            onTap: () {
-                                              // Handle favorite/bookmark toggle
-                                            },
-                                            child: Container(
-                                              padding:
-                                                  const EdgeInsets.all(4.0),
-                                              decoration: BoxDecoration(
-                                                color: Colors.black54,
-                                                borderRadius:
-                                                    BorderRadius.circular(5.0),
-                                              ),
-                                              child: const Icon(
-                                                Icons.favorite_border,
-                                                color: Colors.white,
-                                                size: 24.0,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        Positioned(
-                                          bottom: 8.0,
-                                          left: 8.0,
-                                          child: Container(
-                                            padding: const EdgeInsets.all(4.0),
-                                            decoration: BoxDecoration(
-                                              color: Colors.black54,
-                                              borderRadius:
-                                                  BorderRadius.circular(5.0),
-                                            ),
-                                            child: Text(
-                                              event['price'],
-                                              style: const TextStyle(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  const SizedBox(height: 10.0),
-                                  // Event title
-                                  Text(
-                                    event['title'],
-                                    style: const TextStyle(
-                                      fontSize: 16.0,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  const SizedBox(height: 5.0),
-                                  // Event location
-                                  Row(
-                                    children: [
-                                      const Icon(
-                                        Icons.location_on,
-                                        color: Colors.grey,
-                                        size: 16.0,
-                                      ),
-                                      const SizedBox(width: 4.0),
-                                      Expanded(
-                                        child: Text(
-                                          event['location'],
-                                          style: const TextStyle(
-                                            color: Colors.grey,
-                                            fontSize: 14.0,
-                                          ),
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ),
+                const LatestEventsWidget(),
                 const SizedBox(height: 10.0),
                 const Text(
                   'Community',
@@ -286,6 +293,8 @@ class HomePage extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
+                const SizedBox(height: 10.0),
+                const LatestCommunityPostsWidget(),
               ],
             ),
           ),

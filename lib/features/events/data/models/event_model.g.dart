@@ -17,10 +17,10 @@ const EventModelSchema = CollectionSchema(
   name: r'EventModel',
   id: 3380270723020586526,
   properties: {
-    r'dateTime': PropertySchema(
+    r'date': PropertySchema(
       id: 0,
-      name: r'dateTime',
-      type: IsarType.dateTime,
+      name: r'date',
+      type: IsarType.string,
     ),
     r'detailsEn': PropertySchema(
       id: 1,
@@ -87,19 +87,34 @@ const EventModelSchema = CollectionSchema(
       name: r'ticketDetailsSv',
       type: IsarType.string,
     ),
-    r'titleEn': PropertySchema(
+    r'time': PropertySchema(
       id: 14,
+      name: r'time',
+      type: IsarType.string,
+    ),
+    r'titleEn': PropertySchema(
+      id: 15,
       name: r'titleEn',
       type: IsarType.string,
     ),
     r'titleFi': PropertySchema(
-      id: 15,
+      id: 16,
       name: r'titleFi',
       type: IsarType.string,
     ),
     r'titleSv': PropertySchema(
-      id: 16,
+      id: 17,
       name: r'titleSv',
+      type: IsarType.string,
+    ),
+    r'topics': PropertySchema(
+      id: 18,
+      name: r'topics',
+      type: IsarType.string,
+    ),
+    r'updatedAt': PropertySchema(
+      id: 19,
+      name: r'updatedAt',
       type: IsarType.string,
     )
   },
@@ -123,6 +138,7 @@ int _eventModelEstimateSize(
   Map<Type, List<int>> allOffsets,
 ) {
   var bytesCount = offsets.last;
+  bytesCount += 3 + object.date.length * 3;
   bytesCount += 3 + object.detailsEn.length * 3;
   bytesCount += 3 + object.detailsFi.length * 3;
   bytesCount += 3 + object.detailsSv.length * 3;
@@ -136,9 +152,12 @@ int _eventModelEstimateSize(
   bytesCount += 3 + object.ticketDetailsEn.length * 3;
   bytesCount += 3 + object.ticketDetailsFi.length * 3;
   bytesCount += 3 + object.ticketDetailsSv.length * 3;
+  bytesCount += 3 + object.time.length * 3;
   bytesCount += 3 + object.titleEn.length * 3;
   bytesCount += 3 + object.titleFi.length * 3;
   bytesCount += 3 + object.titleSv.length * 3;
+  bytesCount += 3 + object.topics.length * 3;
+  bytesCount += 3 + object.updatedAt.length * 3;
   return bytesCount;
 }
 
@@ -148,7 +167,7 @@ void _eventModelSerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeDateTime(offsets[0], object.dateTime);
+  writer.writeString(offsets[0], object.date);
   writer.writeString(offsets[1], object.detailsEn);
   writer.writeString(offsets[2], object.detailsFi);
   writer.writeString(offsets[3], object.detailsSv);
@@ -162,9 +181,12 @@ void _eventModelSerialize(
   writer.writeString(offsets[11], object.ticketDetailsEn);
   writer.writeString(offsets[12], object.ticketDetailsFi);
   writer.writeString(offsets[13], object.ticketDetailsSv);
-  writer.writeString(offsets[14], object.titleEn);
-  writer.writeString(offsets[15], object.titleFi);
-  writer.writeString(offsets[16], object.titleSv);
+  writer.writeString(offsets[14], object.time);
+  writer.writeString(offsets[15], object.titleEn);
+  writer.writeString(offsets[16], object.titleFi);
+  writer.writeString(offsets[17], object.titleSv);
+  writer.writeString(offsets[18], object.topics);
+  writer.writeString(offsets[19], object.updatedAt);
 }
 
 EventModel _eventModelDeserialize(
@@ -174,7 +196,7 @@ EventModel _eventModelDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = EventModel(
-    dateTime: reader.readDateTime(offsets[0]),
+    date: reader.readString(offsets[0]),
     detailsEn: reader.readString(offsets[1]),
     detailsFi: reader.readString(offsets[2]),
     detailsSv: reader.readString(offsets[3]),
@@ -188,9 +210,12 @@ EventModel _eventModelDeserialize(
     ticketDetailsEn: reader.readString(offsets[11]),
     ticketDetailsFi: reader.readString(offsets[12]),
     ticketDetailsSv: reader.readString(offsets[13]),
-    titleEn: reader.readString(offsets[14]),
-    titleFi: reader.readString(offsets[15]),
-    titleSv: reader.readString(offsets[16]),
+    time: reader.readString(offsets[14]),
+    titleEn: reader.readString(offsets[15]),
+    titleFi: reader.readString(offsets[16]),
+    titleSv: reader.readString(offsets[17]),
+    topics: reader.readString(offsets[18]),
+    updatedAt: reader.readString(offsets[19]),
   );
   object.id = id;
   return object;
@@ -204,7 +229,7 @@ P _eventModelDeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
-      return (reader.readDateTime(offset)) as P;
+      return (reader.readString(offset)) as P;
     case 1:
       return (reader.readString(offset)) as P;
     case 2:
@@ -236,6 +261,12 @@ P _eventModelDeserializeProp<P>(
     case 15:
       return (reader.readString(offset)) as P;
     case 16:
+      return (reader.readString(offset)) as P;
+    case 17:
+      return (reader.readString(offset)) as P;
+    case 18:
+      return (reader.readString(offset)) as P;
+    case 19:
       return (reader.readString(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -333,56 +364,132 @@ extension EventModelQueryWhere
 
 extension EventModelQueryFilter
     on QueryBuilder<EventModel, EventModel, QFilterCondition> {
-  QueryBuilder<EventModel, EventModel, QAfterFilterCondition> dateTimeEqualTo(
-      DateTime value) {
+  QueryBuilder<EventModel, EventModel, QAfterFilterCondition> dateEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'dateTime',
+        property: r'date',
         value: value,
+        caseSensitive: caseSensitive,
       ));
     });
   }
 
-  QueryBuilder<EventModel, EventModel, QAfterFilterCondition>
-      dateTimeGreaterThan(
-    DateTime value, {
+  QueryBuilder<EventModel, EventModel, QAfterFilterCondition> dateGreaterThan(
+    String value, {
     bool include = false,
+    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         include: include,
-        property: r'dateTime',
+        property: r'date',
         value: value,
+        caseSensitive: caseSensitive,
       ));
     });
   }
 
-  QueryBuilder<EventModel, EventModel, QAfterFilterCondition> dateTimeLessThan(
-    DateTime value, {
+  QueryBuilder<EventModel, EventModel, QAfterFilterCondition> dateLessThan(
+    String value, {
     bool include = false,
+    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.lessThan(
         include: include,
-        property: r'dateTime',
+        property: r'date',
         value: value,
+        caseSensitive: caseSensitive,
       ));
     });
   }
 
-  QueryBuilder<EventModel, EventModel, QAfterFilterCondition> dateTimeBetween(
-    DateTime lower,
-    DateTime upper, {
+  QueryBuilder<EventModel, EventModel, QAfterFilterCondition> dateBetween(
+    String lower,
+    String upper, {
     bool includeLower = true,
     bool includeUpper = true,
+    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
-        property: r'dateTime',
+        property: r'date',
         lower: lower,
         includeLower: includeLower,
         upper: upper,
         includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<EventModel, EventModel, QAfterFilterCondition> dateStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'date',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<EventModel, EventModel, QAfterFilterCondition> dateEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'date',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<EventModel, EventModel, QAfterFilterCondition> dateContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'date',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<EventModel, EventModel, QAfterFilterCondition> dateMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'date',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<EventModel, EventModel, QAfterFilterCondition> dateIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'date',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<EventModel, EventModel, QAfterFilterCondition> dateIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'date',
+        value: '',
       ));
     });
   }
@@ -2194,6 +2301,136 @@ extension EventModelQueryFilter
     });
   }
 
+  QueryBuilder<EventModel, EventModel, QAfterFilterCondition> timeEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'time',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<EventModel, EventModel, QAfterFilterCondition> timeGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'time',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<EventModel, EventModel, QAfterFilterCondition> timeLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'time',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<EventModel, EventModel, QAfterFilterCondition> timeBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'time',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<EventModel, EventModel, QAfterFilterCondition> timeStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'time',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<EventModel, EventModel, QAfterFilterCondition> timeEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'time',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<EventModel, EventModel, QAfterFilterCondition> timeContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'time',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<EventModel, EventModel, QAfterFilterCondition> timeMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'time',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<EventModel, EventModel, QAfterFilterCondition> timeIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'time',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<EventModel, EventModel, QAfterFilterCondition> timeIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'time',
+        value: '',
+      ));
+    });
+  }
+
   QueryBuilder<EventModel, EventModel, QAfterFilterCondition> titleEnEqualTo(
     String value, {
     bool caseSensitive = true,
@@ -2589,6 +2826,271 @@ extension EventModelQueryFilter
       ));
     });
   }
+
+  QueryBuilder<EventModel, EventModel, QAfterFilterCondition> topicsEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'topics',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<EventModel, EventModel, QAfterFilterCondition> topicsGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'topics',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<EventModel, EventModel, QAfterFilterCondition> topicsLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'topics',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<EventModel, EventModel, QAfterFilterCondition> topicsBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'topics',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<EventModel, EventModel, QAfterFilterCondition> topicsStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'topics',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<EventModel, EventModel, QAfterFilterCondition> topicsEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'topics',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<EventModel, EventModel, QAfterFilterCondition> topicsContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'topics',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<EventModel, EventModel, QAfterFilterCondition> topicsMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'topics',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<EventModel, EventModel, QAfterFilterCondition> topicsIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'topics',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<EventModel, EventModel, QAfterFilterCondition>
+      topicsIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'topics',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<EventModel, EventModel, QAfterFilterCondition> updatedAtEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'updatedAt',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<EventModel, EventModel, QAfterFilterCondition>
+      updatedAtGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'updatedAt',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<EventModel, EventModel, QAfterFilterCondition> updatedAtLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'updatedAt',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<EventModel, EventModel, QAfterFilterCondition> updatedAtBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'updatedAt',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<EventModel, EventModel, QAfterFilterCondition>
+      updatedAtStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'updatedAt',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<EventModel, EventModel, QAfterFilterCondition> updatedAtEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'updatedAt',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<EventModel, EventModel, QAfterFilterCondition> updatedAtContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'updatedAt',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<EventModel, EventModel, QAfterFilterCondition> updatedAtMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'updatedAt',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<EventModel, EventModel, QAfterFilterCondition>
+      updatedAtIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'updatedAt',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<EventModel, EventModel, QAfterFilterCondition>
+      updatedAtIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'updatedAt',
+        value: '',
+      ));
+    });
+  }
 }
 
 extension EventModelQueryObject
@@ -2599,15 +3101,15 @@ extension EventModelQueryLinks
 
 extension EventModelQuerySortBy
     on QueryBuilder<EventModel, EventModel, QSortBy> {
-  QueryBuilder<EventModel, EventModel, QAfterSortBy> sortByDateTime() {
+  QueryBuilder<EventModel, EventModel, QAfterSortBy> sortByDate() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'dateTime', Sort.asc);
+      return query.addSortBy(r'date', Sort.asc);
     });
   }
 
-  QueryBuilder<EventModel, EventModel, QAfterSortBy> sortByDateTimeDesc() {
+  QueryBuilder<EventModel, EventModel, QAfterSortBy> sortByDateDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'dateTime', Sort.desc);
+      return query.addSortBy(r'date', Sort.desc);
     });
   }
 
@@ -2771,6 +3273,18 @@ extension EventModelQuerySortBy
     });
   }
 
+  QueryBuilder<EventModel, EventModel, QAfterSortBy> sortByTime() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'time', Sort.asc);
+    });
+  }
+
+  QueryBuilder<EventModel, EventModel, QAfterSortBy> sortByTimeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'time', Sort.desc);
+    });
+  }
+
   QueryBuilder<EventModel, EventModel, QAfterSortBy> sortByTitleEn() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'titleEn', Sort.asc);
@@ -2806,19 +3320,43 @@ extension EventModelQuerySortBy
       return query.addSortBy(r'titleSv', Sort.desc);
     });
   }
+
+  QueryBuilder<EventModel, EventModel, QAfterSortBy> sortByTopics() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'topics', Sort.asc);
+    });
+  }
+
+  QueryBuilder<EventModel, EventModel, QAfterSortBy> sortByTopicsDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'topics', Sort.desc);
+    });
+  }
+
+  QueryBuilder<EventModel, EventModel, QAfterSortBy> sortByUpdatedAt() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'updatedAt', Sort.asc);
+    });
+  }
+
+  QueryBuilder<EventModel, EventModel, QAfterSortBy> sortByUpdatedAtDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'updatedAt', Sort.desc);
+    });
+  }
 }
 
 extension EventModelQuerySortThenBy
     on QueryBuilder<EventModel, EventModel, QSortThenBy> {
-  QueryBuilder<EventModel, EventModel, QAfterSortBy> thenByDateTime() {
+  QueryBuilder<EventModel, EventModel, QAfterSortBy> thenByDate() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'dateTime', Sort.asc);
+      return query.addSortBy(r'date', Sort.asc);
     });
   }
 
-  QueryBuilder<EventModel, EventModel, QAfterSortBy> thenByDateTimeDesc() {
+  QueryBuilder<EventModel, EventModel, QAfterSortBy> thenByDateDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'dateTime', Sort.desc);
+      return query.addSortBy(r'date', Sort.desc);
     });
   }
 
@@ -2994,6 +3532,18 @@ extension EventModelQuerySortThenBy
     });
   }
 
+  QueryBuilder<EventModel, EventModel, QAfterSortBy> thenByTime() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'time', Sort.asc);
+    });
+  }
+
+  QueryBuilder<EventModel, EventModel, QAfterSortBy> thenByTimeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'time', Sort.desc);
+    });
+  }
+
   QueryBuilder<EventModel, EventModel, QAfterSortBy> thenByTitleEn() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'titleEn', Sort.asc);
@@ -3029,13 +3579,38 @@ extension EventModelQuerySortThenBy
       return query.addSortBy(r'titleSv', Sort.desc);
     });
   }
+
+  QueryBuilder<EventModel, EventModel, QAfterSortBy> thenByTopics() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'topics', Sort.asc);
+    });
+  }
+
+  QueryBuilder<EventModel, EventModel, QAfterSortBy> thenByTopicsDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'topics', Sort.desc);
+    });
+  }
+
+  QueryBuilder<EventModel, EventModel, QAfterSortBy> thenByUpdatedAt() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'updatedAt', Sort.asc);
+    });
+  }
+
+  QueryBuilder<EventModel, EventModel, QAfterSortBy> thenByUpdatedAtDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'updatedAt', Sort.desc);
+    });
+  }
 }
 
 extension EventModelQueryWhereDistinct
     on QueryBuilder<EventModel, EventModel, QDistinct> {
-  QueryBuilder<EventModel, EventModel, QDistinct> distinctByDateTime() {
+  QueryBuilder<EventModel, EventModel, QDistinct> distinctByDate(
+      {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'dateTime');
+      return query.addDistinctBy(r'date', caseSensitive: caseSensitive);
     });
   }
 
@@ -3135,6 +3710,13 @@ extension EventModelQueryWhereDistinct
     });
   }
 
+  QueryBuilder<EventModel, EventModel, QDistinct> distinctByTime(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'time', caseSensitive: caseSensitive);
+    });
+  }
+
   QueryBuilder<EventModel, EventModel, QDistinct> distinctByTitleEn(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -3155,6 +3737,20 @@ extension EventModelQueryWhereDistinct
       return query.addDistinctBy(r'titleSv', caseSensitive: caseSensitive);
     });
   }
+
+  QueryBuilder<EventModel, EventModel, QDistinct> distinctByTopics(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'topics', caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<EventModel, EventModel, QDistinct> distinctByUpdatedAt(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'updatedAt', caseSensitive: caseSensitive);
+    });
+  }
 }
 
 extension EventModelQueryProperty
@@ -3165,9 +3761,9 @@ extension EventModelQueryProperty
     });
   }
 
-  QueryBuilder<EventModel, DateTime, QQueryOperations> dateTimeProperty() {
+  QueryBuilder<EventModel, String, QQueryOperations> dateProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'dateTime');
+      return query.addPropertyName(r'date');
     });
   }
 
@@ -3249,6 +3845,12 @@ extension EventModelQueryProperty
     });
   }
 
+  QueryBuilder<EventModel, String, QQueryOperations> timeProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'time');
+    });
+  }
+
   QueryBuilder<EventModel, String, QQueryOperations> titleEnProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'titleEn');
@@ -3264,6 +3866,18 @@ extension EventModelQueryProperty
   QueryBuilder<EventModel, String, QQueryOperations> titleSvProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'titleSv');
+    });
+  }
+
+  QueryBuilder<EventModel, String, QQueryOperations> topicsProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'topics');
+    });
+  }
+
+  QueryBuilder<EventModel, String, QQueryOperations> updatedAtProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'updatedAt');
     });
   }
 }

@@ -10,14 +10,20 @@ class UserModel {
   late String userId;
   late String email;
   late String name;
+  late String labels;
 
-  UserModel({required this.userId, required this.email, required this.name});
+  UserModel(
+      {required this.userId,
+      required this.email,
+      required this.name,
+      required this.labels});
 
   factory UserModel.fromAppwriteUser(appwrite.User user) {
     return UserModel(
       userId: user.$id,
       email: user.email,
       name: user.name,
+      labels: user.labels.join(','),
     );
   }
 
@@ -32,7 +38,7 @@ class UserModel {
       hashOptions: null,
       registration: '',
       status: false,
-      labels: [],
+      labels: labels.split(','),
       passwordUpdate: '',
       email: email,
       phone: '',
@@ -50,6 +56,7 @@ class UserModel {
       id: userId,
       email: email,
       name: name,
+      labels: labels.split(','),
     );
   }
 }

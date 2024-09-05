@@ -12,7 +12,8 @@ class EventModel {
   late String locationEn; // Location of the event in English
   late String locationFi; // Location of the event in Finnish
   late String locationSv; // Location of the event in Swedish
-  late DateTime dateTime; // Date and Time of the event
+  late String date; // Date of the event
+  late String time; // Time of the event
   late String price; // Free or specific amount
   late String organizerName; // Name of the organizer
   late String detailsEn; // Event details in English
@@ -22,6 +23,8 @@ class EventModel {
   late String ticketDetailsFi; // Ticket details in Finnish
   late String ticketDetailsSv; // Ticket details in Swedish
   late String locationUrl; // URL for map location
+  late String topics; // Topics of the event
+  late String updatedAt; // Updated at date
 
   EventModel({
     required this.posterPhotoUrl,
@@ -31,7 +34,8 @@ class EventModel {
     required this.locationEn,
     required this.locationFi,
     required this.locationSv,
-    required this.dateTime,
+    required this.date,
+    required this.time,
     required this.price,
     required this.organizerName,
     required this.detailsEn,
@@ -41,6 +45,8 @@ class EventModel {
     required this.ticketDetailsFi,
     required this.ticketDetailsSv,
     required this.locationUrl,
+    required this.topics,
+    required this.updatedAt,
   });
 
   factory EventModel.fromJson(Map<String, dynamic> json) {
@@ -52,7 +58,8 @@ class EventModel {
       locationEn: json['location_en'] ?? '',
       locationFi: json['location_fi'] ?? '',
       locationSv: json['location_sv'] ?? '',
-      dateTime: DateTime.parse(json['dateTime']),
+      date: json['date'] ?? '',
+      time: json['time'] ?? '',
       price: json['price'] ?? '',
       organizerName: json['organizerName'] ?? '',
       detailsEn: json['details_en'] ?? '',
@@ -62,6 +69,8 @@ class EventModel {
       ticketDetailsFi: json['ticketDetails_fi'] ?? '',
       ticketDetailsSv: json['ticketDetails_sv'] ?? '',
       locationUrl: json['locationUrl'] ?? '',
+      topics: json['topics'] ?? '',
+      updatedAt: json['updatedAt'] ?? '',
     );
   }
 
@@ -74,7 +83,8 @@ class EventModel {
       'location_en': locationEn,
       'location_fi': locationFi,
       'location_sv': locationSv,
-      'dateTime': dateTime.toIso8601String(),
+      'date': date,
+      'time': time,
       'price': price,
       'organizerName': organizerName,
       'details_en': detailsEn,
@@ -84,6 +94,8 @@ class EventModel {
       'ticketDetails_fi': ticketDetailsFi,
       'ticketDetails_sv': ticketDetailsSv,
       'locationUrl': locationUrl,
+      'topics': topics,
+      'updatedAt': updatedAt,
     };
   }
 }

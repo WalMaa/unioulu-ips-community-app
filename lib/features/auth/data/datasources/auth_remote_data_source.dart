@@ -28,7 +28,7 @@ class AuthRemoteDataSource {
         'PUT', // HTTP method
         'users/${user.$id}/labels', // Endpoint path
         {
-          'labels': ['student']
+          'labels': ['user']
         }, // Data to send
       );
 

@@ -37,7 +37,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(AuthLoading());
     try {
       final user = await login.execute(event.email, event.password);
-      emit(AuthAuthenticated(user: user));
+      emit(AuthAuthenticated(user: user, labels: user.labels));
       final result = await account.get();
       final fuser = UserModel.fromAppwriteUser(result).toEntity();
 
@@ -65,7 +65,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     try {
       await register.execute(event.email, event.password, event.name);
       final user = await login.execute(event.email, event.password);
-      emit(AuthAuthenticated(user: user));
+      emit(AuthAuthenticated(user: user, labels: user.labels));
       //TODO: remove print statement
       print('Register: ${user.toString()}');
     } catch (e) {
@@ -78,7 +78,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(AuthLoading());
     try {
       final user = await updateProfile.execute(event.name);
-      emit(AuthAuthenticated(user: user));
+      emit(AuthAuthenticated(user: user, labels: user.labels));
     } catch (e) {
       emit(AuthError(message: e.toString()));
     }
@@ -89,7 +89,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(AuthLoading());
     try {
       final user = await authenticateAnonymous.execute();
-      emit(AuthAuthenticated(user: user));
+      emit(AuthAuthenticated(user: user, labels: user.labels));
     } catch (e) {
       emit(AuthError(message: e.toString()));
     }
@@ -104,10 +104,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         emit(AuthInitial());
       } else {
         final user = UserModel.fromAppwriteUser(appwriteUser).toEntity();
-        emit(AuthAuthenticated(user: user));
+        emit(AuthAuthenticated(user: user, labels: user.labels));
 
         //TODO: remove print statement
-        print('CheckAuthentication: ${user.email}');
+        print('CheckAuthentication: ${user.email} & ${user.labels.join(',')}');
       }
     } catch (e) {
       emit(AuthInitial());
