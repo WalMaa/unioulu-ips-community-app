@@ -158,7 +158,7 @@ This will build and launch the app on the connected device or emulator.
 For further assistance with running or debugging the project, please refer to the official Flutter documentation or check the project's issue tracker on GitHub.
 
 ---
-## 3. Project Structure & Packages Used
+## 3. Project Structure
 
 ### Project Structure
 
