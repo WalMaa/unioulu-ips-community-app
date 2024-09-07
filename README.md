@@ -156,3 +156,79 @@ This will build and launch the app on the connected device or emulator.
 ---
 
 For further assistance with running or debugging the project, please refer to the official Flutter documentation or check the project's issue tracker on GitHub.
+
+---
+## 3. Project Structure & Packages Used
+
+### Project Structure
+
+This project follows CLEAN architecture principles combined with BLoC state management to maintain separation of concerns and keep the code modular, scalable, and testable. Here’s an overview of the folder structure:
+```bash
+lib/
+│
+├── core/                       # Core functionalities shared across the app
+│   ├── fonts/                  # Font files for the app
+│   ├── pages/                  # Core pages (e.g., splash screen)
+│   ├── services/               # Services like dependency injection
+│   ├── theme/                  # Theme-related files
+│   └── utils/                  # Utility classes (e.g., responsive design)
+│
+├── features/                   # Feature-specific code
+│   ├── auth/                   # Authentication feature
+│   │   ├── data/               # Data layer for authentication
+│   │   │   ├── datasources/    # Data sources (remote, local)
+│   │   │   ├── models/         # Data models
+│   │   │   └── repositories/   # Repository implementations
+│   │   ├── domain/             # Domain layer for authentication
+│   │   │   ├── entities/       # Core entities (e.g., User)
+│   │   │   ├── repositories/   # Repository interfaces
+│   │   │   └── usecases/       # Use cases (business logic)
+│   │   └── presentation/       # Presentation layer for authentication
+│   │       ├── bloc/           # BLoC for authentication
+│   │       ├── pages/          # UI pages (e.g., login, register)
+│   │       └── widgets/        # Smaller UI components (e.g., forms)
+│   │
+│   ├── community/              # Community feature (similar structure as auth)
+│   ├── events/                 # Events feature (similar structure as auth)
+│   ├── home/                   # Home feature (similar structure as auth)
+│   ├── language/               # Language feature for localization
+│   └── theme/                  # Theme feature for theming
+│
+├── l10n/                       # Localization files
+│   ├── intl_en.arb             # English localization
+│   ├── intl_fi.arb             # Finnish localization
+│   ├── intl_sv.arb             # Swedish localization
+│
+└── main.dart                   # Application entry point
+```
+
+### Packages Used
+
+The following packages are used in this project:
+
+- **appwrite:** Backend services like authentication, database, and file storage. (^12.0.4)
+- **bloc:** State management solution based on the Business Logic Component (BLoC) pattern. (^8.1.4)
+- **cupertino_icons:** iOS-style icons for Cupertino widgets. (^1.0.6)
+- **equatable:** Simplifies value comparison in Dart. (^2.0.5)
+- **file_picker:** A package for picking files. (^8.0.7)
+- **flutter:** Flutter SDK used to build the application.
+- **flutter_bloc:** Integration between Flutter and BLoC for state management. (^8.1.6)
+- **flutter_localizations:** Flutter localization support.
+- **flutter_svg:** Renders SVG images. (^2.0.10+1)
+- **font_awesome_flutter:** Icon set of FontAwesome. (^10.7.0)
+- **fpdart:** Functional programming utilities for Dart. (^1.1.0)
+- **get_it:** Dependency injection library. (^7.7.0)
+- **http:** HTTP client for making API calls. (^1.2.1)
+- **intl:** Internationalization and localization. (^0.19.0)
+- **isar:** NoSQL database for Flutter. (^3.1.0+1)
+- **isar_flutter_libs:** Isar database bindings for Flutter. (^3.1.0+1)
+- **path_provider:** Access to commonly used file locations. (^2.1.3)
+
+Dev Dependencies
+
+- **build_runner:** Code generation package. (^2.4.11)
+- **flutter_lints:** Provides Flutter-specific linting rules. (^3.0.0)
+- **flutter_test:** Testing library for Flutter.
+- **isar_generator:** Generates Isar code for database models. (^3.1.0+1)
+
+---
