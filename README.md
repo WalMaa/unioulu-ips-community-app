@@ -160,8 +160,6 @@ For further assistance with running or debugging the project, please refer to th
 ---
 ## 3. Project Structure
 
-### Project Structure
-
 This project follows CLEAN architecture principles combined with BLoC state management to maintain separation of concerns and keep the code modular, scalable, and testable. Here’s an overview of the folder structure:
 ```bash
 lib/
