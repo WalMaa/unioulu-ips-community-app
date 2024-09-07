@@ -278,4 +278,12 @@ For more details, please refer to the LICENSE file.
 
 ## 7. UI Design
 
-Below is a preview of the initial UI design for the app:
+The UI design for the app can be found in the `UI-Design` folder of the repository. It contains the following files:
+
+- `App-UI-Design.fig`: The original UI design created in Figma.
+- `app-ui.png`: A preview image of the UI design.
+
+![App UI Preview](https://github.com/salscoding/unioulu-ips-community-app/raw/main/UI-Design/app-ui.png)
+
+You can view and download both files via the following link:  
+[UI-Design Folder](https://github.com/salscoding/unioulu-ips-community-app/tree/main/UI-Design)
