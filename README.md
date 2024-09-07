@@ -202,51 +202,22 @@ lib/
 └── main.dart                   # Application entry point
 ```
 
-### Packages Used
-
-The following packages are used in this project:
-
-- **appwrite:** Backend services like authentication, database, and file storage. (^12.0.4)
-- **bloc:** State management solution based on the Business Logic Component (BLoC) pattern. (^8.1.4)
-- **cupertino_icons:** iOS-style icons for Cupertino widgets. (^1.0.6)
-- **equatable:** Simplifies value comparison in Dart. (^2.0.5)
-- **file_picker:** A package for picking files. (^8.0.7)
-- **flutter:** Flutter SDK used to build the application.
-- **flutter_bloc:** Integration between Flutter and BLoC for state management. (^8.1.6)
-- **flutter_localizations:** Flutter localization support.
-- **flutter_svg:** Renders SVG images. (^2.0.10+1)
-- **font_awesome_flutter:** Icon set of FontAwesome. (^10.7.0)
-- **fpdart:** Functional programming utilities for Dart. (^1.1.0)
-- **get_it:** Dependency injection library. (^7.7.0)
-- **http:** HTTP client for making API calls. (^1.2.1)
-- **intl:** Internationalization and localization. (^0.19.0)
-- **isar:** NoSQL database for Flutter. (^3.1.0+1)
-- **isar_flutter_libs:** Isar database bindings for Flutter. (^3.1.0+1)
-- **path_provider:** Access to commonly used file locations. (^2.1.3)
-
-Dev Dependencies
-
-- **build_runner:** Code generation package. (^2.4.11)
-- **flutter_lints:** Provides Flutter-specific linting rules. (^3.0.0)
-- **flutter_test:** Testing library for Flutter.
-- **isar_generator:** Generates Isar code for database models. (^3.1.0+1)
-
 ---
 
 ## 4. Features
 
 This application includes the following features:
 
-### 1. Community Posts:
+#### 1. Community Posts:
 Users can add, view, and interact with community posts. The app allows users to post content, comment, and engage with the community.
 
-### 2. Announcements:
+#### 2. Announcements:
 Users can view and add important announcements. These announcements are displayed prominently and can be updated regularly.
 
-### 3. Event Management:
+#### 3. Event Management:
 The app features an event management section where users can view and manage events. The latest 3 events are displayed in a horizontal list format, allowing for quick access to upcoming activities.
 
-### Appwrite Integration:
+#### Appwrite Integration:
 Appwrite is used for backend services such as data storage, user authentication, and API calls. The data for community posts, announcements, and events are securely stored and managed through Appwrite’s database service.
 
 ## 5. Contributing
