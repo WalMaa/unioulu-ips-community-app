@@ -232,3 +232,50 @@ Dev Dependencies
 - **isar_generator:** Generates Isar code for database models. (^3.1.0+1)
 
 ---
+
+## 4. Features
+
+This application includes the following features:
+
+### 1. Community Posts:
+Users can add, view, and interact with community posts. The app allows users to post content, comment, and engage with the community.
+
+### 2. Announcements:
+Users can view and add important announcements. These announcements are displayed prominently and can be updated regularly.
+
+### 3. Event Management:
+The app features an event management section where users can view and manage events. The latest 3 events are displayed in a horizontal list format, allowing for quick access to upcoming activities.
+
+### Appwrite Integration:
+Appwrite is used for backend services such as data storage, user authentication, and API calls. The data for community posts, announcements, and events are securely stored and managed through Appwrite’s database service.
+
+## 5. Contributing
+
+We welcome contributions from the community! To contribute:
+
+1. Fork the repository to your own GitHub account.
+2. Create a new branch for your feature or bug fix:
+```bash   
+git checkout -b feature-or-bug-name
+```
+3. Once your changes are complete, commit and push your code:
+```bash   
+git commit -m "Add new feature or fix a bug"
+```
+```bash
+git push origin feature-or-bug-name
+```
+4. Submit a pull request to the main repository for review.
+
+### Coding Standards:
+- Follow the Dart Style Guide and use meaningful naming conventions for variables and methods.
+- Make sure to add documentation and comments where necessary.
+
+## 6. License (Open Source)
+
+This project is licensed under the MIT License.  
+For more details, please refer to the LICENSE file.
+
+## 7. UI Design
+
+Below is a preview of the initial UI design for the app:
