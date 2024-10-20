@@ -72,6 +72,52 @@ docker run -it --rm `
 ```
 For detailed instructions, refer to the [Appwrite self-hosting documentation](https://appwrite.io/docs/advanced/self-hosting) or watch the [YouTube tutorial](https://youtu.be/aO4mw8smXkI?si=8qp5IWHNkY-74J5v).
 
+
+### Database Configuration with db-config.py
+
+Once you have successfully set up Appwrite, you need to configure the database for your app. We have provided a Python script (db-config.py) to automate this process.
+
+#### What db-config.py Does
+This script creates necessary collections and attributes for your Appwrite database, including collections like:
+
+- **Events**
+- **Topics**
+- **Posts**
+- **Comments**
+- **Announcements**
+
+For each collection, it defines the necessary attributes (e.g., title, content, datetime, etc.).
+
+#### How to Use the Script
+1. Ensure that the Appwrite server is running on http://localhost/v1.
+2. Make sure your Appwrite project is already configured, and you have an API key with the necessary permissions.
+3. Update the script (db-config.py) with the correct project_id, database_id, and API key:
+    ```bash
+    endpoint = 'http://localhost/v1'
+    project_id = 'community-app'
+    api_key = 'YOUR_APPWRITE_API_KEY'
+    database_id = 'communitydb'
+    ```
+4. Once the details are updated, run the script:
+   ```bash
+   python db-config.py
+   ```
+
+This script will automatically create the collections and attributes in your Appwrite database as per the app's requirements.
+
+What the Script Creates
+- **Collections**: Events, Topics, Posts, Comments, Announcements.
+- **Attributes**: For each collection, attributes like title, content, dateTime, authorName, and more are created.
+
+For example, the Events collection will include attributes like:
+- **title_en**
+- **location_en**
+- **date**
+- **time**
+- **posterPhotoUrl**
+
+This setup ensures that your database is structured correctly for the application to work smoothly.
+
 ---
 ### 2. Install Flutter
 
