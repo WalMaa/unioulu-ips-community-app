@@ -31,12 +31,13 @@ import 'core/theme/app_theme.dart';
 import 'features/language/data/models/language_model.dart';
 import 'features/theme/data/models/theme_model.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 final GetIt locator = GetIt.instance;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
+  await dotenv.load(fileName: ".env");
   await _initializeDatabase();
   _initializeAppwrite();
   setupLocator();
