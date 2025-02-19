@@ -1,11 +1,15 @@
 import requests
+from dotenv import load_dotenv
+import os
+
+# Load environment variables from .env file
+load_dotenv()
 
 # Appwrite API configuration
-endpoint = 'http://localhost/v1'
-project_id = '67b46229000ca4f9a191'
-api_key = 'standard_74510254ebd6dd0a633548b83b0acc9b102549779baf6feaf5fa9d6a2eda4620f3771fc3d7523c03819fe22d41d84348793f7a7e5aa69aa4a78aa74e8d0724b83747766f6b1af74771c91b111142027e6265512019fa6235a5ce1b699504972bec1ccc55ea38db08302e222841183750c38f71abb6bb3e9792f235183a6d3b80'
-database_id = 'communitydb'
-
+endpoint = os.getenv('APPWRITE_URL')
+project_id = os.getenv('APPWRITE_PROJECT_ID')
+api_key = os.getenv('APPWRITE_API_KEY')
+database_id = os.getenv('APPWRITE_DATABASE_ID')
 
 headers = {
     'Content-Type': 'application/json',
@@ -19,7 +23,6 @@ def create_collection(name, collection_id, permissions=None):
     data = {
         'collectionId': collection_id,
         'name': name,
-        'permissions': permissions if permissions else {'read': [], 'write': []}
     }
     response = requests.post(url, headers=headers, json=data)
     return response.json()
@@ -60,6 +63,16 @@ def create_integer_attribute(collection_id, key, required=False, min_val=None, m
     response = requests.post(url, headers=headers, json=data)
     return response.json()
 
+def create_date_attribute(collection_id, key, required=False, default=None):
+    url = f'{endpoint}/databases/{database_id}/collections/{collection_id}/attributes/date'
+    data = {
+        'key': key,
+        'required': required,
+        'default': default
+    }
+    response = requests.post(url, headers=headers, json=data)
+    return response.json()
+
 
 def create_attribute(collection_id, attribute_config):
     attr_type = attribute_config['type']
@@ -76,6 +89,8 @@ def create_attribute(collection_id, attribute_config):
         min_val = attribute_config.get('min')
         max_val = attribute_config.get('max')
         return create_integer_attribute(collection_id, key, required, min_val, max_val, default)
+    elif attr_type == 'date':
+        return create_date_attribute(collection_id, key, required, default)
     else:
         raise ValueError(f"Unsupported attribute type: {attr_type}")
 

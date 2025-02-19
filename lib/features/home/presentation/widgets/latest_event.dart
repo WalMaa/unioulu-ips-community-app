@@ -30,6 +30,8 @@ class _LatestEventsWidgetState extends State<LatestEventsWidget> {
         null,
       );
 
+      if(!mounted) return;
+
       if (response.statusCode == 200) {
         final List<dynamic> jsonData = jsonDecode(response.body)['documents'];
 

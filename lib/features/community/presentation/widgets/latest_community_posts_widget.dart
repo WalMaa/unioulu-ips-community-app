@@ -26,6 +26,7 @@ class _LatestCommunityPostsWidgetState
     _fetchLatestPosts();
   }
 
+
   Future<void> _fetchLatestPosts() async {
     try {
       final response = await _appwriteService.makeRequest(
@@ -34,6 +35,8 @@ class _LatestCommunityPostsWidgetState
         null,
       );
 
+      if (!mounted) return;
+      
       if (response.statusCode == 200) {
         final List<dynamic> jsonData = jsonDecode(response.body)['documents'];
 
