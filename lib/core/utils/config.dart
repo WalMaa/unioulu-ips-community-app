@@ -1,6 +1,6 @@
-const String appwriteEndpoint = 'http://192.168.0.221/v1';
+const String appwriteEndpoint = 'http://localhost/v1';
 // const String appwriteEndpoint = 'http://192.168.0.100/v1';
-const String appwriteProjectId = 'community-app';
+const String appwriteProjectId = '67b46229000ca4f9a191';
 const String appwriteApiKey =
-    'e7b85c344116076cb3b32afbd0c870f8c5b2035d701b46254d864392b677d4e53bd3bc120c9ac0ecfb011cb7d58a623dd2980409caa3cf4666870b08558de094a851fd9af99275532c81c1c8251d93e499762a74d3c5059017c7fefec56d467a5ca21044893309ce00316811eeba94529d055ee6b504a961093e027c825f280c';
+    'standard_74510254ebd6dd0a633548b83b0acc9b102549779baf6feaf5fa9d6a2eda4620f3771fc3d7523c03819fe22d41d84348793f7a7e5aa69aa4a78aa74e8d0724b83747766f6b1af74771c91b111142027e6265512019fa6235a5ce1b699504972bec1ccc55ea38db08302e222841183750c38f71abb6bb3e9792f235183a6d3b80';
 const String databaseId = 'communitydb';

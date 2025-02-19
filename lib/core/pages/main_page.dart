@@ -10,7 +10,7 @@ class MainPage extends StatelessWidget {
   static final List<Widget> _pages = <Widget>[
     const HomePage(),
     const EventsPage(),
-    CommunityPage(),
+    const CommunityPage(),
     const MorePage(),
   ];
 

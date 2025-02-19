@@ -15,7 +15,7 @@ class AppwriteService {
   Future<http.Response> makeRequest(
       String method, String endpointPath, Map<String, dynamic>? data) async {
     final url = Uri.parse('$endpoint/$endpointPath');
-
+    print('URL: $url');
     final headers = {
       'Content-Type': 'application/json',
       'X-Appwrite-Project': projectId,
