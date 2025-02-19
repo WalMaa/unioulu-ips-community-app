@@ -5,6 +5,8 @@ from appwrite.exception import AppwriteException
 from appwrite.services.databases import Databases
 import os
 
+load_dotenv()
+
 # http://localhost/v1
 endpoint = os.getenv('APPWRITE_URL')
 project_id = os.getenv('APPWRITE_PROJECT_ID')
@@ -66,7 +68,7 @@ collections_config = [
         'attributes': [
             {'type': 'string', 'key': 'postTitle', 'size': 255, 'required': True},
             {'type': 'string', 'key': 'content', 'size': 1024, 'required': True},
-            {'type': 'string', 'key': 'imageUrl', 'size': 255},
+            {'type': 'string', 'key': 'imageUrl', 'size': 255,},
             {'type': 'string', 'key': 'authorName', 'size': 255, 'required': True},
             {'type': 'string', 'key': 'authorTitle', 'size': 255, 'required': True},
             {'type': 'datetime', 'key': 'createdAt', 'required': True}
@@ -80,7 +82,7 @@ collections_config = [
             {'type': 'string', 'key': 'text', 'size': 1024, 'required': True},
             {'type': 'string', 'key': 'username', 'size': 255, 'required': True},
             {'type': 'datetime', 'key': 'dateTime', 'required': True},
-            {'type': 'string', 'key': 'postId', 'size': 255, 'required': True}
+            {'type': 'relationship', 'related_collection': 'posts', "relationship_type": "manyToOne", "two_way": False, 'key': 'postId', "on_delete": "cascade"}
         ]
     },
     # announcements
@@ -95,28 +97,40 @@ collections_config = [
     }
 ]
     
-def create_database(databases: Databases):
-    result = databases.create(db_id, 'Community app database')
-    print(result)
+def create_database(databases: Databases, db_id):
+    print('Creating database', db_id)
+    try:
+        databases.get(db_id)
+    except AppwriteException as e:
+        # Database does not exist, create it
+        result = databases.create(db_id, 'Community app database')
+        print(result)
     
-def create_collections(collections_config, databases: Databases):
+def create_collections(collections_config, databases: Databases, db_id):
     for collection in collections_config:
+        print(f"Creating collection: {collection['name']}")
         result = databases.create_collection(db_id, collection['collection_id'], collection['name'])
         print(result)
+        
         for attribute in collection['attributes']:
+            # If not specified, set required to False
+            required = attribute.get('required', False)
+            two_way_key = attribute.get('two_way_key', None)
             if attribute['type'] == 'string':
-                result = databases.create_string_attribute(db_id, collection['collection_id'], attribute['key'], attribute['size'], attribute['required'])
+                result = databases.create_string_attribute(db_id, collection['collection_id'], attribute['key'], attribute['size'], required)
             elif attribute['type'] == 'datetime':
-                result = databases.create_datetime_attribute(db_id, collection['collection_id'], attribute['key'], attribute['required'])
+                result = databases.create_datetime_attribute(db_id, collection['collection_id'], attribute['key'], required)
             elif attribute['type'] == 'integer':
-                result = databases.create_integer_attribute(db_id, collection['collection_id'], attribute['key'], attribute['required'])
+                result = databases.create_integer_attribute(db_id, collection['collection_id'], attribute['key'], required)
+            elif attribute['type'] == 'relationship':
+                result = databases.create_relationship_attribute(db_id, collection['collection_id'], attribute['related_collection'], attribute['relationship_type'], attribute['two_way'], two_way_key, attribute['on_delete'])
             else:
                 raise ValueError(f'Unknown attribute type: {attribute["type"]}')
     
 try:
     databases = Databases(client)
-    create_database(databases)
-    create_collections(collections_config, databases)
+    create_database(databases, db_id)
+    create_collections(collections_config, databases, db_id)
 except AppwriteException as e:
-    print(e.message)
+    print("Exception: ", e.message)
     

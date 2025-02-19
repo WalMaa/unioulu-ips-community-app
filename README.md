@@ -27,6 +27,7 @@ Before you begin, make sure you have the following installed:
 2. **Flutter**: The mobile development framework.
 3. **Git**: Version control to clone the repository.
 4. **Visual Studio Code** or any preferred IDE.
+5. **Python**: For running the database configuration script.
 
 ---
 
@@ -40,37 +41,58 @@ We are using a self-hosted **Appwrite** instance. Follow the steps below to set 
 
 #### Run the Appwrite Server
 
-After installing Docker, run the following commands based on your OS:
+After installing Docker, run the following command to start the Appwrite server:
 
-**macOS and Linux:**
-
-```bash```
-```
-docker run -it --rm \
-    --volume /var/run/docker.sock:/var/run/docker.sock \
-    --volume "$(pwd)"/appwrite:/usr/src/code/appwrite:rw \
-    --entrypoint="install" \
-    appwrite/appwrite:1.5.10
-```
-**Windows:**
-
-```CMD```
-```
-docker run -it --rm ^
-    --volume //var/run/docker.sock:/var/run/docker.sock ^
-    --volume "%cd%"/appwrite:/usr/src/code/appwrite:rw ^
-    --entrypoint="install" ^
-    appwrite/appwrite:1.5.10
-```
-```PowerShell```
-```
-docker run -it --rm `
-    --volume /var/run/docker.sock:/var/run/docker.sock `
-    --volume ${pwd}/appwrite:/usr/src/code/appwrite:rw `
-    --entrypoint="install" `
-    appwrite/appwrite:1.5.10
+```bash
+docker compose -f ./appwrite/compose.yaml up -d
 ```
 For detailed instructions, refer to the [Appwrite self-hosting documentation](https://appwrite.io/docs/advanced/self-hosting) or watch the [YouTube tutorial](https://youtu.be/aO4mw8smXkI?si=8qp5IWHNkY-74J5v).
+
+## Setting up Appwrite
+
+Once the server is up and running, you can access the Appwrite dashboard at `http://localhost` in your browser. You will be prompted to create an account and set up your project.
+
+You need to register a new account, create a new organization and create a new project. Once the project is created, you will need to create an API key that you will use to interact with the Appwrite API.
+
+### Creating an API Key
+
+You can create an API key by following these steps:
+
+1. Go to the Appwrite Overview dashboard.
+2. Under "Integrate with your server" select "API key".
+3. Select a name and an expiry date.
+4. Select scopes; for development purposes, you can select all scopes.
+5. Click "Create" to generate the API key.
+6. Copy the API key and add it to your project's `.env` file.
+
+
+You need to set the following environment variables in the `.env` file in the root of the project:
+
+```bash
+# Used by Flutter
+# Your Appwrite server URL, default is http://localhost/v1
+APPWRITE_URL=http://localhost/v1
+# Your project ID
+APPWRITE_PROJECT_ID=community-app
+# Your API key
+APPWRITE_API_KEY=xyz123 
+APPWRITE_DATABASE_ID=communitydb # Default value
+```
+
+## Appwrite configuration with appwrite_init.py
+
+To automate the Appwrite configuration process, we have provided a Python script (appwrite_init.py) that sets up the necessary collections and attributes in your Appwrite database.
+
+Start with installing requirements:
+
+```bash
+pip install -r requirements.txt
+```
+Make sure you have filled the required fields in the .env file. Then run the script:
+
+```bash
+python appwrite_init.py
+```
 
 
 ### Database Configuration with db-config.py

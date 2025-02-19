@@ -14,6 +14,7 @@
 
 * Logout functionality
 
+* RBAC
 
 ## Upcoming Features
 
