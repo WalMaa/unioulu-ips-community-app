@@ -4,7 +4,18 @@
 
 * Uniform the way the appwrite api is called.
 
-## Features
+* Images require url in appwrite, no file upload.
+
+* comments - post_id relationship is a string, not a relationship.
+
+## Core features
+
+* Settings view
+
+* Logout functionality
+
+
+## Upcoming Features
 
 These are just my ideas, feel free to add your own.
 
