@@ -202,7 +202,7 @@ class HomePage extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                           const Text('Hello,',
-                              style: TextStyle(fontSize: 16.0)),
+                              style: TextStyle(fontSize: 24.0)),
                           Text(
                             userName,
                             style: const TextStyle(

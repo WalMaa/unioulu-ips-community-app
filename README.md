@@ -72,7 +72,7 @@ Appwrite requires you to add a platform to your project for CORS. You can add a 
 1. Go to the Appwrite Overview dashboard.
 2. Under "Integrations" select "Add platform".
 3. Select the platform type (e.g., Flutter app).
-4. Select the correct platform and fill out the details
+4. Select the correct platform and fill out the details (the package name should be the same as your Flutter app's package name. Current name is "community" and it is defined in pubspec.yaml).
 5. Click through the optional steps and press "Go to dashboard".
 
 
