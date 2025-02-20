@@ -52,7 +52,7 @@ For detailed instructions, refer to the [Appwrite self-hosting documentation](ht
 
 Once the server is up and running, you can access the Appwrite dashboard at `http://localhost` in your browser. You will be prompted to create an account and set up your project.
 
-You need to register a new account, create a new organization and create a new project. Once the project is created, you will need to create an API key that you will use to interact with the Appwrite API.
+You need to register a new account, create a new organization, add a platform and create a new project. Once the project is created, you will need to create an API key that you will use to interact with the Appwrite API.
 
 ### Creating an API Key
 
@@ -64,6 +64,16 @@ You can create an API key by following these steps:
 4. Select scopes; for development purposes, you can select all scopes.
 5. Click "Create" to generate the API key.
 6. Copy the API key and add it to your project's `.env` file.
+
+### Adding a Platform
+
+Appwrite requires you to add a platform to your project for CORS. You can add a platform by following these steps:
+
+1. Go to the Appwrite Overview dashboard.
+2. Under "Integrations" select "Add platform".
+3. Select the platform type (e.g., Flutter app).
+4. Select the correct platform and fill out the details
+5. Click through the optional steps and press "Go to dashboard".
 
 
 You need to set the following environment variables in the `.env` file in the root of the project:
@@ -94,12 +104,6 @@ Make sure you have filled the required fields in the .env file. Then run the scr
 python appwrite_init.py
 ```
 
-
-### Database Configuration with db-config.py
-
-Once you have successfully set up Appwrite, you need to configure the database for your app. We have provided a Python script (db-config.py) to automate this process.
-
-#### What db-config.py Does
 This script creates necessary collections and attributes for your Appwrite database, including collections like:
 
 - **Events**
@@ -108,24 +112,7 @@ This script creates necessary collections and attributes for your Appwrite datab
 - **Comments**
 - **Announcements**
 
-For each collection, it defines the necessary attributes (e.g., title, content, datetime, etc.).
-
-#### How to Use the Script
-1. Ensure that the Appwrite server is running on http://localhost/v1.
-2. Make sure your Appwrite project is already configured, and you have an API key with the necessary permissions.
-3. Update the script (db-config.py) with the correct project_id, database_id, and API key:
-    ```bash
-    endpoint = 'http://localhost/v1'
-    project_id = 'community-app'
-    api_key = 'YOUR_APPWRITE_API_KEY'
-    database_id = 'communitydb'
-    ```
-4. Once the details are updated, run the script:
-   ```bash
-   python db-config.py
-   ```
-
-This script will automatically create the collections and attributes in your Appwrite database as per the app's requirements.
+For each collection, it defines the necessary attributes (e.g., title, content, datetime, etc.) and injects sample data to get you started.
 
 What the Script Creates
 - **Collections**: Events, Topics, Posts, Comments, Announcements.

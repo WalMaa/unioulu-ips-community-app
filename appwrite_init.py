@@ -61,6 +61,33 @@ sample_topics = [
     }
 ]
 
+sample_posts = [
+    {
+        "postTitle": "Welcome to the Academic Year 2025-2026!",
+        "content": "Dear students and staff, we're excited to start another academic year at the University of Oulu! This year brings many new opportunities and exciting developments in our academic community.",
+        "imageUrl": "https://example.com/images/welcome2025.jpg",
+        "authorName": "Prof. Anna Virtanen",
+        "authorTitle": "Vice Rector for Education",
+        "createdAt": datetime.now().isoformat()
+    },
+    {
+        "postTitle": "New Student Technology Hub Opening",
+        "content": "We're thrilled to announce the opening of our new Student Technology Hub at Linnanmaa Campus! The hub offers state-of-the-art equipment and spaces for project work, coding, and digital content creation.",
+        "imageUrl": "https://example.com/images/techhub.jpg",
+        "authorName": "Dr. Mikko Järvinen",
+        "authorTitle": "Head of IT Services",
+        "createdAt": (datetime.now() - timedelta(days=2)).isoformat()
+    },
+    {
+        "postTitle": "International Student Ambassador Program Launch",
+        "content": "Join our new International Student Ambassador program! Help welcome new international students and promote cultural exchange on campus. Applications are now open for the spring semester.",
+        "imageUrl": "https://example.com/images/international.jpg",
+        "authorName": "Lisa Chen",
+        "authorTitle": "International Student Coordinator",
+        "createdAt": (datetime.now() - timedelta(days=5)).isoformat()
+    }
+]
+
 sample_events = [
     {
         "title_en": "Introduction to University Studies",
@@ -207,6 +234,48 @@ collections_config = [
     }
 ]
 
+def create_sample_posts():
+    try:
+        print("Creating sample posts...")
+        for post in sample_posts:
+            result = databases.create_document(
+                db_id,
+                'posts',
+                'unique()',
+                post
+            )
+            print(f"Created post: {result['postTitle']}")
+            print (result)
+            
+            # Create some sample comments for each post
+            sample_comments = [
+                {
+                    "text": f"Great post about {post['postTitle'].lower()}!",
+                    "username": "student2025",
+                    "dateTime": datetime.now().isoformat(),
+                    "posts": result['$id']
+                },
+                {
+                    "text": "Thanks for sharing this information.",
+                    "username": "academicstaff",
+                    "dateTime": (datetime.now() - timedelta(hours=2)).isoformat(),
+                    "posts": result['$id']
+                }
+            ]
+            
+            # Create comments for the post
+            for comment in sample_comments:
+                comment_result = databases.create_document(
+                    db_id,
+                    'comments',
+                    'unique()',
+                    comment
+                )
+                print(f"Created comment for post: {result['postTitle']}")
+                
+    except AppwriteException as e:
+        print(f"Error creating posts: {str(e)}")
+
 def create_sample_events():
     try:
         print("Creating sample events...")
@@ -218,7 +287,7 @@ def create_sample_events():
                 event
             )
             print(f"Created event: {result['title_en']}")
-    except Exception as e:
+    except AppwriteException as e:
         print(f"Error creating events: {str(e)}")
         
 def create_sample_topics():
@@ -239,7 +308,7 @@ def create_sample_topics():
                 )
                 print(f"Created topic: {result['text_en']}")
                 
-    except Exception as e:
+    except AppwriteException as e:
         print(f"Error creating topics: {str(e)}")
     
 def create_database(databases: Databases):
@@ -285,6 +354,7 @@ if __name__ == "__main__":
         create_collections(databases)
         create_sample_events()
         create_sample_topics()
+        create_sample_posts()
     except AppwriteException as e:
         print("Exception: ", e.message)
     
