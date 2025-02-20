@@ -1,8 +1,8 @@
 from appwrite.client import Client
-from appwrite.services.users import Users
 from dotenv import load_dotenv
 from appwrite.exception import AppwriteException
 from appwrite.services.databases import Databases
+from datetime import datetime, timedelta
 import os
 
 load_dotenv()
@@ -21,6 +21,116 @@ client = Client()
     .set_key(api_key)
     # .set_self_signed() # Use only on dev mode with a self-signed SSL cert
     )
+
+sample_topics = [
+    {
+        "text_en": "Academic",
+        "text_fi": "Akateeminen",
+        "text_sv": "Akademisk",
+        "icon": "📚"
+    },
+    {
+        "text_en": "Student Life",
+        "text_fi": "Opiskelijaelämä",
+        "text_sv": "Studentliv",
+        "icon": "🎓"
+    },
+    {
+        "text_en": "Sports",
+        "text_fi": "Urheilu",
+        "text_sv": "Sport",
+        "icon": "🏃"
+    },
+    {
+        "text_en": "Culture",
+        "text_fi": "Kulttuuri",
+        "text_sv": "Kultur",
+        "icon": "🎭"
+    },
+    {
+        "text_en": "Career",
+        "text_fi": "Ura",
+        "text_sv": "Karriär",
+        "icon": "💼"
+    },
+    {
+        "text_en": "Research",
+        "text_fi": "Tutkimus",
+        "text_sv": "Forskning",
+        "icon": "🔬"
+    }
+]
+
+sample_events = [
+    {
+        "title_en": "Introduction to University Studies",
+        "title_fi": "Johdatus yliopisto-opintoihin",
+        "title_sv": "Introduktion till universitetsstudier",
+        "location_en": "Linnanmaa Campus, Room L2",
+        "location_fi": "Linnanmaan kampus, Sali L2",
+        "location_sv": "Linnanmaa campus, Sal L2",
+        "date": (datetime.now() + timedelta(days=7)).isoformat(),
+        "time": "10:00",
+        "organizerName": "Student Services",
+        "details_en": "Welcome event for new students! Get to know your university and fellow students.",
+        "details_fi": "Tervetulotilaisuus uusille opiskelijoille! Tutustu yliopistoosi ja opiskelijatovereihisi.",
+        "details_sv": "Välkomstevenemang för nya studenter! Lär känna ditt universitet och dina medstudenter.",
+        "ticketDetails_en": "Free for all new students",
+        "ticketDetails_fi": "Ilmainen kaikille uusille opiskelijoille",
+        "ticketDetails_sv": "Gratis för alla nya studenter",
+        "locationUrl": "https://maps.app.goo.gl/LinnanmaaCampus",
+        "price": "Free",
+        "posterPhotoUrl": "https://example.com/welcome-event.jpg",
+        "topics": "Academic, Student Life",
+        "updatedAt": datetime.now().isoformat()
+    },
+    {
+        "title_en": "Research Seminar: AI in Healthcare",
+        "title_fi": "Tutkimusseminaari: Tekoäly terveydenhuollossa",
+        "title_sv": "Forskningsseminarium: AI inom hälsovården",
+        "location_en": "Kontinkangas Campus, Medical Faculty",
+        "location_fi": "Kontinkankaan kampus, Lääketieteellinen tiedekunta",
+        "location_sv": "Kontinkangas campus, Medicinska fakulteten",
+        "date": (datetime.now() + timedelta(days=14)).isoformat(),
+        "time": "13:15",
+        "organizerName": "Faculty of Medicine",
+        "details_en": "International research seminar discussing the latest developments in AI applications in healthcare.",
+        "details_fi": "Kansainvälinen tutkimusseminaari tekoälyn sovelluksista terveydenhuollossa.",
+        "details_sv": "Internationellt forskningsseminarium om AI-tillämpningar inom hälsovården.",
+        "ticketDetails_en": "Registration required",
+        "ticketDetails_fi": "Ennakkoilmoittautuminen vaaditaan",
+        "ticketDetails_sv": "Förhandsregistrering krävs",
+        "locationUrl": "https://maps.app.goo.gl/KontinkangasCampus",
+        "price": "Free",
+        "posterPhotoUrl": "https://example.com/ai-seminar.jpg",
+        "topics": "Research, Academic",
+        "updatedAt": datetime.now().isoformat()
+    },
+    {
+        "title_en": "Student Sports Day",
+        "title_fi": "Opiskelijoiden liikuntapäivä",
+        "title_sv": "Studerandes idrottsdag",
+        "location_en": "Sports Center",
+        "location_fi": "Liikuntakeskus",
+        "location_sv": "Idrottscenter",
+        "date": (datetime.now() + timedelta(days=21)).isoformat(),
+        "time": "12:00",
+        "organizerName": "Student Sports Society",
+        "details_en": "Join us for a day of sports activities! Try different sports and meet new people.",
+        "details_fi": "Tule mukaan liikuntapäivään! Kokeile eri lajeja ja tapaa uusia ihmisiä.",
+        "details_sv": "Kom med på idrottsdagen! Prova olika sporter och träffa nya människor.",
+        "ticketDetails_en": "Student card required",
+        "ticketDetails_fi": "Opiskelijakortti vaaditaan",
+        "ticketDetails_sv": "Studentkort krävs",
+        "locationUrl": "https://maps.app.goo.gl/SportsCenterOulu",
+        "price": "5€",
+        "posterPhotoUrl": "https://example.com/sports-day.jpg",
+        "topics": "Sports, Student Life",
+        "updatedAt": datetime.now().isoformat()
+    }
+]
+
+
 
 collections_config = [
     #Events
@@ -96,8 +206,43 @@ collections_config = [
         ]
     }
 ]
+
+def create_sample_events():
+    try:
+        print("Creating sample events...")
+        for event in sample_events:
+            result = databases.create_document(
+                db_id,
+                'events',
+                'unique()',
+                event
+            )
+            print(f"Created event: {result['title_en']}")
+    except Exception as e:
+        print(f"Error creating events: {str(e)}")
+        
+def create_sample_topics():
+    try:
+        print("Creating sample topics...")
+        for topic in sample_topics:
+            topic_id = topic['text_en'].lower().replace(' ', '-')
+            try:
+                databases.get_document(db_id, 'topics', topic_id)
+                print(f"Topic {topic['text_en']} already exists")
+                continue
+            except AppwriteException as e:
+                result = databases.create_document(
+                    db_id,
+                    'topics',
+                    topic_id,
+                    topic
+                )
+                print(f"Created topic: {result['text_en']}")
+                
+    except Exception as e:
+        print(f"Error creating topics: {str(e)}")
     
-def create_database(databases: Databases, db_id):
+def create_database(databases: Databases):
     print('Creating database', db_id)
     try:
         databases.get(db_id)
@@ -106,11 +251,16 @@ def create_database(databases: Databases, db_id):
         result = databases.create(db_id, 'Community app database')
         print(result)
     
-def create_collections(collections_config, databases: Databases, db_id):
+def create_collections(databases: Databases):
     for collection in collections_config:
         print(f"Creating collection: {collection['name']}")
-        result = databases.create_collection(db_id, collection['collection_id'], collection['name'])
-        print(result)
+        try:
+            databases.get_collection(db_id, collection['collection_id'])
+            print(f"Collection {collection['name']} already exists")
+            continue
+        except AppwriteException as e:
+            result = databases.create_collection(db_id, collection['collection_id'], collection['name'])
+            print(result)
         
         for attribute in collection['attributes']:
             # If not specified, set required to False
@@ -126,11 +276,15 @@ def create_collections(collections_config, databases: Databases, db_id):
                 result = databases.create_relationship_attribute(db_id, collection['collection_id'], attribute['related_collection'], attribute['relationship_type'], attribute['two_way'], two_way_key, attribute['on_delete'])
             else:
                 raise ValueError(f'Unknown attribute type: {attribute["type"]}')
-    
-try:
-    databases = Databases(client)
-    create_database(databases, db_id)
-    create_collections(collections_config, databases, db_id)
-except AppwriteException as e:
-    print("Exception: ", e.message)
+ 
+ 
+if __name__ == "__main__":   
+    try:
+        databases = Databases(client)
+        create_database(databases)
+        create_collections(databases)
+        create_sample_events()
+        create_sample_topics()
+    except AppwriteException as e:
+        print("Exception: ", e.message)
     
