@@ -65,7 +65,7 @@ sample_posts = [
     {
         "postTitle": "Welcome to the Academic Year 2025-2026!",
         "content": "Dear students and staff, we're excited to start another academic year at the University of Oulu! This year brings many new opportunities and exciting developments in our academic community.",
-        "imageUrl": "https://example.com/images/welcome2025.jpg",
+        "imageUrl": "https://images.unsplash.com/photo-1564981797816-1043664bf78d?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
         "authorName": "Prof. Anna Virtanen",
         "authorTitle": "Vice Rector for Education",
         "createdAt": datetime.now().isoformat()
@@ -73,7 +73,7 @@ sample_posts = [
     {
         "postTitle": "New Student Technology Hub Opening",
         "content": "We're thrilled to announce the opening of our new Student Technology Hub at Linnanmaa Campus! The hub offers state-of-the-art equipment and spaces for project work, coding, and digital content creation.",
-        "imageUrl": "https://example.com/images/techhub.jpg",
+        "imageUrl": "https://images.unsplash.com/photo-1564981797816-1043664bf78d?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
         "authorName": "Dr. Mikko Järvinen",
         "authorTitle": "Head of IT Services",
         "createdAt": (datetime.now() - timedelta(days=2)).isoformat()
@@ -81,7 +81,7 @@ sample_posts = [
     {
         "postTitle": "International Student Ambassador Program Launch",
         "content": "Join our new International Student Ambassador program! Help welcome new international students and promote cultural exchange on campus. Applications are now open for the spring semester.",
-        "imageUrl": "https://example.com/images/international.jpg",
+        "imageUrl": "https://images.unsplash.com/photo-1564981797816-1043664bf78d?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
         "authorName": "Lisa Chen",
         "authorTitle": "International Student Coordinator",
         "createdAt": (datetime.now() - timedelta(days=5)).isoformat()
@@ -107,7 +107,7 @@ sample_events = [
         "ticketDetails_sv": "Gratis för alla nya studenter",
         "locationUrl": "https://maps.app.goo.gl/LinnanmaaCampus",
         "price": "Free",
-        "posterPhotoUrl": "https://example.com/welcome-event.jpg",
+        "posterPhotoUrl": "https://images.unsplash.com/photo-1564981797816-1043664bf78d?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
         "topics": "Academic, Student Life",
         "updatedAt": datetime.now().isoformat()
     },
@@ -129,7 +129,7 @@ sample_events = [
         "ticketDetails_sv": "Förhandsregistrering krävs",
         "locationUrl": "https://maps.app.goo.gl/KontinkangasCampus",
         "price": "Free",
-        "posterPhotoUrl": "https://example.com/ai-seminar.jpg",
+        "posterPhotoUrl": "https://images.unsplash.com/photo-1564981797816-1043664bf78d?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
         "topics": "Research, Academic",
         "updatedAt": datetime.now().isoformat()
     },
@@ -151,7 +151,7 @@ sample_events = [
         "ticketDetails_sv": "Studentkort krävs",
         "locationUrl": "https://maps.app.goo.gl/SportsCenterOulu",
         "price": "5€",
-        "posterPhotoUrl": "https://example.com/sports-day.jpg",
+        "posterPhotoUrl": "https://images.unsplash.com/photo-1564981797816-1043664bf78d?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
         "topics": "Sports, Student Life",
         "updatedAt": datetime.now().isoformat()
     }
@@ -186,6 +186,17 @@ collections_config = [
             {'type': 'string', 'key': 'topics', 'size': 255, 'required': True},
             {'type': 'datetime', 'key': 'updatedAt'}
         ]
+    },
+    # Event likes
+    # Appwrite does not support unique indexes on relationship types as of early 2025 so we have to use a stringtype for identifiers
+    {
+        'name': 'EventLikes',
+        'collection_id': 'event_likes',
+        'attributes': [
+            {'type': 'string', 'key': 'eventId', 'size': 255, 'required': True},
+            {'type': 'string', 'key': 'username', 'size': 255, 'required': True}
+        ]
+        
     },
     #Topics
     {
@@ -234,6 +245,20 @@ collections_config = [
     }
 ]
 
+def create_event_like_index():
+    try:
+        print("Creating unique index for event likes...")
+        result = databases.create_index(
+            db_id,
+            'event_likes',
+            'eventId_username_index',
+            'unique',
+            ['eventId', 'username']
+        )
+        print(result)
+    except AppwriteException as e:
+        print(f"Error creating event like index: {str(e)}")
+
 def create_sample_posts():
     try:
         print("Creating sample posts...")
@@ -245,24 +270,35 @@ def create_sample_posts():
                 post
             )
             print(f"Created post: {result['postTitle']}")
-            print (result)
-            
-            # Create some sample comments for each post
-            sample_comments = [
-                {
-                    "text": f"Great post about {post['postTitle'].lower()}!",
-                    "username": "student2025",
-                    "dateTime": datetime.now().isoformat(),
-                    "posts": result['$id']
-                },
-                {
-                    "text": "Thanks for sharing this information.",
-                    "username": "academicstaff",
-                    "dateTime": (datetime.now() - timedelta(hours=2)).isoformat(),
-                    "posts": result['$id']
-                }
-            ]
-            
+                
+    except AppwriteException as e:
+        print(f"Error creating posts: {str(e)}")
+        
+
+def create_comments():
+    # Get all posts from the database and create comments for each post
+    try:
+        posts = databases.list_documents(db_id, 'posts')
+    except AppwriteException as e:
+        print(f"Error getting posts: {str(e)}")
+    for post in posts['documents']:
+        sample_comments = [
+            {
+                "text": f"Great post about {post['postTitle'].lower()}!",
+                "username": "student2025",
+                "dateTime": datetime.now().isoformat(),
+                "posts": post['$id']
+
+            },
+            {
+                "text": "Thanks for sharing this information.",
+                "username": "academicstaff",
+                "dateTime": (datetime.now() - timedelta(hours=2)).isoformat(),
+                "posts": post['$id']
+            }
+        ]
+        
+        try:
             # Create comments for the post
             for comment in sample_comments:
                 comment_result = databases.create_document(
@@ -271,10 +307,10 @@ def create_sample_posts():
                     'unique()',
                     comment
                 )
-                print(f"Created comment for post: {result['postTitle']}")
+                print(f"Created comment for post: {post['postTitle']}")
+        except AppwriteException as e:
+            print(f"Error creating comments: {str(e)}")
                 
-    except AppwriteException as e:
-        print(f"Error creating posts: {str(e)}")
 
 def create_sample_events():
     try:
@@ -355,6 +391,8 @@ if __name__ == "__main__":
         create_sample_events()
         create_sample_topics()
         create_sample_posts()
+        create_event_like_index()
+        create_comments()
     except AppwriteException as e:
         print("Exception: ", e.message)
     
