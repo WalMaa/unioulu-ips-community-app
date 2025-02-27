@@ -22,7 +22,7 @@ class CommentModel {
 
   Map<String, dynamic> toJson() {
     return {
-      'postId': postId, // Include postId when serializing to JSON
+      'posts': postId, // Include posts relationship when serializing to JSON
       'text': text,
       'username': username,
       'dateTime': dateTime.toIso8601String(),
