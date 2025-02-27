@@ -456,7 +456,7 @@ class EventCard extends StatelessWidget {
                           borderRadius: BorderRadius.circular(5.0),
                         ),
                         child: const Icon(
-                          Icons.favorite_border,
+                          Icons.bookmark_border_rounded,
                           color: Colors.white,
                           size: 24.0,
                         ),
