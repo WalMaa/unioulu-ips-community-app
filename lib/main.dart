@@ -1,3 +1,4 @@
+import 'package:community/features/events/presentation/bloc/events_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:isar/isar.dart';
@@ -101,6 +102,10 @@ class MyApp extends StatelessWidget {
             updateProfile: locator<UpdateProfile>(),
             authenticateAnonymous: locator<AuthenticateAnonymous>(),
             account: locator<Account>(),
+          ),
+        ),
+        BlocProvider(
+          create: (context) => EventsBloc(
           ),
         ),
       ],

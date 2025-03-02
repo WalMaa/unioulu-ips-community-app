@@ -8,6 +8,8 @@
 
 * comments - post_id relationship is a string, not a relationship.
 
+* Functions are written individually in the files, bloc events should be used to make a clear API.
+
 ## Core features
 
 * Settings view

@@ -1,10 +1,11 @@
+import 'package:community/features/events/presentation/bloc/events_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../data/models/event_model.dart';
 
 class EventDetailsPage extends StatelessWidget {
   final EventModel event;
-
-  const EventDetailsPage({Key? key, required this.event}) : super(key: key);
+  const EventDetailsPage({super.key, required this.event});
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +25,7 @@ class EventDetailsPage extends StatelessWidget {
         body: Column(
           children: [
             // The static event image placed outside the TabBarView
-            EventLayout(url: event.posterPhotoUrl),
+            EventLayout(event: event),
             // Tab content occupies the rest of the space
             Expanded(
               child: TabBarView(
@@ -84,7 +85,6 @@ class EventDetailsPage extends StatelessWidget {
                         ),
                         const SizedBox(height: 8.0),
                         Text(event.detailsEn),
-
                       ],
                     ),
                   ),
@@ -142,42 +142,57 @@ class EventDetailsPage extends StatelessWidget {
 }
 
 class EventLayout extends StatelessWidget {
-  final String url;
-  const EventLayout({Key? key, required this.url}) : super(key: key);
+  final EventModel event;
+  const EventLayout({super.key, required this.event});
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Column(
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(10.0),
-            child: Image.network(
-              url,
-              width: double.infinity, // Full width image
-              height: 200,
-              fit: BoxFit.cover,
-            ),
+    return BlocBuilder<EventsBloc, EventsState>(
+      builder: (context, state) {
+        return Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(10.0),
+                child: Image.network(
+                  event.posterPhotoUrl,
+                  width: double.infinity,
+                  height: 200,
+                  fit: BoxFit.cover,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    TextButton.icon(
+                      onPressed: () {
+                        context.read<EventsBloc>().add(
+                          ToggleFavoriteEvent(event.id),
+                        );
+                      },
+                      icon: Icon(
+                        state is EventsLoaded && state.favorites.contains(event.id)
+                            ? Icons.favorite
+                            : Icons.favorite_border,
+                      ),
+                      label: const Text('Favorite'),
+                    ),
+                    const SizedBox(width: 16.0),
+                    TextButton.icon(
+                      onPressed: () {},
+                      label: const Text('Share'),
+                      icon: const Icon(Icons.share),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
-          const Padding(
-            padding: EdgeInsets.all(8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.favorite_border),
-                SizedBox(width: 4.0),
-                Text('Favorite'),
-                SizedBox(width: 16.0),
-                Icon(Icons.share),
-                SizedBox(width: 4.0),
-                Text('Share'),
-              ],
-            ),
-          ),
-        ],
-      ),
-      
+        );
+      },
     );
   }
 }
