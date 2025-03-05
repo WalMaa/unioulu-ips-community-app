@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import '../../../../core/services/http_appwrite_service.dart';
 
@@ -22,43 +21,34 @@ class _LatestEventsWidgetState extends State<LatestEventsWidget> {
     _fetchLatestEvents();
   }
 
-  Future<void> _fetchLatestEvents() async {
-    try {
-      final response = await _appwriteService.makeRequest(
-        'GET',
-        'databases/communitydb/collections/events/documents',
-        null,
-      );
+Future<void> _fetchLatestEvents() async {
+  try {
+    final response = await _appwriteService.listDocuments(
+      collectionId: "events",
+    );
 
-      if(!mounted) return;
+    if (!mounted) return;
 
-      if (response.statusCode == 200) {
-        final List<dynamic> jsonData = jsonDecode(response.body)['documents'];
+    final List<dynamic> jsonData = response['documents'];
 
-        // Sort by date if available (assumes you have a 'date' field in the API response)
-        final sortedEvents = jsonData
-          ..sort((a, b) =>
-              DateTime.parse(b['date']).compareTo(DateTime.parse(a['date'])));
+    // Sort by date if available
+    final sortedEvents = jsonData
+      ..sort((a, b) =>
+          DateTime.parse(b['date']).compareTo(DateTime.parse(a['date'])));
 
-        // Limit to 3 latest events
-        setState(() {
-          _events = sortedEvents.take(3).toList().cast<Map<String, dynamic>>();
-          _isLoading = false;
-        });
-      } else {
-        setState(() {
-          _isLoading = false;
-          _hasError = true;
-        });
-      }
-    } catch (e) {
-      setState(() {
-        _isLoading = false;
-        _hasError = true;
-      });
-    }
+    // Limit to 3 latest events
+    setState(() {
+      _events = sortedEvents.take(3).toList().cast<Map<String, dynamic>>();
+      _isLoading = false;
+    });
+  } catch (e) {
+    if (!mounted) return;
+    setState(() {
+      _isLoading = false;
+      _hasError = true;
+    });
   }
-
+}
   @override
   Widget build(BuildContext context) {
     return _isLoading

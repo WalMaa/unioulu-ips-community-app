@@ -22,18 +22,13 @@ class _CommunityPageState extends State<CommunityPage> {
   }
 
   Future<List<PostModel>> _fetchPosts() async {
-    final response = await _appwriteService.makeRequest(
-      'GET',
-      'databases/communitydb/collections/posts/documents',
-      null,
+    final response = await _appwriteService.listDocuments(
+      collectionId: 'posts',
     );
 
-    if (response.statusCode == 200) {
-      final List<dynamic> jsonData = jsonDecode(response.body)['documents'];
+      final List<dynamic> jsonData = response['documents'];
       return jsonData.map((json) => PostModel.fromJson(json)).toList();
-    } else {
-      throw Exception('Failed to load posts');
-    }
+
   }
 
   @override

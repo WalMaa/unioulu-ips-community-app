@@ -54,23 +54,22 @@ class EventsPage extends StatelessWidget {
                 ),
               ),
               Expanded(
-                child: FutureBuilder<http.Response>(
-                  future: appwriteService.makeRequest(
-                    'GET',
-                    'databases/communitydb/collections/events/documents',
-                    null,
+                child: FutureBuilder<Map<String, dynamic>>(
+                  future: appwriteService.listDocuments(
+                    collectionId: 'events',
                   ),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Center(child: CircularProgressIndicator());
                     } else if (snapshot.hasError) {
                       return Text('Error: ${snapshot.error}');
-                    } else if (!snapshot.hasData ||
-                        snapshot.data!.statusCode != 200) {
+                    } else if (!snapshot.hasData) {
                       return const Text('Failed to load events');
                     } else {
+                      // Get documents directly from the response map
+                      // instead of decoding the body
                       final List<dynamic> jsonData =
-                          jsonDecode(snapshot.data!.body)['documents'];
+                          snapshot.data!['documents'];
 
                       final filteredEvents = selectedTopicId != null
                           ? jsonData
@@ -118,7 +117,7 @@ class EventsPage extends StatelessWidget {
                     }
                   },
                 ),
-              ),
+              )
             ],
           ),
         ),

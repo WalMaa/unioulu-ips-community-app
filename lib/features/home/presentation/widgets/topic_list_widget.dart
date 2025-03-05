@@ -19,19 +19,19 @@ class TopicListWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       height: 150.0,
-      child: FutureBuilder<http.Response>(
-        future: appwriteService.makeRequest(
-            'GET', 'databases/communitydb/collections/topics/documents', null),
+      child: FutureBuilder<Map<String, dynamic>>(
+        future: appwriteService.listDocuments(
+          collectionId: "topics"),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             return Text('Error: ${snapshot.error}');
-          } else if (!snapshot.hasData || snapshot.data!.statusCode != 200) {
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty != 200) {
             return const Text('Failed to load topics');
           } else {
             final List<dynamic> jsonData =
-                jsonDecode(snapshot.data!.body)['documents'];
+                snapshot.data!['documents'];
             final topics =
                 jsonData.map((json) => TopicModel.fromJson(json)).toList();
 

@@ -7,10 +7,10 @@ class TopicForm extends StatefulWidget {
   const TopicForm({super.key});
 
   @override
-  _TopicFormState createState() => _TopicFormState();
+  TopicFormState createState() => TopicFormState();
 }
 
-class _TopicFormState extends State<TopicForm> {
+class TopicFormState extends State<TopicForm> {
   final _formKey = GlobalKey<FormState>();
   final _textEnController = TextEditingController();
   final _textFiController = TextEditingController();
@@ -26,45 +26,50 @@ class _TopicFormState extends State<TopicForm> {
   }
 
   void _submitForm() async {
+    // Store context before async gap
+    final currentContext = context;
+
     if (_formKey.currentState!.validate()) {
-      // Retrieve the AppwriteService instance
-      final appwriteService = AppwriteService();
+      try {
+        // Show loading indicator
+        ScaffoldMessenger.of(currentContext).showSnackBar(
+          const SnackBar(content: Text('Adding topic...')),
+        );
 
-      // Create the data object to send
-      final data = {
-        'text_en': _textEnController.text,
-        'text_fi': _textFiController.text,
-        'text_sv': _textSvController.text,
-        'icon': _selectedIconName ?? '',
-      };
+        // Retrieve the AppwriteService instance
+        final appwriteService = AppwriteService();
 
-      // Create the request body with documentId and permissions
-      final body = {
-        'documentId': 'unique()', // Generates a unique ID
-        'data': data,
-        'permissions': [
-          'read("any")', // Grant read access to any user
-          'update("any")', // Grant update access to any user
-          'delete("any")', // Grant delete access to any user
-        ],
-      };
+        // Create the data object to send
+        final data = {
+          'text_en': _textEnController.text,
+          'text_fi': _textFiController.text,
+          'text_sv': _textSvController.text,
+          'icon': _selectedIconName ?? '📋', // Default icon
+        };
 
-      // Make an HTTP request to add a new topic
-      final response = await appwriteService.makeRequest(
-        'POST',
-        'databases/communitydb/collections/topics/documents',
-        body,
-      );
+        // Make an HTTP request to add a new topic
+        await appwriteService.createDocument(
+          collectionId: 'topics',
+          data: data,
+          documentId: 'unique()', // Pass as separate parameter
+        );
 
-      if (response.statusCode == 201) {
-        ScaffoldMessenger.of(context).showSnackBar(
+        // Check if widget is still in the tree before using context
+        if (!mounted) return;
+
+        // Show success message and navigate back
+        ScaffoldMessenger.of(currentContext).clearSnackBars();
+        ScaffoldMessenger.of(currentContext).showSnackBar(
           const SnackBar(content: Text('Topic added successfully!')),
         );
-        Navigator.of(context).pop(); // Close the form on success
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-              content: Text('Failed to add topic. Error: ${response.body}')),
+        Navigator.of(currentContext).pop(); // Close the form on success
+      } catch (e) {
+        // Check if widget is still in the tree before using context
+        if (!mounted) return;
+
+        // Show error message
+        ScaffoldMessenger.of(currentContext).showSnackBar(
+          SnackBar(content: Text('Error adding topic: ${e.toString()}')),
         );
       }
     }
