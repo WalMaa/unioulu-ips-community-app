@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -9,10 +8,10 @@ class CommunityPostForm extends StatefulWidget {
   const CommunityPostForm({super.key});
 
   @override
-  _CommunityPostFormState createState() => _CommunityPostFormState();
+  CommunityPostFormState createState() => CommunityPostFormState();
 }
 
-class _CommunityPostFormState extends State<CommunityPostForm> {
+class CommunityPostFormState extends State<CommunityPostForm> {
   final _formKey = GlobalKey<FormState>();
   final _postTitleController = TextEditingController();
   final _contentController = TextEditingController();
@@ -45,35 +44,43 @@ class _CommunityPostFormState extends State<CommunityPostForm> {
     if (_selectedImage == null) return null;
 
     final response = await appwriteService.uploadFile(
-        'storage/buckets/storage/files',
-        _selectedImage!,
-        'unique()' // This generates a unique ID for each file
+        bucketId: "storage",
+        file: _selectedImage!,
+        fileId: 'unique()' // This generates a unique ID for each file
         );
 
-    if (response.statusCode == 201) {
-      final responseData = jsonDecode(response.body);
-      final fileId = responseData['\$id'];
+      final fileId = response['\$id'];
       return '${appwriteService.endpoint}/storage/buckets/storage/files/$fileId/view?project=$appwriteProjectId&mode=admin';
-    } else {
-      print('Error uploading image: ${response.body}');
-      return null;
-    }
+
   }
 
   void _submitForm() async {
-    if (_formKey.currentState!.validate()) {
+  // Store context before async gap
+  final currentContext = context;
+  
+  if (_formKey.currentState!.validate()) {
+    try {
+      // Show loading indicator
+      ScaffoldMessenger.of(currentContext).showSnackBar(
+        const SnackBar(content: Text('Adding post...')),
+      );
+      
       final appwriteService = AppwriteService();
+      
       // Upload the image and get its URL
       final imageUrl = await _uploadImage(appwriteService);
+      
+      // Check if widget is still mounted
+      if (!mounted) return;
 
       if (imageUrl == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
+        ScaffoldMessenger.of(currentContext).showSnackBar(
           const SnackBar(content: Text('Failed to upload image.')),
         );
         return;
       }
 
-      // Create the post data with a unique document ID
+      // Create the post data
       final data = {
         'postTitle': _postTitleController.text,
         'content': _contentController.text,
@@ -81,31 +88,39 @@ class _CommunityPostFormState extends State<CommunityPostForm> {
         'authorName': _authorNameController.text,
         'authorTitle': _authorTitleController.text,
         'createdAt': DateTime.now().toIso8601String(),
+        'updatedAt': DateTime.now().toIso8601String(), // Add this for sorting
       };
 
       // Make the request to create a new document
-      final response = await appwriteService.makeRequest(
-        'POST',
-        'databases/communitydb/collections/posts/documents',
-        {
-          'documentId': 'unique()', // Generate a unique ID for the document
-          'data': data
-        },
+      // Fix: pass data directly and documentId as a separate parameter
+      await appwriteService.createDocument(
+        collectionId: "posts",
+        data: data,
+        documentId: 'unique()', // Pass as separate parameter
       );
-
-      if (response.statusCode == 201) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Post added successfully!')),
-        );
-        Navigator.of(context).pop();
-      } else {
-        print('Failed to add post: ${response.body}');
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to add post: ${response.body}')),
-        );
-      }
+      
+      // Check if widget is still mounted after second async operation
+      if (!mounted) return;
+      
+      // Clear loading snackbar
+      ScaffoldMessenger.of(currentContext).clearSnackBars();
+      
+      // Show success and navigate
+      ScaffoldMessenger.of(currentContext).showSnackBar(
+        const SnackBar(content: Text('Post added successfully!')),
+      );
+      Navigator.of(currentContext).pop();
+    } catch (e) {
+      // Check if widget is still mounted
+      if (!mounted) return;
+      
+      // Show error message
+      ScaffoldMessenger.of(currentContext).showSnackBar(
+        SnackBar(content: Text('Error adding post: ${e.toString()}')),
+      );
     }
   }
+}
 
   @override
   Widget build(BuildContext context) {

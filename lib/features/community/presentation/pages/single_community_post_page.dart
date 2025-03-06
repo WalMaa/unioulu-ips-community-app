@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../features/auth/presentation/bloc/auth_bloc.dart';
@@ -28,18 +27,16 @@ class _SingleCommunityPostPageState extends State<SingleCommunityPostPage> {
   Future<void> _fetchComments() async {
     print(widget.post.id);
     final appwriteService = AppwriteService();
+
+    //TODO: Add a filter to only fetch comments for the current post
     final response = await appwriteService.listDocuments(
       collectionId: "comments",
-      queries: ['equal("postId", "${widget.post.id}")'],
-
     );
 
-      final List<dynamic> jsonData = response['documents'];
-      setState(() {
-        _comments =
-            jsonData.map((json) => CommentModel.fromJson(json)).toList();
-      });
-
+    final List<dynamic> jsonData = response['documents'];
+    setState(() {
+      _comments = jsonData.map((json) => CommentModel.fromJson(json)).toList();
+    });
   }
 
   // Function to add a comment

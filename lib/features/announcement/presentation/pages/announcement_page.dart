@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import '../../../../core/services/http_appwrite_service.dart';
 import '../../data/models/announcement_model.dart';
@@ -7,10 +6,10 @@ class AnnouncementsPage extends StatefulWidget {
   const AnnouncementsPage({super.key});
 
   @override
-  _AnnouncementsPageState createState() => _AnnouncementsPageState();
+  AnnouncementsPageState createState() => AnnouncementsPageState();
 }
 
-class _AnnouncementsPageState extends State<AnnouncementsPage> {
+class AnnouncementsPageState extends State<AnnouncementsPage> {
   late AppwriteService _appwriteService;
 
   @override
@@ -20,18 +19,11 @@ class _AnnouncementsPageState extends State<AnnouncementsPage> {
   }
 
   Future<List<AnnouncementModel>> _fetchAnnouncements() async {
-    final response = await _appwriteService.makeRequest(
-      'GET',
-      'databases/communitydb/collections/announcements/documents',
-      null,
+    final response = await _appwriteService.listDocuments(
+      collectionId: "accouncements",
     );
-
-    if (response.statusCode == 200) {
-      final List<dynamic> jsonData = jsonDecode(response.body)['documents'];
-      return jsonData.map((json) => AnnouncementModel.fromJson(json)).toList();
-    } else {
-      throw Exception('Failed to load announcements');
-    }
+    final List<dynamic> jsonData = response['documents'];
+    return jsonData.map((json) => AnnouncementModel.fromJson(json)).toList();
   }
 
   @override

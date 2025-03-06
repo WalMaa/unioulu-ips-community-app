@@ -1,6 +1,4 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import '../../../../core/services/http_appwrite_service.dart';
 import '../../data/models/topic_model.dart';
 import '../../../../core/utils/icon_map.dart';
