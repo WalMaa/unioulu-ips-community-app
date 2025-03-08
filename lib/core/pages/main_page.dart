@@ -58,7 +58,8 @@ class MainPage extends StatelessWidget {
               ],
               selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
               currentIndex: selectedIndex,
-              selectedItemColor: Theme.of(context).primaryColor,
+              backgroundColor: Theme.of(context).primaryColor,
+              selectedItemColor: Theme.of(context).scaffoldBackgroundColor,
               unselectedItemColor:
                   Theme.of(context).textTheme.headlineSmall!.color,
               onTap: (index) {

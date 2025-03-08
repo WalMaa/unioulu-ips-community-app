@@ -6,12 +6,12 @@ enum AppTheme {
   Dark,
 }
 
+const Color primaryColor = Color.fromARGB(255, 35, 64, 141);
+
 class AppThemeData {
   static final lightTheme = ThemeData.light().copyWith(
     scaffoldBackgroundColor: AppPallete.whiteColor,
-    primaryColor: Colors.indigo,
-    colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.indigo)
-        .copyWith(secondary: Colors.indigoAccent),
+    primaryColor: primaryColor,
     appBarTheme: const AppBarTheme(
       backgroundColor: Color.fromARGB(255, 242, 242, 242),
       actionsIconTheme: IconThemeData(color: Colors.black),

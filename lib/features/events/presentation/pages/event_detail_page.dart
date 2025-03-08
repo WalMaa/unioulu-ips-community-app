@@ -13,9 +13,43 @@ class EventDetailsPage extends StatelessWidget {
       length: 3, // Info, Ticket, Location
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Event Details'),
-          bottom: const TabBar(
-            tabs: [
+          leading: IconButton(
+            icon: Icon(
+              Icons.chevron_left,
+              color: Theme.of(context).scaffoldBackgroundColor,
+              size: 30,
+            ),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+          backgroundColor: Theme.of(context).primaryColor,
+          title: Text(
+            'Event Details',
+            style: TextStyle(color: Theme.of(context).scaffoldBackgroundColor),
+          ),
+          iconTheme: IconThemeData(
+            color: Theme.of(context)
+                .scaffoldBackgroundColor, // Change back arrow color
+          ),
+          bottom: TabBar(
+            // Add indicator for the active tab
+            indicator: BoxDecoration(
+              color: Theme.of(context)
+                  .scaffoldBackgroundColor, // Active tab background color
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(10),
+                topRight: Radius.circular(10),
+              ),
+            ),
+            // Style for unselected tabs
+            unselectedLabelColor: Colors.white70, // Inactive tab text color
+            labelColor: Theme.of(context).primaryColor, // Active tab text color
+
+            // Remove the default indicator
+            indicatorSize: TabBarIndicatorSize.tab,
+
+            // Tab background color (for all tabs)
+            labelPadding: const EdgeInsets.symmetric(horizontal: 16.0),
+            tabs: const [
               Tab(text: 'Info'),
               Tab(text: 'Ticket'),
               Tab(text: 'Location'),
@@ -170,11 +204,12 @@ class EventLayout extends StatelessWidget {
                     TextButton.icon(
                       onPressed: () {
                         context.read<EventsBloc>().add(
-                          ToggleFavoriteEvent(event.id),
-                        );
+                              ToggleFavoriteEvent(event.id),
+                            );
                       },
                       icon: Icon(
-                        state is EventsLoaded && state.favorites.contains(event.id)
+                        state is EventsLoaded &&
+                                state.favorites.contains(event.id)
                             ? Icons.favorite
                             : Icons.favorite_border,
                       ),
