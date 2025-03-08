@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import '../../../../core/services/http_appwrite_service.dart';
 import '../../data/models/post_model.dart';
@@ -8,11 +7,11 @@ class LatestCommunityPostsWidget extends StatefulWidget {
   const LatestCommunityPostsWidget({super.key});
 
   @override
-  _LatestCommunityPostsWidgetState createState() =>
-      _LatestCommunityPostsWidgetState();
+  LatestCommunityPostsWidgetState createState() =>
+      LatestCommunityPostsWidgetState();
 }
 
-class _LatestCommunityPostsWidgetState
+class LatestCommunityPostsWidgetState
     extends State<LatestCommunityPostsWidget> {
   late AppwriteService _appwriteService;
   List<PostModel> _posts = [];
@@ -28,44 +27,38 @@ class _LatestCommunityPostsWidgetState
 
 
   Future<void> _fetchLatestPosts() async {
-    try {
-      final response = await _appwriteService.makeRequest(
-        'GET',
-        'databases/communitydb/collections/posts/documents',
-        null,
-      );
+  try {
+    final response = await _appwriteService.listDocuments(
+      collectionId: "posts",
+    );
 
-      if (!mounted) return;
-      
-      if (response.statusCode == 200) {
-        final List<dynamic> jsonData = jsonDecode(response.body)['documents'];
+    if (!mounted) return;
+    
+    final List<dynamic> jsonData = response['documents'];
 
-        // Sort by date if available (assumes you have an 'updatedAt' field in the API response)
-        final sortedPosts = jsonData
-          ..sort((a, b) => DateTime.parse(b['updatedAt'])
-              .compareTo(DateTime.parse(a['updatedAt'])));
+    // Sort by date if available (assumes you have an 'updatedAt' field in the API response)
+    final sortedPosts = jsonData
+      ..sort((a, b) => DateTime.parse(b['updatedAt'])
+          .compareTo(DateTime.parse(a['updatedAt'])));
 
-        // Limit to 5 latest posts
-        setState(() {
-          _posts = sortedPosts
-              .take(5)
-              .map((json) => PostModel.fromJson(json))
-              .toList();
-          _isLoading = false;
-        });
-      } else {
-        setState(() {
-          _isLoading = false;
-          _hasError = true;
-        });
-      }
-    } catch (e) {
-      setState(() {
-        _isLoading = false;
-        _hasError = true;
-      });
-    }
+    // Limit to 5 latest posts
+    setState(() {
+      _posts = sortedPosts
+          .take(5)
+          .map((json) => PostModel.fromJson(json))
+          .toList();
+      _isLoading = false;
+    });
+  } catch (e) {
+    if (!mounted) return;
+    
+    setState(() {
+      _hasError = true;
+      _isLoading = false;
+    });
+    
   }
+}
 
   @override
   Widget build(BuildContext context) {

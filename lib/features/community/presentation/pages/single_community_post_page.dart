@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../features/auth/presentation/bloc/auth_bloc.dart';
@@ -28,23 +27,16 @@ class _SingleCommunityPostPageState extends State<SingleCommunityPostPage> {
   Future<void> _fetchComments() async {
     print(widget.post.id);
     final appwriteService = AppwriteService();
-    final response = await appwriteService.makeRequest(
-      'GET',
-      'databases/communitydb/collections/comments/documents',
-      {
-        'queries': ['equal("postId", "${widget.post.id}")'],
-      },
+
+    //TODO: Add a filter to only fetch comments for the current post
+    final response = await appwriteService.listDocuments(
+      collectionId: "comments",
     );
 
-    if (response.statusCode == 200) {
-      final List<dynamic> jsonData = jsonDecode(response.body)['documents'];
-      setState(() {
-        _comments =
-            jsonData.map((json) => CommentModel.fromJson(json)).toList();
-      });
-    } else {
-      throw Exception('Failed to load comments');
-    }
+    final List<dynamic> jsonData = response['documents'];
+    setState(() {
+      _comments = jsonData.map((json) => CommentModel.fromJson(json)).toList();
+    });
   }
 
   // Function to add a comment
@@ -63,23 +55,23 @@ class _SingleCommunityPostPageState extends State<SingleCommunityPostPage> {
 
       // Submit the new comment to the Appwrite comments collection
       final appwriteService = AppwriteService();
-      final response = await appwriteService.makeRequest(
-        'POST',
-        'databases/communitydb/collections/comments/documents',
-        {
+      final response = await appwriteService.createDocument(
+        collectionId: "comments",
+        documentId: 'unique()',
+        data: {
           'documentId': 'unique()',
           'data': newComment.toJson(),
         },
       );
 
-      if (response.statusCode == 201) {
+      if (response.isNotEmpty) {
         setState(() {
           _comments.add(newComment);
         });
         _commentController.clear();
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to add comment: ${response.body}')),
+          const SnackBar(content: Text('Failed to add comment')),
         );
       }
     }

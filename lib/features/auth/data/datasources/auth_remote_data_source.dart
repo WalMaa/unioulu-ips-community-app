@@ -25,9 +25,9 @@ class AuthRemoteDataSource {
       // Access the registered AppwriteService instance
       final appwriteService = GetIt.instance<AppwriteService>();
       final response = await appwriteService.makeRequest(
-        'PUT', // HTTP method
-        'users/${user.$id}/labels', // Endpoint path
-        {
+        method: 'PUT',
+        endpointPath: 'users/${user.$id}/labels', // Endpoint path
+        data: {
           'labels': ['user']
         }, // Data to send
       );
