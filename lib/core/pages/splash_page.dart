@@ -50,16 +50,16 @@ class SplashPage extends StatelessWidget {
                           color:
                               Theme.of(context).textTheme.headlineSmall!.color,
                           icon: Icon(
-                            state is ThemeLoaded && state.theme == AppTheme.Dark
+                            state is ThemeLoaded && state.theme == AppTheme.dark
                                 ? Icons.wb_sunny
                                 : Icons.nightlight_round,
                           ),
                           onPressed: () {
                             context.read<ThemeBloc>().add(ChangeThemeEvent(
                                 state is ThemeLoaded &&
-                                        state.theme == AppTheme.Dark
-                                    ? AppTheme.Light
-                                    : AppTheme.Dark));
+                                        state.theme == AppTheme.dark
+                                    ? AppTheme.light
+                                    : AppTheme.dark));
                           },
                         );
                       },

@@ -65,7 +65,7 @@ ThemeModel _themeModelDeserialize(
 ) {
   final object = ThemeModel(
     _ThemeModelthemeValueEnumMap[reader.readStringOrNull(offsets[0])] ??
-        AppTheme.Light,
+        AppTheme.light,
   );
   object.id = id;
   return object;
@@ -80,7 +80,7 @@ P _themeModelDeserializeProp<P>(
   switch (propertyId) {
     case 0:
       return (_ThemeModelthemeValueEnumMap[reader.readStringOrNull(offset)] ??
-          AppTheme.Light) as P;
+          AppTheme.light) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -91,8 +91,8 @@ const _ThemeModelthemeEnumValueMap = {
   r'Dark': r'Dark',
 };
 const _ThemeModelthemeValueEnumMap = {
-  r'Light': AppTheme.Light,
-  r'Dark': AppTheme.Dark,
+  r'Light': AppTheme.light,
+  r'Dark': AppTheme.dark,
 };
 
 Id _themeModelGetId(ThemeModel object) {

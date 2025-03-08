@@ -15,7 +15,7 @@ class ThemeLocalDataSourceImpl implements ThemeLocalDataSource {
   @override
   Future<ThemeModel> getTheme() async {
     final theme = await isar.themeModels.where().findFirst();
-    return theme ?? ThemeModel(AppTheme.Light);
+    return theme ?? ThemeModel(AppTheme.light);
   }
 
   @override

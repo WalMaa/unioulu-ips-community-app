@@ -112,7 +112,7 @@ class MyApp extends StatelessWidget {
       child: BlocBuilder<ThemeBloc, ThemeState>(
         builder: (context, state) {
           ThemeData themeData = AppThemeData.lightTheme;
-          if (state is ThemeLoaded && state.theme == AppTheme.Dark) {
+          if (state is ThemeLoaded && state.theme == AppTheme.dark) {
             themeData = AppThemeData.darkTheme;
           }
           return MaterialApp(
