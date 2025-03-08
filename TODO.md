@@ -10,6 +10,11 @@
 
 * Functions are written individually in the files, bloc events should be used to make a clear API.
 
+* DRY has not been followed in the codebase.
+    - The appwrite api calls are not uniform.
+    - appwrite is called with sdk and with http
+    - requests are made in the widgets themselves, should be abstracted to the bloc.
+
 ## Core features
 
 * Settings view
