@@ -1,8 +1,8 @@
+import 'package:community/core/theme/app_spacing.dart';
 import 'package:community/features/auth/presentation/pages/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
-import '../../../../core/constants.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../language/presentation/pages/language_page.dart';
 import '../../../theme/presentation/bloc/theme_bloc.dart';
@@ -71,7 +71,7 @@ class RegisterPage extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: defaultPadding),
+                const SizedBox(height: AppSpacing.defaultPadding),
                 Column(
                   children: [
                     Text(
@@ -79,7 +79,7 @@ class RegisterPage extends StatelessWidget {
                       style: const TextStyle(
                           fontWeight: FontWeight.bold, fontSize: 25),
                     ),
-                    const SizedBox(height: defaultPadding),
+                    const SizedBox(height: AppSpacing.defaultPadding),
                     Row(
                       children: [
                         const Spacer(),
@@ -90,7 +90,7 @@ class RegisterPage extends StatelessWidget {
                         const Spacer(),
                       ],
                     ),
-                    const SizedBox(height: defaultPadding),
+                    const SizedBox(height: AppSpacing.defaultPadding),
                   ],
                 ),
                 Row(
@@ -104,7 +104,6 @@ class RegisterPage extends StatelessWidget {
                             TextFormField(
                               keyboardType: TextInputType.name,
                               textInputAction: TextInputAction.next,
-                              cursorColor: kPrimaryColor,
                               controller: nameController,
                               decoration: InputDecoration(
                                 enabledBorder: OutlineInputBorder(
@@ -118,7 +117,7 @@ class RegisterPage extends StatelessWidget {
                                 ),
                                 hintText: AppLocalizations.of(context)!.name,
                                 prefixIcon: Padding(
-                                  padding: const EdgeInsets.all(defaultPadding),
+                                  padding: const EdgeInsets.all(AppSpacing.defaultPadding),
                                   child: Icon(
                                     Icons.person_outline,
                                     color: Theme.of(context)
@@ -131,11 +130,10 @@ class RegisterPage extends StatelessWidget {
                             ),
                             Padding(
                               padding: const EdgeInsets.symmetric(
-                                  vertical: defaultPadding),
+                                  vertical: AppSpacing.defaultPadding),
                               child: TextFormField(
                                 keyboardType: TextInputType.emailAddress,
                                 textInputAction: TextInputAction.next,
-                                cursorColor: kPrimaryColor,
                                 controller: emailController,
                                 decoration: InputDecoration(
                                   enabledBorder: OutlineInputBorder(
@@ -150,7 +148,7 @@ class RegisterPage extends StatelessWidget {
                                   hintText: AppLocalizations.of(context)!.email,
                                   prefixIcon: Padding(
                                     padding:
-                                        const EdgeInsets.all(defaultPadding),
+                                        const EdgeInsets.all(AppSpacing.defaultPadding),
                                     child: Icon(
                                       Icons.email_outlined,
                                       color: Theme.of(context)
@@ -166,7 +164,6 @@ class RegisterPage extends StatelessWidget {
                               keyboardType: TextInputType.visiblePassword,
                               textInputAction: TextInputAction.done,
                               obscureText: true,
-                              cursorColor: kPrimaryColor,
                               controller: passwordController,
                               decoration: InputDecoration(
                                 enabledBorder: OutlineInputBorder(
@@ -181,7 +178,7 @@ class RegisterPage extends StatelessWidget {
                                 hintText:
                                     AppLocalizations.of(context)!.password,
                                 prefixIcon: Padding(
-                                  padding: const EdgeInsets.all(defaultPadding),
+                                  padding: const EdgeInsets.all(AppSpacing.defaultPadding),
                                   child: Icon(
                                     Icons.lock_outline,
                                     color: Theme.of(context)
@@ -192,7 +189,7 @@ class RegisterPage extends StatelessWidget {
                                 ),
                               ),
                             ),
-                            const SizedBox(height: defaultPadding / 2),
+                            const SizedBox(height: AppSpacing.smallPadding),
                             ElevatedButton(
                               onPressed: () {
                                 print("Register Name: ${nameController.text}");
@@ -212,13 +209,12 @@ class RegisterPage extends StatelessWidget {
                                   .register
                                   .toUpperCase()),
                             ),
-                            const SizedBox(height: defaultPadding),
+                            const SizedBox(height: AppSpacing.defaultPadding),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: <Widget>[
                                 Text(
                                   "${AppLocalizations.of(context)!.alreadyHaveAnAccount} ",
-                                  style: const TextStyle(color: kPrimaryColor),
                                 ),
                                 GestureDetector(
                                   onTap: () {
@@ -234,7 +230,6 @@ class RegisterPage extends StatelessWidget {
                                   child: Text(
                                     AppLocalizations.of(context)!.login,
                                     style: const TextStyle(
-                                      color: kPrimaryColor,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),

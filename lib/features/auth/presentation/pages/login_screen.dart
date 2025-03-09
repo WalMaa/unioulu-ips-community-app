@@ -1,8 +1,8 @@
+import 'package:community/core/theme/app_spacing.dart';
 import 'package:community/features/auth/presentation/pages/register_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
-import '../../../../core/constants.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../language/presentation/pages/language_page.dart';
 import '../../../theme/presentation/bloc/theme_bloc.dart';
@@ -74,7 +74,7 @@ class LoginPage extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: defaultPadding),
+                const SizedBox(height: AppSpacing.defaultPadding),
                 Column(
                   children: [
                     Text(
@@ -82,7 +82,7 @@ class LoginPage extends StatelessWidget {
                       style: const TextStyle(
                           fontWeight: FontWeight.bold, fontSize: 25),
                     ),
-                    const SizedBox(height: defaultPadding * 2),
+                    const SizedBox(height: AppSpacing.extraLargePadding),
                     Row(
                       children: [
                         const Spacer(),
@@ -93,7 +93,7 @@ class LoginPage extends StatelessWidget {
                         const Spacer(),
                       ],
                     ),
-                    const SizedBox(height: defaultPadding * 2),
+                    const SizedBox(height: AppSpacing.extraLargePadding),
                   ],
                 ),
                 Row(
@@ -108,7 +108,6 @@ class LoginPage extends StatelessWidget {
                               controller: emailController,
                               keyboardType: TextInputType.emailAddress,
                               textInputAction: TextInputAction.next,
-                              cursorColor: kPrimaryColor,
                               decoration: InputDecoration(
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10),
@@ -122,7 +121,7 @@ class LoginPage extends StatelessWidget {
                                 hintText:
                                     AppLocalizations.of(context)!.yourEmail,
                                 prefixIcon: Padding(
-                                  padding: const EdgeInsets.all(defaultPadding),
+                                  padding: const EdgeInsets.all(AppSpacing.defaultPadding),
                                   child: Icon(
                                     Icons.email_outlined,
                                     color: Theme.of(context)
@@ -135,12 +134,11 @@ class LoginPage extends StatelessWidget {
                             ),
                             Padding(
                               padding: const EdgeInsets.symmetric(
-                                  vertical: defaultPadding),
+                                  vertical: AppSpacing.defaultPadding),
                               child: TextFormField(
                                 controller: passwordController,
                                 textInputAction: TextInputAction.done,
                                 obscureText: true,
-                                cursorColor: kPrimaryColor,
                                 decoration: InputDecoration(
                                   enabledBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(10),
@@ -155,7 +153,7 @@ class LoginPage extends StatelessWidget {
                                       .yourPassword,
                                   prefixIcon: Padding(
                                     padding:
-                                        const EdgeInsets.all(defaultPadding),
+                                        const EdgeInsets.all(AppSpacing.defaultPadding),
                                     child: Icon(
                                       Icons.lock_outline,
                                       color: Theme.of(context)
@@ -167,7 +165,7 @@ class LoginPage extends StatelessWidget {
                                 ),
                               ),
                             ),
-                            const SizedBox(height: defaultPadding),
+                            const SizedBox(height: AppSpacing.defaultPadding),
                             ElevatedButton(
                               onPressed: () {
                                 print(
@@ -182,13 +180,12 @@ class LoginPage extends StatelessWidget {
                                     .toUpperCase(),
                               ),
                             ),
-                            const SizedBox(height: defaultPadding),
+                            const SizedBox(height: AppSpacing.defaultPadding),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: <Widget>[
                                 Text(
                                   "${AppLocalizations.of(context)!.dontHaveAnAccount} ",
-                                  style: const TextStyle(color: kPrimaryColor),
                                 ),
                                 GestureDetector(
                                   onTap: () {
@@ -204,14 +201,13 @@ class LoginPage extends StatelessWidget {
                                   child: Text(
                                     AppLocalizations.of(context)!.register,
                                     style: const TextStyle(
-                                      color: kPrimaryColor,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
                                 ),
                               ],
                             ),
-                            const SizedBox(height: defaultPadding),
+                            const SizedBox(height: AppSpacing.defaultPadding),
                             TextButton(
                               onPressed: () {
                                 Navigator.of(context).push(
@@ -223,7 +219,6 @@ class LoginPage extends StatelessWidget {
                               child: Text(
                                 AppLocalizations.of(context)!.forgotPassword,
                                 style: const TextStyle(
-                                  color: kPrimaryColor,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),

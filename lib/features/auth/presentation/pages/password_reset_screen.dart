@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../../core/constants.dart';
+import '../../../../core/theme/app_spacing.dart';
 import '../../presentation/bloc/auth_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../bloc/auth_event.dart';
@@ -34,7 +34,6 @@ class ResetPasswordPage extends StatelessWidget {
                 controller: emailController,
                 keyboardType: TextInputType.emailAddress,
                 textInputAction: TextInputAction.next,
-                cursorColor: kPrimaryColor,
                 decoration: InputDecoration(
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
@@ -47,7 +46,7 @@ class ResetPasswordPage extends StatelessWidget {
                   ),
                   hintText: AppLocalizations.of(context)!.yourEmail,
                   prefixIcon: Padding(
-                    padding: const EdgeInsets.all(defaultPadding),
+                    padding: const EdgeInsets.all(AppSpacing.defaultPadding),
                     child: Icon(
                       Icons.email_outlined,
                       color: Theme.of(context).textTheme.headlineSmall!.color,

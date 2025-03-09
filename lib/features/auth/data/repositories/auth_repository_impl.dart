@@ -25,8 +25,7 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<User> login(String email, String password) async {
-    final appwrite.Session session =
-        await remoteDataSource.login(email, password);
+    await remoteDataSource.login(email, password);
     final appwrite.User user = await remoteDataSource.getUser();
     final userModel = UserModel.fromAppwriteUser(user);
     await isar.writeTxn(() async {

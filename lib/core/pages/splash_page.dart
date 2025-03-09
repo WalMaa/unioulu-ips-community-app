@@ -1,3 +1,4 @@
+import 'package:community/core/theme/app_spacing.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -9,7 +10,6 @@ import '../../features/auth/presentation/pages/register_screen.dart';
 import '../../features/language/presentation/pages/language_page.dart';
 import '../../features/theme/presentation/bloc/theme_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import '../constants.dart';
 import '../theme/app_theme.dart';
 
 class SplashPage extends StatelessWidget {
@@ -66,7 +66,7 @@ class SplashPage extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: defaultPadding),
+                const SizedBox(height: AppSpacing.defaultPadding),
                 Column(
                   children: [
                     Text(
@@ -74,7 +74,7 @@ class SplashPage extends StatelessWidget {
                       style: const TextStyle(
                           fontWeight: FontWeight.bold, fontSize: 26),
                     ),
-                    const SizedBox(height: defaultPadding),
+                    const SizedBox(height: AppSpacing.defaultPadding),
                     Row(
                       children: [
                         const Spacer(),
@@ -87,7 +87,7 @@ class SplashPage extends StatelessWidget {
                         const Spacer(),
                       ],
                     ),
-                    const SizedBox(height: defaultPadding),
+                    const SizedBox(height: AppSpacing.defaultPadding),
                   ],
                 ),
                 Row(
@@ -125,7 +125,6 @@ class SplashPage extends StatelessWidget {
                               );
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: kPrimaryLightColor,
                               elevation: 0,
                             ),
                             child: Text(
