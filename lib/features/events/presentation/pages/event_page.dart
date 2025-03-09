@@ -93,7 +93,7 @@ class EventsPage extends StatelessWidget {
                         itemCount: filteredEvents.length,
                         itemBuilder: (context, index) {
                           final event =
-                              EventModel.fromJson(filteredEvents[index]);
+                              EventModel.fromMap(filteredEvents[index]);
                           return GestureDetector(
                             onTap: () {
                               // Navigate to Event Details Page with event details

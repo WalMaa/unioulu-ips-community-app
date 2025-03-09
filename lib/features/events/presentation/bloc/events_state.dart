@@ -1,4 +1,5 @@
-part of 'events_bloc.dart';
+import 'package:equatable/equatable.dart';
+import '../../data/models/event_model.dart';
 
 abstract class EventsState extends Equatable {
   const EventsState();
@@ -12,8 +13,8 @@ class EventsInitial extends EventsState {}
 class EventsLoading extends EventsState {}
 
 class EventsLoaded extends EventsState {
-  final List<dynamic> events;
-  final Set<int> favorites;
+  final List<EventModel> events;
+  final Set<String> favorites;
 
   const EventsLoaded({
     required this.events,
@@ -29,8 +30,8 @@ class EventsLoaded extends EventsState {
 
   // Copy method to easily create new versions of EventsLoaded
   EventsLoaded copyWith({
-    List<dynamic>? events,
-    Set<int>? favorites,
+    List<EventModel>? events,
+    Set<String>? favorites,
   }) {
     return EventsLoaded(
       events: events ?? this.events,
@@ -39,7 +40,6 @@ class EventsLoaded extends EventsState {
   }
 }
 
-
 class EventsError extends EventsState {
   final String message;
 
@@ -47,7 +47,4 @@ class EventsError extends EventsState {
 
   @override
   List<Object> get props => [message];
-  
-  @override
-  String toString() => 'EventsError(message: $message)';
 }

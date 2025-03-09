@@ -9,7 +9,7 @@ abstract class EventsEvent extends Equatable {
 
 
 class ToggleFavoriteEvent extends EventsEvent {
-  final int eventId;
+  final String eventId;
 
   const ToggleFavoriteEvent(this.eventId);
 

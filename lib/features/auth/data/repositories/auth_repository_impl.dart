@@ -71,4 +71,14 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<void> resetPassword(String email) {
     return remoteDataSource.resetPassword(email);
   }
+
+  @override
+  Future<String> getCurrentUserId() async {
+    try {
+      final user = await remoteDataSource.getUser();
+      return user.$id;
+    } catch (e) {
+      throw Exception('Failed to get current user ID: ${e.toString()}');
+    }
+  }
 }

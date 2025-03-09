@@ -1,63 +1,93 @@
-import 'dart:developer';
+import 'dart:developer' as developer;
 
-import 'package:bloc/bloc.dart';
+import 'package:community/features/auth/data/repositories/auth_repository_impl.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
-
+import '../../repository/event_repository.dart';
+import 'events_state.dart';
 part 'events_event.dart';
-part 'events_state.dart';
 
 class EventsBloc extends Bloc<EventsEvent, EventsState> {
-  EventsBloc() : super(const EventsLoaded(events: [], favorites: {})) {
-    on<EventsEvent>((event, emit) {
-      // TODO: implement event handler
-    });
+  final EventRepository _eventRepository;
+  final AuthRepositoryImpl _authRepository;
 
-    on<ToggleFavoriteEvent>(_onToggleFavorite);
-    on<LoadEventsEvent>(_onLoadEvents);
+  EventsBloc({
+    required EventRepository eventRepository, 
+    required AuthRepositoryImpl authRepository,
+  }) : _eventRepository = eventRepository,
+       _authRepository = authRepository,
+       super(EventsInitial()) {
+    on<FetchEvents>(_onFetchEvents);
+    on<ToggleFavorite>(_onToggleFavorite);
   }
 
-  void _onToggleFavorite(ToggleFavoriteEvent event, Emitter<EventsState> emit) {
-    log('Processing ${event.toString()}');
-    final currentState = state;
-
-    if (currentState is EventsLoaded) {
-      final currentFavorites = currentState.favorites;
-      log('Current state: $currentFavorites');
-
-      final isFavorited = currentFavorites.contains(event.eventId);
-      // Create a new set (because state must be immutable)
-      final updatedFavorites = Set<int>.from(currentFavorites);
-
-      if (isFavorited) {
-        updatedFavorites.remove(event.eventId);
-      } else {
-        updatedFavorites.add(event.eventId);
-      }
-
-      // Emit a new state with updated favorites
-      emit(
-        currentState.copyWith(favorites: updatedFavorites),
-      );
-    }
-  } 
-
-  void _onLoadEvents(LoadEventsEvent event, Emitter<EventsState> emit) async {
-    log('Loading events...');
+  Future<void> _onFetchEvents(
+      FetchEvents event, Emitter<EventsState> emit) async {
     emit(EventsLoading());
-    
+
     try {
-      // Here you would fetch events from your repository
-      // For now we'll just emit an empty list
-      final events = []; // Replace with actual event fetching
-      final currentFavorites = state is EventsLoaded 
-          ? (state as EventsLoaded).favorites 
-          : <int>{};
-          
-      emit(EventsLoaded(events: events, favorites: currentFavorites));
-      log('Events loaded successfully');
+      // Get events from repository
+      final events = await _eventRepository.getEvents();
+      // Get user favorites
+      final favorites = await _eventRepository.getUserLiked(event.userId);
+
+      emit(EventsLoaded(events: events, favorites: favorites));
     } catch (e) {
-      log('Error loading events: $e');
-      emit(EventsError(message: 'Failed to load events: $e'));
+      emit(EventsError(message: e.toString()));
     }
   }
+
+  Future<void> _onToggleFavorite(
+      ToggleFavorite event, Emitter<EventsState> emit) async {
+        developer.log('Toggling favorite for event: ${event.eventId}');
+        developer.log('Current state: ${state.runtimeType}');
+    if (state is EventsLoaded) {
+      final currentState = state as EventsLoaded;
+      try {
+        // Get current user ID from auth repository
+        final userId = await _authRepository.getCurrentUserId();
+        final isFavorite = currentState.favorites.contains(event.eventId);
+
+        // Optimistic update
+        final updatedFavorites = Set<String>.from(currentState.favorites);
+        if (isFavorite) {
+          updatedFavorites.remove(event.eventId);
+        } else {
+          updatedFavorites.add(event.eventId);
+        }
+
+        emit(currentState.copyWith(favorites: updatedFavorites));
+
+        // Call repository
+        await _eventRepository.toggleFavorite(
+          userId,
+          event.eventId,
+          isFavorite,
+        );
+      } catch (e) {
+        // Revert on error
+        developer.log('Failed to toggle favorite: ${e.toString()}');
+        emit(currentState);
+        emit(EventsError(message: e.toString()));
+      }
+    }
+  }
+}
+
+class FetchEvents extends EventsEvent {
+  final String userId;
+
+  const FetchEvents({required this.userId});
+
+  @override
+  List<Object> get props => [userId];
+}
+
+class ToggleFavorite extends EventsEvent {
+  final String eventId;
+
+  const ToggleFavorite({required this.eventId});
+
+  @override
+  List<Object> get props => [eventId];
 }

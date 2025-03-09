@@ -1,3 +1,5 @@
+import 'package:community/features/auth/data/repositories/auth_repository_impl.dart';
+import 'package:community/features/auth/domain/repositories/auth_repository.dart';
 import 'package:community/features/events/presentation/bloc/events_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
@@ -10,6 +12,7 @@ import 'core/pages/main_page.dart';
 import 'core/pages/splash_page.dart';
 import 'core/services/dependency_injection.dart';
 import 'core/utils/config.dart';
+import 'features/auth/data/datasources/auth_remote_data_source.dart';
 import 'features/auth/data/models/user_model.dart';
 import 'features/auth/domain/usecases/authenticate_anonymous.dart';
 import 'features/auth/domain/usecases/login.dart';
@@ -19,6 +22,8 @@ import 'features/auth/domain/usecases/update_profile.dart';
 import 'features/auth/presentation/bloc/auth_bloc.dart';
 import 'features/auth/presentation/pages/login_screen.dart';
 import 'features/events/data/models/event_model.dart';
+import 'features/events/repository/event_repository.dart';
+import 'features/events/services/event_service.dart';
 import 'features/home/data/models/topic_model.dart';
 import 'features/language/presentation/bloc/language_event.dart';
 import 'features/theme/presentation/bloc/theme_bloc.dart';
@@ -72,6 +77,11 @@ void _initializeAppwrite() {
   locator.registerSingleton<Account>(Account(client));
   locator
       .registerSingleton<Databases>(Databases(client)); // Registering Databases
+
+  locator.registerLazySingleton<EventService>(
+      () => EventService(databases: locator<Databases>()));
+  locator.registerLazySingleton<EventRepository>(
+      () => EventRepository(eventService: locator<EventService>()));
 }
 
 class MyApp extends StatelessWidget {
@@ -106,6 +116,8 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider(
           create: (context) => EventsBloc(
+            eventRepository: locator<EventRepository>(),
+            authRepository: locator<AuthRepositoryImpl>(),
           ),
         ),
       ],
