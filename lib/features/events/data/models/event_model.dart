@@ -61,7 +61,7 @@ class EventModel {
     required DateTime createdAt,
     required DateTime updatedAt,
   }) {
-    this.remoteId = id;
+    remoteId = id;
     this.posterPhotoUrl = posterPhotoUrl;
     this.titleEn = titleEn;
     this.titleFi = titleFi;
