@@ -8,6 +8,7 @@ import '../../domain/usecases/register.dart';
 import '../../domain/usecases/update_profile.dart';
 import 'auth_event.dart';
 import 'auth_state.dart';
+import 'dart:developer' as developer;
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final Login login;
@@ -33,8 +34,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<CheckAuthenticationEvent>(_onCheckAuthentication);
   }
   
-  get developer => null;
-
   void _onLogin(LoginEvent event, Emitter<AuthState> emit) async {
     emit(AuthLoading());
     try {
