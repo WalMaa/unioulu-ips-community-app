@@ -1,3 +1,5 @@
+import 'dart:developer' as developer;
+
 import 'package:community/core/theme/app_spacing.dart';
 import 'package:community/features/auth/presentation/pages/login_screen.dart';
 import 'package:flutter/material.dart';
@@ -192,10 +194,10 @@ class RegisterPage extends StatelessWidget {
                             const SizedBox(height: AppSpacing.smallPadding),
                             ElevatedButton(
                               onPressed: () {
-                                print("Register Name: ${nameController.text}");
-                                print(
+                                developer.log("Register Name: ${nameController.text}");
+                                developer.log(
                                     "Register Email: ${emailController.text}");
-                                print(
+                                developer.log(
                                     "Register Password: ${passwordController.text}");
                                 context.read<AuthBloc>().add(
                                       RegisterEvent(

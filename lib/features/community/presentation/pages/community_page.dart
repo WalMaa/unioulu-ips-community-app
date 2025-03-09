@@ -8,10 +8,10 @@ class CommunityPage extends StatefulWidget {
   const CommunityPage({super.key});
 
   @override
-  _CommunityPageState createState() => _CommunityPageState();
+  CommunityPageState createState() => CommunityPageState();
 }
 
-class _CommunityPageState extends State<CommunityPage> {
+class CommunityPageState extends State<CommunityPage> {
   late AppwriteService _appwriteService;
 
   @override

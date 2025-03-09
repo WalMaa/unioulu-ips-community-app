@@ -4,7 +4,6 @@ import 'package:community/features/auth/data/repositories/auth_repository_impl.d
 import 'package:community/features/events/presentation/bloc/events_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../auth/domain/repositories/auth_repository.dart';
 import '../../data/models/event_model.dart';
 import '../bloc/events_state.dart';
 

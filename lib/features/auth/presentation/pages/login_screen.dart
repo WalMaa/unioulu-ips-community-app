@@ -1,3 +1,5 @@
+import 'dart:developer' as developer;
+
 import 'package:community/core/theme/app_spacing.dart';
 import 'package:community/features/auth/presentation/pages/register_screen.dart';
 import 'package:flutter/material.dart';
@@ -168,7 +170,7 @@ class LoginPage extends StatelessWidget {
                             const SizedBox(height: AppSpacing.defaultPadding),
                             ElevatedButton(
                               onPressed: () {
-                                print(
+                                developer.log(
                                     "Login button pressed: ${emailController.text} ${passwordController.text}");
                                 context.read<AuthBloc>().add(LoginEvent(
                                     email: emailController.text,

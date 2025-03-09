@@ -32,6 +32,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<AuthenticateAnonymousEvent>(_onAuthenticateAnonymous);
     on<CheckAuthenticationEvent>(_onCheckAuthentication);
   }
+  
+  get developer => null;
 
   void _onLogin(LoginEvent event, Emitter<AuthState> emit) async {
     emit(AuthLoading());
@@ -41,8 +43,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       final result = await account.get();
       final fuser = UserModel.fromAppwriteUser(result).toEntity();
 
-      //TODO: remove print statement
-      print('Login: ${fuser.name}');
+      developer.log('Login: ${fuser.name}');
     } catch (e) {
       emit(AuthError(message: 'Invalid email or password. Please try again.'));
     }
@@ -53,8 +54,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     try {
       await logout.execute();
       emit(AuthInitial());
-      //TODO: remove print statement
-      print('Logout: ${event.toString()}');
+      developer.log('Logout: ${event.toString()}');
     } catch (e) {
       emit(AuthError(message: e.toString()));
     }
@@ -66,8 +66,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       await register.execute(event.email, event.password, event.name);
       final user = await login.execute(event.email, event.password);
       emit(AuthAuthenticated(user: user, labels: user.labels));
-      //TODO: remove print statement
-      print('Register: ${user.toString()}');
+      developer.log('Register: ${user.toString()}');
     } catch (e) {
       emit(AuthError(message: e.toString()));
     }
@@ -106,8 +105,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         final user = UserModel.fromAppwriteUser(appwriteUser).toEntity();
         emit(AuthAuthenticated(user: user, labels: user.labels));
 
-        //TODO: remove print statement
-        print('CheckAuthentication: ${user.email} & ${user.labels.join(',')}');
+        developer.log('CheckAuthentication: ${user.email} & ${user.labels.join(',')}');
       }
     } catch (e) {
       emit(AuthInitial());

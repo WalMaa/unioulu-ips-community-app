@@ -1,3 +1,5 @@
+import 'dart:developer' as developer;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../features/auth/presentation/bloc/auth_bloc.dart';
@@ -15,17 +17,17 @@ class SingleCommunityPostPage extends StatefulWidget {
   final PostModel post;
 
   @override
-  _SingleCommunityPostPageState createState() =>
-      _SingleCommunityPostPageState();
+  SingleCommunityPostPageState createState() =>
+      SingleCommunityPostPageState();
 }
 
-class _SingleCommunityPostPageState extends State<SingleCommunityPostPage> {
+class SingleCommunityPostPageState extends State<SingleCommunityPostPage> {
   final TextEditingController _commentController = TextEditingController();
   late List<CommentModel> _comments = [];
 
   // Function to fetch comments for the post
   Future<void> _fetchComments() async {
-    print(widget.post.id);
+    developer.log(widget.post.id);
     final appwriteService = AppwriteService();
 
     //TODO: Add a filter to only fetch comments for the current post

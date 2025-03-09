@@ -1,5 +1,4 @@
 import 'package:community/features/auth/data/repositories/auth_repository_impl.dart';
-import 'package:community/features/auth/domain/repositories/auth_repository.dart';
 import 'package:community/features/events/presentation/bloc/events_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
@@ -12,7 +11,6 @@ import 'core/pages/main_page.dart';
 import 'core/pages/splash_page.dart';
 import 'core/services/dependency_injection.dart';
 import 'core/utils/config.dart';
-import 'features/auth/data/datasources/auth_remote_data_source.dart';
 import 'features/auth/data/models/user_model.dart';
 import 'features/auth/domain/usecases/authenticate_anonymous.dart';
 import 'features/auth/domain/usecases/login.dart';

@@ -5,10 +5,10 @@ class LatestEventsWidget extends StatefulWidget {
   const LatestEventsWidget({super.key});
 
   @override
-  _LatestEventsWidgetState createState() => _LatestEventsWidgetState();
+  LatestEventsWidgetState createState() => LatestEventsWidgetState();
 }
 
-class _LatestEventsWidgetState extends State<LatestEventsWidget> {
+class LatestEventsWidgetState extends State<LatestEventsWidget> {
   late AppwriteService _appwriteService;
   List<Map<String, dynamic>> _events = [];
   bool _isLoading = true;
