@@ -26,6 +26,7 @@ class EventsBloc extends Bloc<EventsEvent, EventsState> {
     emit(EventsLoading());
 
     try {
+      developer.log('Fetching events for user: $event');
       // Get events from repository
       final events = await _eventRepository.getEvents();
       // Get user favorites
@@ -33,6 +34,7 @@ class EventsBloc extends Bloc<EventsEvent, EventsState> {
 
       emit(EventsLoaded(events: events, favorites: favorites));
     } catch (e) {
+      developer.log('Failed to fetch events: ${e.toString()}');
       emit(EventsError(message: e.toString()));
     }
   }

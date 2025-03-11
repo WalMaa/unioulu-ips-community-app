@@ -194,7 +194,7 @@ collections_config = [
         'collection_id': 'event_likes',
         'attributes': [
             {'type': 'string', 'key': 'eventId', 'size': 255, 'required': True},
-            {'type': 'string', 'key': 'username', 'size': 255, 'required': True}
+            {'type': 'string', 'key': 'userId', 'size': 255, 'required': True}
         ]
         
     },
@@ -253,7 +253,7 @@ def create_event_like_index():
             'event_likes',
             'eventId_username_index',
             'unique',
-            ['eventId', 'username']
+            ['eventId', 'userId']
         )
         print(result)
     except AppwriteException as e:

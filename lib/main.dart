@@ -65,6 +65,7 @@ Future<void> _initializeDatabase() async {
 }
 
 void _initializeAppwrite() {
+  WidgetsFlutterBinding.ensureInitialized();
   final client = Client()
     ..setEndpoint(appwriteEndpoint)
     ..setProject(appwriteProjectId)

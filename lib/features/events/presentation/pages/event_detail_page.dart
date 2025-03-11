@@ -6,25 +6,35 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../data/models/event_model.dart';
 import '../bloc/events_state.dart';
+import 'package:community/main.dart' show locator;  // Import locator directly
 
 class EventDetailsPage extends StatelessWidget {
   final EventModel event;
   const EventDetailsPage({super.key, required this.event});
 
-  Future<void> _loadEvents(BuildContext context) async {
+Future<void> _loadEvents(BuildContext context) async {
+  try {
+    developer.log('Attempting to load events in EventDetailsPage');
+    String? userId;
+    
     try {
-      developer.log('Attempting to load events');
-      final authRepository = context.read<AuthRepositoryImpl>();
-      final eventsBloc = context.read<EventsBloc>();
-
-      final userId = await authRepository.getCurrentUserId();
-      developer.log('Loading events with userId: $userId');
-
-      eventsBloc.add(FetchEvents(userId: userId));
+      // Use locator instead of context.read
+      final authRepository = locator<AuthRepositoryImpl>();
+      userId = await authRepository.getCurrentUserId();
+      developer.log('Got userId: $userId');
     } catch (e) {
-      developer.log('Error loading events: ${e.toString()}');
+      developer.log('Error getting user ID in EventDetailsPage: ${e.toString()}');
+      userId = 'anonymous'; // Fallback to anonymous
     }
+    
+    final eventsBloc = context.read<EventsBloc>();
+    eventsBloc.add(FetchEvents(userId: userId ?? 'anonymous'));
+  } catch (e) {
+    developer.log('Error loading events in EventDetailsPage: ${e.toString()}');
+    // Try anonymous events as fallback
+    context.read<EventsBloc>().add(const FetchEvents(userId: 'anonymous'));
   }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -300,16 +310,26 @@ class EventLayout extends StatelessWidget {
     );
   }
   
-  Future<void> _loadEvents(BuildContext context) async {
+Future<void> _loadEvents(BuildContext context) async {
+  try {
+    final authRepository = locator<AuthRepositoryImpl>();
+    final eventsBloc = context.read<EventsBloc>();
+    String? userId;
+    
     try {
-      final authRepository = context.read<AuthRepositoryImpl>();
-      final userId = await authRepository.getCurrentUserId();
-      
+      userId = await authRepository.getCurrentUserId();
       developer.log('Loading events from EventLayout with userId: $userId');
-      context.read<EventsBloc>().add(FetchEvents(userId: userId ?? 'anonymous'));
     } catch (e) {
-      developer.log('Error loading events from EventLayout: ${e.toString()}');
-      context.read<EventsBloc>().add(const FetchEvents(userId: 'anonymous'));
+      developer.log('Error getting user ID: ${e.toString()}');
+      userId = 'anonymous';  // Fallback to anonymous if we can't get userId
     }
+    
+    // Add null safety here
+    eventsBloc.add(FetchEvents(userId: userId ?? 'anonymous'));
+  } catch (e) {
+    developer.log('Critical error loading events from EventLayout: ${e.toString()}');
+    // Always try to load anonymous events as a last resort
+    context.read<EventsBloc>().add(const FetchEvents(userId: 'anonymous'));
   }
+}
 }
