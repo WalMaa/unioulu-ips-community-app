@@ -2,9 +2,7 @@ import 'dart:convert';
 import 'dart:developer' as developer;
 
 import 'package:appwrite/appwrite.dart';
-import 'package:appwrite/models.dart';
 import 'package:community/core/services/http_appwrite_service.dart';
-import 'package:community/core/utils/config.dart';
 import 'package:community/features/events/data/models/event_like_model.dart';
 
 import '../data/models/event_model.dart';
