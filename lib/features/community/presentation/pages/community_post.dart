@@ -42,7 +42,7 @@ class CommunityPost extends StatelessWidget {
                   const CircleAvatar(
                     radius: 28,
                     backgroundImage:
-                        NetworkImage('https://via.placeholder.com/150'),
+                        NetworkImage('https://thispersondoesnotexist.com'),
                   ),
                   const SizedBox(width: 12),
                   Expanded(

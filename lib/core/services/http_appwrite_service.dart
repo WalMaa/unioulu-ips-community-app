@@ -149,23 +149,36 @@ class AppwriteService {
     required String collectionId,
     List<String>? queries,
   }) async {
-    final queryParams = <String, String>{};
+    // Create a Map<String, String> for query parameters
+    final Map<String, String> queryParams = {};
+
+    // Add each query to the query parameters in the correct format for Appwrite REST API
     if (queries != null && queries.isNotEmpty) {
       for (int i = 0; i < queries.length; i++) {
         queryParams['queries[$i]'] = queries[i];
       }
     }
 
-    final response = await makeRequest(
-      method: 'GET',
-      endpointPath: 'databases/$databaseId/collections/$collectionId/documents',
-      queryParameters: queryParams,
-    );
+    developer.log('List documents query params: $queryParams');
 
-    if (response.statusCode == 200) {
-      return jsonDecode(response.body);
-    } else {
-      throw Exception('Failed to list documents: ${response.body}');
+    try {
+      final response = await makeRequest(
+        method: 'GET',
+        endpointPath:
+            'databases/$databaseId/collections/$collectionId/documents',
+        queryParameters: queryParams.isNotEmpty ? queryParams : null,
+      );
+
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
+      } else {
+        developer.log(
+            'Failed to list documents. Status: ${response.statusCode}, Body: ${response.body}');
+        throw Exception('Failed to list documents: ${response.body}');
+      }
+    } catch (e) {
+      developer.log('Error listing documents: $e');
+      rethrow;
     }
   }
 
@@ -181,22 +194,40 @@ class AppwriteService {
   }) async {
     final endpointPath =
         'databases/$databaseId/collections/$collectionId/documents';
-    final Map<String, dynamic> requestData = {...data};
 
-    if (documentId != null) {
-      requestData['documentId'] = documentId;
+    // Handle documentId properly
+    final Map<String, String> queryParams = {};
+    if (documentId != null && documentId == 'unique()') {
+      queryParams['documentId'] = 'unique()';
     }
 
-    final response = await makeRequest(
-      method: 'POST',
-      endpointPath: endpointPath,
-      data: requestData,
-    );
+    // Use the documentId in query params or in body based on its value
+    final Map<String, dynamic> requestData = {...data};
+    if (documentId != null && documentId != 'unique()') {
+      requestData['\$id'] = documentId; // Use $id for explicit IDs
+    }
 
-    if (response.statusCode == 201) {
-      return jsonDecode(response.body);
-    } else {
-      throw Exception('Failed to create document: ${response.body}');
+    try {
+      developer.log('Creating document with data: $requestData');
+      developer.log('Document query params: $queryParams');
+
+      final response = await makeRequest(
+        method: 'POST',
+        endpointPath: endpointPath,
+        data: requestData,
+        queryParameters: queryParams.isNotEmpty ? queryParams : null,
+      );
+
+      if (response.statusCode == 201) {
+        return jsonDecode(response.body);
+      } else {
+        developer.log(
+            'Failed to create document. Status: ${response.statusCode}, Response: ${response.body}');
+        throw Exception('Failed to create document: ${response.body}');
+      }
+    } catch (e) {
+      developer.log('Error creating document: $e');
+      rethrow;
     }
   }
 

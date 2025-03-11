@@ -230,7 +230,7 @@ collections_config = [
             {'type': 'string', 'key': 'text', 'size': 1024, 'required': True},
             {'type': 'string', 'key': 'username', 'size': 255, 'required': True},
             {'type': 'datetime', 'key': 'dateTime', 'required': True},
-            {'type': 'relationship', 'related_collection': 'posts', "relationship_type": "manyToOne", "two_way": False, 'key': 'postId', "on_delete": "cascade"}
+            {'type': 'string', 'key': 'postId', 'size': 255, 'required': True}
         ]
     },
     # announcements
@@ -287,14 +287,14 @@ def create_comments():
                 "text": f"Great post about {post['postTitle'].lower()}!",
                 "username": "student2025",
                 "dateTime": datetime.now().isoformat(),
-                "posts": post['$id']
+                "postId": post['$id']
 
             },
             {
                 "text": "Thanks for sharing this information.",
                 "username": "academicstaff",
                 "dateTime": (datetime.now() - timedelta(hours=2)).isoformat(),
-                "posts": post['$id']
+                "postId": post['$id']
             }
         ]
         

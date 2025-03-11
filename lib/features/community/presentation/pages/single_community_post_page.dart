@@ -1,5 +1,6 @@
 import 'dart:developer' as developer;
 
+import 'package:appwrite/appwrite.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../features/auth/presentation/bloc/auth_bloc.dart';
@@ -17,8 +18,7 @@ class SingleCommunityPostPage extends StatefulWidget {
   final PostModel post;
 
   @override
-  SingleCommunityPostPageState createState() =>
-      SingleCommunityPostPageState();
+  SingleCommunityPostPageState createState() => SingleCommunityPostPageState();
 }
 
 class SingleCommunityPostPageState extends State<SingleCommunityPostPage> {
@@ -27,13 +27,14 @@ class SingleCommunityPostPageState extends State<SingleCommunityPostPage> {
 
   // Function to fetch comments for the post
   Future<void> _fetchComments() async {
-    developer.log(widget.post.id);
+    developer.log('Fetching comments for post: ${widget.post.id}');
     final appwriteService = AppwriteService();
 
     //TODO: Add a filter to only fetch comments for the current post
-    final response = await appwriteService.listDocuments(
-      collectionId: "comments",
-    );
+    final response =
+        await appwriteService.listDocuments(collectionId: "comments", queries: [
+      Query.equal('postId', widget.post.id),
+    ]);
 
     final List<dynamic> jsonData = response['documents'];
     setState(() {
@@ -62,7 +63,7 @@ class SingleCommunityPostPageState extends State<SingleCommunityPostPage> {
         documentId: 'unique()',
         data: {
           'documentId': 'unique()',
-          'data': newComment.toJson(),
+          "data": newComment.toJson(),
         },
       );
 
@@ -113,8 +114,8 @@ class SingleCommunityPostPageState extends State<SingleCommunityPostPage> {
                       children: [
                         const CircleAvatar(
                           radius: 28,
-                          backgroundImage:
-                              NetworkImage('https://via.placeholder.com/150'),
+                          backgroundImage: NetworkImage(
+                              'https://thispersondoesnotexist.com/'),
                         ),
                         const SizedBox(width: 12),
                         Expanded(
@@ -215,7 +216,7 @@ class SingleCommunityPostPageState extends State<SingleCommunityPostPage> {
                 return ListTile(
                   leading: const CircleAvatar(
                     backgroundImage:
-                        NetworkImage('https://via.placeholder.com/150'),
+                        NetworkImage('https://thispersondoesnotexist.com/'),
                   ),
                   title: Row(
                     children: [

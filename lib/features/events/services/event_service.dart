@@ -86,9 +86,9 @@ class EventService {
       final response = await appwriteService.listDocuments(
         collectionId: "event_likes",
         queries: [
-          "equal('user_id', '$userId')",
-          "equal('event_id', '$eventId')",
-        ],
+          Query.equal('userId', userId),
+          Query.equal('eventId', eventId),
+      ],
       );
 
       // Check if document exists and delete it
