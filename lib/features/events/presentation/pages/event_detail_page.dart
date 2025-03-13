@@ -308,7 +308,7 @@ class EventLayoutState extends State<EventLayout> {
         state.favorites.contains(widget.event.remoteId);
         
     return TextButton.icon(
-      onPressed: () {
+        onPressed: () {
         // Check if state is loaded before toggling
         if (state is! EventsLoaded) {
           developer.log('State is not EventsLoaded, loading events first');

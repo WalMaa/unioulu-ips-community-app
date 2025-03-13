@@ -277,13 +277,7 @@ class HomePage extends StatelessWidget {
                   appwriteService: appwriteService,
                 ),
                 const SizedBox(height: 10.0),
-                const Text(
-                  'Latest Events',
-                  style: TextStyle(
-                    fontSize: 16.0,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                
                 const LatestEventsWidget(),
                 const SizedBox(height: 10.0),
                 const Text(
