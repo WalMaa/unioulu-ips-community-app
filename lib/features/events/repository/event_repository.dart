@@ -17,7 +17,7 @@ class EventRepository {
   }
   
   // Get user's favorites
-  Future<Set<String>> getUserLiked(String userId) async {
+  Future<Set<EventModel>> getUserLiked(String userId) async {
     final favorites = await _eventService.getUserLikedEvents(userId);
     developer.log('Favorites: $favorites');
     return favorites.toSet();

@@ -114,7 +114,7 @@ class EventService {
   }
 
   // Get user's liked events
-  Future<List<String>> getUserLikedEvents(String userId) async {
+  Future<List<EventModel>> getUserLikedEvents(String userId) async {
     if (userId == 'anonymous') {
       developer.log('Anonymous user has no likes');
       return []; // Anonymous users have no likes
@@ -125,26 +125,30 @@ class EventService {
       final response = await appwriteService.listDocuments(
         collectionId: "event_likes",
         queries: [
-          "equal('user_id', '$userId')",
+          Query.equal('userId', userId),
         ],
       );
 
+       // Parse the response
       if (response.containsKey('documents') && response['documents'] is List) {
-        final likes = (response['documents'] as List)
-            .map((doc) {
-              if (doc is Map && doc.containsKey('data')) {
-                final data = doc['data'];
-                if (data is Map && data.containsKey('event_id')) {
-                  return data['event_id'] as String;
-                }
-              }
-              return null;
-            })
-            .whereType<String>()
-            .toList();
+        final documents = response['documents'] as List;
+        developer.log('Successfully fetched ${documents.length} events');
 
-        developer.log('Found ${likes.length} liked events');
-        return likes;
+        return documents
+            .map((doc) {
+              try {
+                if (doc is Map<String, dynamic>) {
+                  return EventModel.fromMap(doc['data'] ?? doc);
+                }
+                return EventModel.fromMap(jsonDecode(jsonEncode(doc))['data'] ??
+                    jsonDecode(jsonEncode(doc)));
+              } catch (e) {
+                developer.log('Error parsing event document: $e');
+                return null;
+              }
+            })
+            .whereType<EventModel>()
+            .toList();
       }
 
       developer.log('No liked events found or invalid response format');
