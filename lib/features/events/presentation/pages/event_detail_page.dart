@@ -1,7 +1,9 @@
 import 'dart:developer' as developer;
 
+import 'package:appwrite/appwrite.dart';
 import 'package:community/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:community/features/events/presentation/bloc/events_bloc.dart';
+import 'package:community/features/events/services/event_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../data/models/event_model.dart';
@@ -22,12 +24,10 @@ Future<void> _loadEvents(BuildContext context) async {
       userId = 'anonymous';  // Fallback to anonymous if we can't get userId
     }
     
-    // Add null safety here
     eventsBloc.add(FetchEvents(userId: userId));
   } catch (e) {
     developer.log('Critical error loading events from EventLayout: ${e.toString()}');
     // Always try to load anonymous events as a last resort
-    context.read<EventsBloc>().add(const FetchEvents(userId: 'anonymous'));
   }
 }
 
@@ -217,9 +217,41 @@ class EventDetailsPage extends StatelessWidget {
   }
 }
 
-class EventLayout extends StatelessWidget {
+class EventLayout extends StatefulWidget {
   final EventModel event;
   const EventLayout({super.key, required this.event});
+
+  @override
+  EventLayoutState createState() => EventLayoutState();
+}
+
+class EventLayoutState extends State<EventLayout> {
+  int _likeCount = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchLikeCount();
+  }
+
+  Future<void> _fetchLikeCount() async {
+    try {
+      final eventService = EventService(databases: locator<Databases>());
+      final count = await eventService.getEventLikeCount(widget.event.remoteId);
+      if (mounted) {
+        setState(() {
+          _likeCount = count;
+        });
+      }
+    } catch (e) {
+      developer.log('Error fetching like count: $e');
+      if (mounted) {
+        setState(() {
+          _likeCount = 0;
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -229,6 +261,7 @@ class EventLayout extends StatelessWidget {
           developer.log('EventLayout detected EventsInitial, loading events');
           _loadEvents(context);
         }
+        
       },
       builder: (context, state) {
         developer.log('Building EventLayout with state: ${state.runtimeType}');
@@ -240,7 +273,7 @@ class EventLayout extends StatelessWidget {
               ClipRRect(
                 borderRadius: BorderRadius.circular(10.0),
                 child: Image.network(
-                  event.posterPhotoUrl,
+                  widget.event.posterPhotoUrl,
                   width: double.infinity,
                   height: 200,
                   fit: BoxFit.cover,
@@ -269,21 +302,10 @@ class EventLayout extends StatelessWidget {
   }
   
   Widget _buildFavoriteButton(BuildContext context, EventsState state) {
-    // Show loading indicator if we're loading events
-    if (state is EventsLoading) {
-      return const Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16.0),
-        child: SizedBox(
-          height: 24,
-          width: 24,
-          child: CircularProgressIndicator(),
-        ),
-      );
-    }
     
     // Check if the event is favorited
     final bool isFavorite = state is EventsLoaded && 
-        state.favorites.contains(event.remoteId);
+        state.favorites.contains(widget.event.remoteId);
         
     return TextButton.icon(
       onPressed: () {
@@ -291,21 +313,27 @@ class EventLayout extends StatelessWidget {
         if (state is! EventsLoaded) {
           developer.log('State is not EventsLoaded, loading events first');
           _loadEvents(context);
-          // To prevent immediate favorite toggle, we could return here
-          // But let's continue - the EventsBloc handler should handle this case
+          return; // Add return to prevent action until loaded
         }
         
-        developer.log('Attempting to toggle favorite for event: ${event.remoteId}');
+        developer.log('Attempting to toggle favorite for event: ${widget.event.remoteId}');
         context.read<EventsBloc>().add(
-          ToggleFavorite(eventId: event.remoteId),
+          ToggleFavorite(eventId: widget.event.remoteId),
         );
+
+        _likeCount += isFavorite ? -1 : 1;
+
       },
       icon: Icon(
         isFavorite ? Icons.favorite : Icons.favorite_border,
+        color: isFavorite ? Colors.red : null,
       ),
-      label: const Text('Favorite'),
+      label: Text(
+        _likeCount.toString(),
+        style: TextStyle(
+          color: isFavorite ? Colors.red : null,
+        ),
+      ),
     );
   }
-  
-
 }
