@@ -8,33 +8,32 @@ import '../../data/models/event_model.dart';
 import '../bloc/events_state.dart';
 import 'package:community/main.dart' show locator;  // Import locator directly
 
-class EventDetailsPage extends StatelessWidget {
-  final EventModel event;
-  const EventDetailsPage({super.key, required this.event});
-
 Future<void> _loadEvents(BuildContext context) async {
   try {
-    developer.log('Attempting to load events in EventDetailsPage');
+    final authRepository = locator<AuthRepositoryImpl>();
+    final eventsBloc = context.read<EventsBloc>();
     String? userId;
     
     try {
-      // Use locator instead of context.read
-      final authRepository = locator<AuthRepositoryImpl>();
       userId = await authRepository.getCurrentUserId();
-      developer.log('Got userId: $userId');
+      developer.log('Loading events from EventLayout with userId: $userId');
     } catch (e) {
-      developer.log('Error getting user ID in EventDetailsPage: ${e.toString()}');
-      userId = 'anonymous'; // Fallback to anonymous
+      developer.log('Error getting user ID: ${e.toString()}');
+      userId = 'anonymous';  // Fallback to anonymous if we can't get userId
     }
     
-    final eventsBloc = context.read<EventsBloc>();
-    eventsBloc.add(FetchEvents(userId: userId ?? 'anonymous'));
+    // Add null safety here
+    eventsBloc.add(FetchEvents(userId: userId));
   } catch (e) {
-    developer.log('Error loading events in EventDetailsPage: ${e.toString()}');
-    // Try anonymous events as fallback
+    developer.log('Critical error loading events from EventLayout: ${e.toString()}');
+    // Always try to load anonymous events as a last resort
     context.read<EventsBloc>().add(const FetchEvents(userId: 'anonymous'));
   }
 }
+
+class EventDetailsPage extends StatelessWidget {
+  final EventModel event;
+  const EventDetailsPage({super.key, required this.event});
 
   @override
   Widget build(BuildContext context) {
@@ -226,7 +225,6 @@ class EventLayout extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocConsumer<EventsBloc, EventsState>(
       listener: (context, state) {
-        // This adds another layer of protection to ensure we load events
         if (state is EventsInitial) {
           developer.log('EventLayout detected EventsInitial, loading events');
           _loadEvents(context);
@@ -235,7 +233,6 @@ class EventLayout extends StatelessWidget {
       builder: (context, state) {
         developer.log('Building EventLayout with state: ${state.runtimeType}');
         
-        // Extract favorite button to its own method for clarity
         return Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
@@ -310,26 +307,5 @@ class EventLayout extends StatelessWidget {
     );
   }
   
-Future<void> _loadEvents(BuildContext context) async {
-  try {
-    final authRepository = locator<AuthRepositoryImpl>();
-    final eventsBloc = context.read<EventsBloc>();
-    String? userId;
-    
-    try {
-      userId = await authRepository.getCurrentUserId();
-      developer.log('Loading events from EventLayout with userId: $userId');
-    } catch (e) {
-      developer.log('Error getting user ID: ${e.toString()}');
-      userId = 'anonymous';  // Fallback to anonymous if we can't get userId
-    }
-    
-    // Add null safety here
-    eventsBloc.add(FetchEvents(userId: userId ?? 'anonymous'));
-  } catch (e) {
-    developer.log('Critical error loading events from EventLayout: ${e.toString()}');
-    // Always try to load anonymous events as a last resort
-    context.read<EventsBloc>().add(const FetchEvents(userId: 'anonymous'));
-  }
-}
+
 }

@@ -32,7 +32,9 @@ class EventsBloc extends Bloc<EventsEvent, EventsState> {
       // Get user favorites
       final favorites = await _eventRepository.getUserLiked(event.userId);
 
-      emit(EventsLoaded(events: events, favorites: favorites));
+      final eventIds = favorites.map((e) => e.remoteId).toSet();
+
+      emit(EventsLoaded(events: events, favorites: eventIds));
     } catch (e) {
       developer.log('Failed to fetch events: ${e.toString()}');
       emit(EventsError(message: e.toString()));
