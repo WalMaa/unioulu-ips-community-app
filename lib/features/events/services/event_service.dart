@@ -66,9 +66,34 @@ class EventService {
         },
         documentId: 'unique()',
       );
+      
     } catch (e) {
       developer.log('Failed to like event: ${e.toString()}');
       throw Exception('Failed to like event: ${e.toString()}');
+    }
+  }
+
+  // Get like count for an event
+  Future<int> getEventLikeCount(String eventId) async {
+    try {
+      developer.log('Fetching like count for event $eventId');
+      final response = await appwriteService.listDocuments(
+        collectionId: "event_likes",
+        queries: [
+          Query.equal('eventId', eventId),
+        ],
+      );
+
+      if (response.containsKey('documents') && response['documents'] is List) {
+        final documents = response['documents'] as List;
+        developer.log('Successfully fetched ${documents.length} likes for event $eventId');
+        return documents.length;
+      } else {
+        throw Exception('Failed to fetch like count: ${response.toString()}');
+      }
+    } catch (e) {
+      developer.log('Failed to fetch like count: ${e.toString()}');
+      throw Exception('Failed to fetch like count: ${e.toString()}');
     }
   }
 
