@@ -69,7 +69,7 @@ class LatestEventsWidgetState extends State<LatestEventsWidget> {
     }
 
     // Calculate card width once here
-    final cardWidth = MediaQuery.of(context).size.width * 0.8;
+    final cardWidth = 300.0;
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -77,8 +77,8 @@ class LatestEventsWidgetState extends State<LatestEventsWidget> {
       children: [
         Padding(
           padding: const EdgeInsets.only(
-            left: AppSpacing.smallPadding,
             top: AppSpacing.defaultPadding,
+            left: AppSpacing.smallPadding
           ),
           child: Text(
             'Latest Events',
@@ -86,15 +86,15 @@ class LatestEventsWidgetState extends State<LatestEventsWidget> {
           ),
         ),
 
-        // Fix: Add a fixed height container for the ListView
         SizedBox(
           height: 250, // Set an appropriate fixed height
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             physics: const BouncingScrollPhysics(),
             padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.smallPadding,
                 vertical: AppSpacing.defaultPadding,
-                horizontal: AppSpacing.smallPadding),
+                ),
             itemCount: _events.length,
             itemBuilder: (context, index) {
               final event = EventModel.fromMap(_events[index]);
@@ -109,7 +109,7 @@ class LatestEventsWidgetState extends State<LatestEventsWidget> {
                 },
                 child: Padding(
                   padding: const EdgeInsets.only(right: AppSpacing.smallPadding),
-                  child: EventCard(event: event),
+                  child: EventCard(event: event, width: cardWidth,),
                 ),
               );
             },

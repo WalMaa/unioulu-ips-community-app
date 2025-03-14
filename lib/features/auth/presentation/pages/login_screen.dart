@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/widgets/button.dart';
 import '../../../language/presentation/pages/language_page.dart';
 import '../../../theme/presentation/bloc/theme_bloc.dart';
 import '../../presentation/bloc/auth_bloc.dart';
@@ -123,7 +124,8 @@ class LoginPage extends StatelessWidget {
                                 hintText:
                                     AppLocalizations.of(context)!.yourEmail,
                                 prefixIcon: Padding(
-                                  padding: const EdgeInsets.all(AppSpacing.defaultPadding),
+                                  padding: const EdgeInsets.all(
+                                      AppSpacing.defaultPadding),
                                   child: Icon(
                                     Icons.email_outlined,
                                     color: Theme.of(context)
@@ -154,8 +156,8 @@ class LoginPage extends StatelessWidget {
                                   hintText: AppLocalizations.of(context)!
                                       .yourPassword,
                                   prefixIcon: Padding(
-                                    padding:
-                                        const EdgeInsets.all(AppSpacing.defaultPadding),
+                                    padding: const EdgeInsets.all(
+                                        AppSpacing.defaultPadding),
                                     child: Icon(
                                       Icons.lock_outline,
                                       color: Theme.of(context)
@@ -168,7 +170,8 @@ class LoginPage extends StatelessWidget {
                               ),
                             ),
                             const SizedBox(height: AppSpacing.defaultPadding),
-                            ElevatedButton(
+                            Button(
+                              text: AppLocalizations.of(context)!.login,
                               onPressed: () {
                                 developer.log(
                                     "Login button pressed: ${emailController.text} ${passwordController.text}");
@@ -176,11 +179,8 @@ class LoginPage extends StatelessWidget {
                                     email: emailController.text,
                                     password: passwordController.text));
                               },
-                              child: Text(
-                                AppLocalizations.of(context)!
-                                    .login
-                                    .toUpperCase(),
-                              ),
+                              fontSize: 18.0,
+                              padding: 20.0,
                             ),
                             const SizedBox(height: AppSpacing.defaultPadding),
                             Row(
