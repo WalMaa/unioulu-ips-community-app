@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/widgets/button.dart';
 import '../../presentation/bloc/auth_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../bloc/auth_event.dart';
@@ -55,14 +56,13 @@ class ResetPasswordPage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () {
-                  context.read<AuthBloc>().add(ResetPasswordEvent(
-                        email: emailController.text,
-                      ));
-                },
-                child: Text(AppLocalizations.of(context)!.resetPassword),
-              ),
+              Button(
+                  onPressed: () {
+                    context.read<AuthBloc>().add(ResetPasswordEvent(
+                          email: emailController.text,
+                        ));
+                  },
+                  text: AppLocalizations.of(context)!.resetPassword),
             ],
           ),
         ),

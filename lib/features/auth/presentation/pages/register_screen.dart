@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/widgets/button.dart';
 import '../../../language/presentation/pages/language_page.dart';
 import '../../../theme/presentation/bloc/theme_bloc.dart';
 import '../../presentation/bloc/auth_bloc.dart';
@@ -192,8 +193,8 @@ class RegisterPage extends StatelessWidget {
                               ),
                             ),
                             const SizedBox(height: AppSpacing.smallPadding),
-                            ElevatedButton(
-                              onPressed: () {
+                            Button(
+                               onPressed: () {
                                 developer.log("Register Name: ${nameController.text}");
                                 developer.log(
                                     "Register Email: ${emailController.text}");
@@ -207,10 +208,11 @@ class RegisterPage extends StatelessWidget {
                                       ),
                                     );
                               },
-                              child: Text(AppLocalizations.of(context)!
+                              text: (AppLocalizations.of(context)!
                                   .register
                                   .toUpperCase()),
                             ),
+                            
                             const SizedBox(height: AppSpacing.defaultPadding),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
