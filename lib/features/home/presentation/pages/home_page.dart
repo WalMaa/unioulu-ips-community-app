@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import '../../../../core/services/http_appwrite_service.dart';
-import '../../../../core/widgets/button.dart';
+import '../../../../core/widgets/custom_button.dart';
 import '../../../announcement/presentation/pages/announcement_page.dart';
 import '../../../announcement/presentation/widgets/announcement_form.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
@@ -130,7 +130,7 @@ class HomePage extends StatelessWidget {
                   child: const Text('Add New Event'),
                 ),
                 const SizedBox(height: 10),
-                Button(
+                CustomButton(
                   onPressed: () {
                     Navigator.push(
                       context,
@@ -241,7 +241,7 @@ class HomePage extends StatelessWidget {
               ),
               const SizedBox(height: 10.0),
               Center(
-                child: Button(
+                child: CustomButton(
                     onPressed: () {
                       Navigator.push(
                         context,

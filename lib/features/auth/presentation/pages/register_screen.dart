@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import '../../../../core/theme/app_theme.dart';
-import '../../../../core/widgets/button.dart';
+import '../../../../core/widgets/custom_button.dart';
 import '../../../language/presentation/pages/language_page.dart';
 import '../../../theme/presentation/bloc/theme_bloc.dart';
 import '../../presentation/bloc/auth_bloc.dart';
@@ -193,7 +193,7 @@ class RegisterPage extends StatelessWidget {
                               ),
                             ),
                             const SizedBox(height: AppSpacing.smallPadding),
-                            Button(
+                            CustomButton(
                                onPressed: () {
                                 developer.log("Register Name: ${nameController.text}");
                                 developer.log(

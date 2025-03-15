@@ -3,7 +3,7 @@ import 'dart:developer' as developer;
 import 'package:appwrite/appwrite.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../../core/widgets/button.dart';
+import '../../../../core/widgets/custom_button.dart';
 import '../../../../features/auth/presentation/bloc/auth_bloc.dart';
 import '../../../../core/services/http_appwrite_service.dart';
 import '../../../auth/presentation/bloc/auth_state.dart';
@@ -191,7 +191,7 @@ class SingleCommunityPostPageState extends State<SingleCommunityPostPage> {
                     ),
                   ),
                   const SizedBox(width: 8),
-                  Button(
+                  CustomButton(
                     onPressed: _addComment,
                     text: 'Post',
                   ),

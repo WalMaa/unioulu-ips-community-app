@@ -11,6 +11,7 @@ import '../../features/language/presentation/pages/language_page.dart';
 import '../../features/theme/presentation/bloc/theme_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../theme/app_theme.dart';
+import '../widgets/custom_button.dart';
 
 class SplashPage extends StatelessWidget {
   const SplashPage({super.key});
@@ -79,9 +80,10 @@ class SplashPage extends StatelessWidget {
                       children: [
                         const Spacer(),
                         Expanded(
-                          flex: 8,
-                          child: SvgPicture.asset(
-                            "assets/icons/welcome.svg",
+                          flex: 1,
+                          child: Image.asset(
+                            "assets/images/unioululogo.png",
+                            fit: BoxFit.contain,
                           ),
                         ),
                         const Spacer(),
@@ -97,7 +99,7 @@ class SplashPage extends StatelessWidget {
                       flex: 8,
                       child: Column(
                         children: [
-                          ElevatedButton(
+                          CustomButton(
                             onPressed: () {
                               Navigator.push(
                                 context,
@@ -108,9 +110,9 @@ class SplashPage extends StatelessWidget {
                                 ),
                               );
                             },
-                            child: Text(
-                              AppLocalizations.of(context)!.login.toUpperCase(),
-                            ),
+                            text: AppLocalizations.of(context)!
+                                .login
+                                .toUpperCase(),
                           ),
                           const SizedBox(height: 16),
                           ElevatedButton(

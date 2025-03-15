@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/theme/app_spacing.dart';
-import '../../../../core/widgets/button.dart';
+import '../../../../core/widgets/custom_button.dart';
 import '../../presentation/bloc/auth_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../bloc/auth_event.dart';
@@ -56,7 +56,7 @@ class ResetPasswordPage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 16),
-              Button(
+              CustomButton(
                   onPressed: () {
                     context.read<AuthBloc>().add(ResetPasswordEvent(
                           email: emailController.text,

@@ -8,7 +8,7 @@
     "logout": "Logout",
     "email": "Email",
     "password": "Password",
-    "forgotPassword": "Forgot Password",
+    "forgotPassword": "Forgot Password?",
     "sendResetLink": "Send Reset Link",
     "resetPassword": "Reset Password",
     "dontHaveAnAccount": "Don't have an account?",
