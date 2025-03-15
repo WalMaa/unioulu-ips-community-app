@@ -1,31 +1,51 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:appwrite/appwrite.dart';
 
 part 'more_event.dart';
 part 'more_state.dart';
 
 class MoreBloc extends Bloc<MoreEvent, MoreState> {
-  MoreBloc() : super(MoreInitial()) {
-    // Handle profile edit event
+  final Account account;
+
+  MoreBloc(this.account) : super(MoreInitial()) {
+    
+    // Handle profile edit event (requires password to update email)
     on<EditProfile>((event, emit) async {
-      // Here, you would add logic to update the profile data, e.g., call an API or update local storage.
-      // For example, let's simulate a delay and emit the ProfileUpdated state
-      await Future.delayed(Duration(seconds: 1));
-      emit(ProfileUpdated());
+      try {
+        await account.updateEmail(email: event.email, password: event.password);
+        await account.updateName(name: event.name);
+
+        emit(ProfileUpdated());
+      } catch (e) {
+        emit(ProfileUpdateFailed("Incorrect current password for email update."));
+      }
     });
 
-    // Handle change password event
-    on<ChangePassword>((event, emit) async {
-      // Here, add logic for changing the password (e.g., Firebase Auth, API call)
-      await Future.delayed(Duration(seconds: 1));
-      emit(PasswordChanged());
-    });
+
+on<ChangePassword>((event, emit) async {
+  try {
+    // Directly use updatePassword with both current and new password
+    await account.updatePassword(
+      oldPassword: event.currentPassword,
+      password: event.newPassword,
+    );
+
+    emit(PasswordChanged());
+  } catch (e) {
+    emit(ProfileUpdateFailed("Incorrect current password or weak new password."));
+  }
+});
+
 
     // Handle delete account event
     on<DeleteAccount>((event, emit) async {
-      // Here, you would call the logic to delete the account (e.g., Firebase Auth, API call)
-      await Future.delayed(Duration(seconds: 1));
-      emit(AccountDeleted());
+      try {
+        await account.deleteSession(sessionId: 'current');
+        emit(AccountDeleted());
+      } catch (e) {
+        emit(ProfileUpdateFailed(e.toString()));
+      }
     });
   }
 }
