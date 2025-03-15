@@ -27,7 +27,7 @@ class Button extends StatelessWidget {
       style: ElevatedButton.styleFrom(
         backgroundColor: color ?? Theme.of(context).primaryColor,
         padding: EdgeInsets.all(padding ?? 16.0),
-        minimumSize: minimumSize ?? const Size(double.infinity, 20.0),
+        minimumSize: minimumSize ?? const Size(60, 20.0),
       ),
       child: Text(
         text,

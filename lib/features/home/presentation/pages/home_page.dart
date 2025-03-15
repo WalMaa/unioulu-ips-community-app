@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import '../../../../core/services/http_appwrite_service.dart';
+import '../../../../core/widgets/button.dart';
 import '../../../announcement/presentation/pages/announcement_page.dart';
 import '../../../announcement/presentation/widgets/announcement_form.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
@@ -129,7 +130,7 @@ class HomePage extends StatelessWidget {
                   child: const Text('Add New Event'),
                 ),
                 const SizedBox(height: 10),
-                ElevatedButton(
+                Button(
                   onPressed: () {
                     Navigator.push(
                       context,
@@ -138,7 +139,7 @@ class HomePage extends StatelessWidget {
                       ),
                     );
                   },
-                  child: const Text('Add New Announcement'),
+                  text: 'Add New Announcement',
                 ),
                 const SizedBox(height: 10),
                 ElevatedButton(
@@ -184,68 +185,63 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    Expanded(
-                      flex: 2,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          const Text('Hello,',
-                              style: TextStyle(fontSize: 24.0)),
-                          Text(
-                            userName,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 22.0,
-                            ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Expanded(
+                    flex: 2,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        const Text('Hello,', style: TextStyle(fontSize: 24.0)),
+                        Text(
+                          userName,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 22.0,
                           ),
-                          const Text(
-                            'Let\'s explore what\'s new...',
-                            style: TextStyle(
-                              fontSize: 16.0,
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 2,
+                        ),
+                        const Text(
+                          'Let\'s explore what\'s new...',
+                          style: TextStyle(
+                            fontSize: 16.0,
                           ),
-                        ],
-                      ),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 2,
+                        ),
+                      ],
                     ),
-                    Expanded(
-                      flex: 1,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          IconButton(
-                            onPressed: () {},
-                            icon: const Icon(Icons.favorite),
-                          ),
-                          IconButton(
-                            onPressed: () {},
-                            icon: const Icon(Icons.settings),
-                          ),
-                        ],
-                      ),
+                  ),
+                  Expanded(
+                    flex: 1,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          onPressed: () {},
+                          icon: const Icon(Icons.favorite),
+                        ),
+                        IconButton(
+                          onPressed: () {},
+                          icon: const Icon(Icons.settings),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-                const SizedBox(height: 10.0),
-                Center(
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      foregroundColor: Colors.white,
-                      backgroundColor: Theme.of(context).primaryColor,
-                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10.0),
+              Center(
+                child: Button(
                     onPressed: () {
                       Navigator.push(
                         context,
@@ -254,43 +250,36 @@ class HomePage extends StatelessWidget {
                         ),
                       );
                     },
-                    child: const Text(
-                      'Announcements',
-                      style: TextStyle(
-                        fontSize: 16.0,
-                      ),
-                    ),
-                  ),
+                    text: 'Announcements'),
+              ),
+              const SizedBox(height: 10.0),
+              const Text(
+                'Topics',
+                style: TextStyle(
+                  fontSize: 16.0,
+                  fontWeight: FontWeight.bold,
                 ),
-                const SizedBox(height: 10.0),
-                const Text(
-                  'Topics',
-                  style: TextStyle(
-                    fontSize: 16.0,
-                    fontWeight: FontWeight.bold,
-                  ),
+              ),
+              TopicListWidget(
+                currentLocale: currentLocale,
+                appwriteService: appwriteService,
+              ),
+              const SizedBox(height: 10.0),
+              const LatestEventsWidget(),
+              const SizedBox(height: 10.0),
+              const Text(
+                'Community',
+                style: TextStyle(
+                  fontSize: 16.0,
+                  fontWeight: FontWeight.bold,
                 ),
-                TopicListWidget(
-                  currentLocale: currentLocale,
-                  appwriteService: appwriteService,
-                ),
-                const SizedBox(height: 10.0),
-                
-                const LatestEventsWidget(),
-                const SizedBox(height: 10.0),
-                const Text(
-                  'Community',
-                  style: TextStyle(
-                    fontSize: 16.0,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 10.0),
-                const LatestCommunityPostsWidget(),
-              ],
-            ),
+              ),
+              const SizedBox(height: 10.0),
+              const LatestCommunityPostsWidget(),
+            ],
           ),
         ),
+      ),
     );
   }
 }

@@ -20,7 +20,7 @@ class AnnouncementsPageState extends State<AnnouncementsPage> {
 
   Future<List<AnnouncementModel>> _fetchAnnouncements() async {
     final response = await _appwriteService.listDocuments(
-      collectionId: "accouncements",
+      collectionId: "announcements",
     );
     final List<dynamic> jsonData = response['documents'];
     return jsonData.map((json) => AnnouncementModel.fromJson(json)).toList();
