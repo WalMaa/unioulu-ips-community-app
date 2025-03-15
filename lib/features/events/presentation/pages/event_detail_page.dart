@@ -2,6 +2,7 @@ import 'package:community/features/events/presentation/bloc/events_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../data/models/event_model.dart';
+import 'package:share_plus/share_plus.dart';
 
 class EventDetailsPage extends StatelessWidget {
   final EventModel event;
@@ -217,7 +218,16 @@ class EventLayout extends StatelessWidget {
                     ),
                     const SizedBox(width: 16.0),
                     TextButton.icon(
-                      onPressed: () {},
+                      onPressed: () {
+                        final String shareText =
+                            'Check out this event: ${event.titleEn}\n'
+                            '📍 Location: ${event.locationEn}\n'
+                            '📅 Date: ${event.date} | 🕒 Time: ${event.time}\n'
+                            '💰 Price: ${event.price}\n'
+                            '🔗 More details: [Event Link Here]'; // Replace with actual link
+
+                        Share.share(shareText);
+                      },
                       label: const Text('Share'),
                       icon: const Icon(Icons.share),
                     ),

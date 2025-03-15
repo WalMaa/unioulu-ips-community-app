@@ -7,6 +7,7 @@ import '../../../auth/presentation/bloc/auth_event.dart';
 import '../../../auth/presentation/bloc/auth_state.dart';
 import '../../../language/presentation/pages/language_page.dart';
 import '../../../theme/presentation/bloc/theme_bloc.dart';
+import '../../../profile/presentation/pages/profile_page.dart'; // Import Profile Page
 
 class MorePage extends StatelessWidget {
   const MorePage({super.key});
@@ -46,31 +47,38 @@ class MorePage extends StatelessWidget {
           ),
         ],
       ),
-      body: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            BlocBuilder<AuthBloc, AuthState>(
+      body: ListView(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
+        children: [
+          ListTile(
+            leading: const Icon(Icons.person),
+            title: const Text("Profile Management"),
+            subtitle: const Text("Edit profile, change password, delete account"),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => ProfilePage()),
+              );
+            },
+          ),
+          const Divider(),
+          Center(
+            child: BlocBuilder<AuthBloc, AuthState>(
               builder: (context, state) {
-                return Center(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      context.read<AuthBloc>().add(LogoutEvent());
-                      Navigator.of(context)
-                          .pushNamedAndRemoveUntil('/login', (route) => false);
-                    },
-                    child: Text(
-                      AppLocalizations.of(context)!.logout.toUpperCase(),
-                    ),
+                return ElevatedButton(
+                  onPressed: () {
+                    context.read<AuthBloc>().add(LogoutEvent());
+                    Navigator.of(context)
+                        .pushNamedAndRemoveUntil('/login', (route) => false);
+                  },
+                  child: Text(
+                    AppLocalizations.of(context)!.logout.toUpperCase(),
                   ),
                 );
               },
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

@@ -287,14 +287,14 @@ def create_comments():
                 "text": f"Great post about {post['postTitle'].lower()}!",
                 "username": "student2025",
                 "dateTime": datetime.now().isoformat(),
-                "posts": post['$id']
+                "postId": post['$id']
 
             },
             {
                 "text": "Thanks for sharing this information.",
                 "username": "academicstaff",
                 "dateTime": (datetime.now() - timedelta(hours=2)).isoformat(),
-                "posts": post['$id']
+                "postId": post['$id']
             }
         ]
         
