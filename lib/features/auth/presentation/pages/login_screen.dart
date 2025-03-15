@@ -111,34 +111,13 @@ class LoginPage extends StatelessWidget {
                       child: Form(
                         child: Column(
                           children: [
-                            TextFormField(
+                            CustomTextField(
                               controller: emailController,
                               keyboardType: TextInputType.emailAddress,
                               textInputAction: TextInputAction.next,
-                              decoration: InputDecoration(
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                  borderSide: const BorderSide(
-                                    color: Colors.indigo,
-                                  ),
-                                ),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                hintText:
-                                    AppLocalizations.of(context)!.yourEmail,
-                                prefixIcon: Padding(
-                                  padding: const EdgeInsets.all(
-                                      AppSpacing.defaultPadding),
-                                  child: Icon(
-                                    Icons.email_outlined,
-                                    color: Theme.of(context)
-                                        .textTheme
-                                        .headlineSmall!
-                                        .color,
-                                  ),
-                                ),
-                              ),
+                              hintText: AppLocalizations.of(context)!.yourEmail,
+                              prefixIcon: Icons.email_outlined,
+                              
                             ),
                             Padding(
                               padding: const EdgeInsets.only(

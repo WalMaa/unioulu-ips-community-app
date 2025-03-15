@@ -1,10 +1,10 @@
 import 'dart:developer' as developer;
 
 import 'package:community/core/theme/app_spacing.dart';
+import 'package:community/core/widgets/custom_text_field.dart';
 import 'package:community/features/auth/presentation/pages/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/custom_button.dart';
 import '../../../language/presentation/pages/language_page.dart';
@@ -87,8 +87,11 @@ class RegisterPage extends StatelessWidget {
                       children: [
                         const Spacer(),
                         Expanded(
-                          flex: 8,
-                          child: SvgPicture.asset("assets/icons/signup.svg"),
+                          flex: 1,
+                          child: Image.asset(
+                            "assets/images/unioululogo.png",
+                            fit: BoxFit.contain,
+                          ),
                         ),
                         const Spacer(),
                       ],
@@ -104,98 +107,39 @@ class RegisterPage extends StatelessWidget {
                       child: Form(
                         child: Column(
                           children: [
-                            TextFormField(
+                            CustomTextField(
                               keyboardType: TextInputType.name,
                               textInputAction: TextInputAction.next,
                               controller: nameController,
-                              decoration: InputDecoration(
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                  borderSide: const BorderSide(
-                                    color: Colors.indigo,
-                                  ),
-                                ),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                hintText: AppLocalizations.of(context)!.name,
-                                prefixIcon: Padding(
-                                  padding: const EdgeInsets.all(AppSpacing.defaultPadding),
-                                  child: Icon(
-                                    Icons.person_outline,
-                                    color: Theme.of(context)
-                                        .textTheme
-                                        .headlineSmall!
-                                        .color,
-                                  ),
-                                ),
-                              ),
+                              hintText: AppLocalizations.of(context)!.username,
+                              prefixIcon: Icons.person_outline,
                             ),
                             Padding(
                               padding: const EdgeInsets.symmetric(
                                   vertical: AppSpacing.defaultPadding),
-                              child: TextFormField(
+                              child: CustomTextField(
                                 keyboardType: TextInputType.emailAddress,
                                 textInputAction: TextInputAction.next,
                                 controller: emailController,
-                                decoration: InputDecoration(
-                                  enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                    borderSide: const BorderSide(
-                                      color: Colors.indigo,
-                                    ),
-                                  ),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  hintText: AppLocalizations.of(context)!.email,
-                                  prefixIcon: Padding(
-                                    padding:
-                                        const EdgeInsets.all(AppSpacing.defaultPadding),
-                                    child: Icon(
-                                      Icons.email_outlined,
-                                      color: Theme.of(context)
-                                          .textTheme
-                                          .headlineSmall!
-                                          .color,
-                                    ),
-                                  ),
-                                ),
+                                hintText: AppLocalizations.of(context)!.email,
+                                prefixIcon: Icons.email_outlined,
                               ),
                             ),
-                            TextFormField(
+                            CustomTextField(
                               keyboardType: TextInputType.visiblePassword,
                               textInputAction: TextInputAction.done,
                               obscureText: true,
                               controller: passwordController,
-                              decoration: InputDecoration(
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                  borderSide: const BorderSide(
-                                    color: Colors.indigo,
-                                  ),
-                                ),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                hintText:
-                                    AppLocalizations.of(context)!.password,
-                                prefixIcon: Padding(
-                                  padding: const EdgeInsets.all(AppSpacing.defaultPadding),
-                                  child: Icon(
-                                    Icons.lock_outline,
-                                    color: Theme.of(context)
-                                        .textTheme
-                                        .headlineSmall!
-                                        .color,
-                                  ),
-                                ),
-                              ),
+                              hintText: AppLocalizations.of(context)!.password,
+                              prefixIcon: Icons.lock_outline,
                             ),
-                            const SizedBox(height: AppSpacing.smallPadding),
+                            const SizedBox(height: AppSpacing.defaultPadding),
                             CustomButton(
-                               onPressed: () {
-                                developer.log("Register Name: ${nameController.text}");
+                              minimumSize: Size(200, 20),
+                              padding: 20,
+                              onPressed: () {
+                                developer.log(
+                                    "Register Name: ${nameController.text}");
                                 developer.log(
                                     "Register Email: ${emailController.text}");
                                 developer.log(
@@ -208,12 +152,10 @@ class RegisterPage extends StatelessWidget {
                                       ),
                                     );
                               },
-                              text: (AppLocalizations.of(context)!
-                                  .register
-                                  .toUpperCase()),
+                              text: (AppLocalizations.of(context)!.register),
                             ),
-                            
                             const SizedBox(height: AppSpacing.defaultPadding),
+                            // Already have an account
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: <Widget>[
@@ -233,8 +175,9 @@ class RegisterPage extends StatelessWidget {
                                   },
                                   child: Text(
                                     AppLocalizations.of(context)!.login,
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       fontWeight: FontWeight.bold,
+                                      color: Theme.of(context).primaryColor,
                                     ),
                                   ),
                                 )
