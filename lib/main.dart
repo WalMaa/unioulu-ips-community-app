@@ -36,6 +36,8 @@ import 'features/language/data/models/language_model.dart';
 import 'features/theme/data/models/theme_model.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:community/features/more/presentation/bloc/more_bloc.dart';
+
 
 final GetIt locator = GetIt.instance;
 
@@ -118,6 +120,9 @@ class MyApp extends StatelessWidget {
             eventRepository: locator<EventRepository>(),
             authRepository: locator<AuthRepositoryImpl>(),
           ),
+        ),
+        BlocProvider(
+          create: (context) => MoreBloc(locator<Account>()), // Add MoreBloc here
         ),
       ],
       child: BlocBuilder<ThemeBloc, ThemeState>(

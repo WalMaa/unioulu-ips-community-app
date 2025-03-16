@@ -7,6 +7,7 @@ import 'package:community/features/events/services/event_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../data/models/event_model.dart';
+import 'package:share_plus/share_plus.dart';
 import '../bloc/events_state.dart';
 import 'package:community/main.dart' show locator;  // Import locator directly
 
@@ -287,7 +288,16 @@ class EventLayoutState extends State<EventLayout> {
                     _buildFavoriteButton(context, state),
                     const SizedBox(width: 16.0),
                     TextButton.icon(
-                      onPressed: () {},
+                      onPressed: () {
+                        final String shareText =
+                            'Check out this event: ${widget.event.titleEn}\n'
+                            '📍 Location: ${widget.event.locationEn}\n'
+                            '📅 Date: ${widget.event.date} | 🕒 Time: ${widget.event.time}\n'
+                            '💰 Price: ${widget.event.price}\n'
+                            '🔗 More details: [Event Link Here]'; // Replace with actual link
+
+                        Share.share(shareText);
+                      },
                       label: const Text('Share'),
                       icon: const Icon(Icons.share),
                     ),
