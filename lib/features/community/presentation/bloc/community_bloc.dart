@@ -2,6 +2,7 @@ import 'dart:developer' as developer;
 
 import 'package:bloc/bloc.dart';
 import 'package:community/features/auth/data/repositories/auth_repository_impl.dart';
+import 'package:community/features/community/data/models/post_model.dart';
 import 'package:community/features/community/service/community_service.dart';
 import 'package:equatable/equatable.dart';
 
@@ -28,7 +29,7 @@ class CommunityBloc extends Bloc<CommunityEvent, CommunityState> {
 
     try {
       // Get community posts from service
-      final posts = await _communityService.getLatestPosts();
+      final posts = await _communityService.getPosts();
 
       emit(CommunityLoaded(posts: posts));
     } catch (e) {
@@ -38,12 +39,15 @@ class CommunityBloc extends Bloc<CommunityEvent, CommunityState> {
   
   Future<void> _onToggleLike(
       ToggleLike event, Emitter<CommunityState> emit) async {
+    developer.log("ToggleLike: Toggling like for post: ${event.postId}");
     if (state is CommunityLoaded) {
       final currentState = state as CommunityLoaded;
       try {
         // Get current user ID from auth repository
         final userId = await _authRepository.getCurrentUserId();
         developer.log('Toggling like for post: ${event.postId}');
+
+        _communityService.likePost(userId, event.postId);
 
       } catch (e) {
         emit(CommunityError(message: e.toString()));

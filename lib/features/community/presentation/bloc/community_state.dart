@@ -12,7 +12,7 @@ class CommunityInitial extends CommunityState {}
 class CommunityLoading extends CommunityState {}
 
 class CommunityLoaded extends CommunityState {
-  final List<Map<String, dynamic>> posts;
+  final List<PostModel> posts;
 
   const CommunityLoaded({required this.posts});
 
@@ -23,7 +23,7 @@ class CommunityLoaded extends CommunityState {
   String toString() => 'CommunityLoaded(posts: ${posts.length})';
 
   CommunityLoaded copyWith({
-    List<Map<String, dynamic>>? posts,
+    List<PostModel>? posts,
   }) {
     return CommunityLoaded(
       posts: posts ?? this.posts,

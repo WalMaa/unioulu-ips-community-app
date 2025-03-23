@@ -46,4 +46,20 @@ class PostModel {
       'comments': comments.map((comment) => comment.toJson()).toList(),
     };
   }
+
+  //from Map
+  factory PostModel.fromMap(Map<String, dynamic> map) {
+    return PostModel(
+      id: map['\$id'],
+      authorName: map['authorName'] ?? '',
+      authorTitle: map['authorTitle'] ?? '',
+      postTitle: map['postTitle'] ?? '',
+      content: map['content'] ?? '',
+      imageUrl: map['imageUrl'] ?? '',
+      comments: (map['comments'] as List<dynamic>?)
+              ?.map((commentJson) => CommentModel.fromMap(commentJson))
+              .toList() ??
+          [],
+    );
+  }
 }

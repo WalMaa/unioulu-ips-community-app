@@ -1,4 +1,7 @@
 import 'package:appwrite/appwrite.dart';
+import 'package:community/features/community/service/community_service.dart';
+import 'package:community/features/events/repository/event_repository.dart';
+import 'package:community/features/events/services/event_service.dart';
 import 'package:get_it/get_it.dart';
 import 'package:isar/isar.dart';
 import '../../features/auth/data/datasources/auth_remote_data_source.dart';
@@ -84,4 +87,9 @@ void _registerAuthDependencies() {
 
 void _registerCommonServices() {
   locator.registerLazySingleton<AppwriteService>(() => AppwriteService());
+  locator.registerLazySingleton<EventService>(
+      () => EventService(databases: locator<Databases>()));
+  locator.registerLazySingleton<EventRepository>(
+      () => EventRepository(eventService: locator<EventService>()));
+  locator.registerLazySingleton<CommunityService>(() => CommunityService(appwriteService: locator<AppwriteService>()));
 }

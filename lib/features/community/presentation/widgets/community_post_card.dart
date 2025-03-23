@@ -1,13 +1,14 @@
 import 'dart:developer' as developer;
 
 import 'package:community/core/theme/theme_constants.dart';
+import 'package:community/features/community/presentation/bloc/community_bloc.dart';
 import 'package:community/features/community/presentation/pages/single_community_post_page.dart';
 import 'package:flutter/material.dart';
-
+import 'package:flutter_bloc/flutter_bloc.dart'; // Import for CommunityBloc
 import '../../data/models/post_model.dart';
 
-class CommunityPostCard extends StatelessWidget {
-  final PostModel post; // Pass the PostModel
+class CommunityPostCard extends StatefulWidget {
+  final PostModel post;
 
   const CommunityPostCard({
     super.key,
@@ -15,10 +16,22 @@ class CommunityPostCard extends StatelessWidget {
   });
 
   @override
+  CommunityPostCardState createState() => CommunityPostCardState();
+}
+
+class CommunityPostCardState extends State<CommunityPostCard> {
+  late final PostModel post;
+
+  @override
+  void initState() {
+    super.initState();
+    post = widget.post;
+  }
+
+  @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        // print(post.id);
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -91,20 +104,24 @@ class CommunityPostCard extends StatelessWidget {
               const SizedBox(height: 16),
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
-                spacing: AppSpacing.smallPadding,
                 children: [
                   Row(
                     children: [
                       IconButton(
                         icon: const Icon(Icons.favorite_border),
                         onPressed: () {
-                          developer.log('Like button pressed: ${post.id}',);
+                          developer.log('Like button pressed: ${post.id}');
                           // Handle like button press
+
+                          context.read<CommunityBloc>().add(
+                                ToggleLike(postId: post.id),
+                              );
                         },
                       ),
                       Text('${0}'),
                     ],
                   ),
+                  const SizedBox(width: AppSpacing.smallPadding),
                   Row(
                     children: [
                       const Icon(Icons.mode_comment_outlined),

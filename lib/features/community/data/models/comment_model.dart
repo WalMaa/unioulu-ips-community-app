@@ -28,4 +28,13 @@ class CommentModel {
       'dateTime': dateTime.toIso8601String(),
     };
   }
+
+  factory CommentModel.fromMap(Map<String, dynamic> map) {
+    return CommentModel(
+      postId: map['postId'] ?? '', // Ensure postId is included in the comment
+      text: map['text'] ?? '',
+      username: map['username'] ?? 'Anonymous',
+      dateTime: DateTime.parse(map['dateTime']),
+    );
+  }
 }
