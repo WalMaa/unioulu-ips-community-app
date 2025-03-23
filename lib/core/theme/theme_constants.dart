@@ -11,6 +11,7 @@ class AppPallete {
   static const Color greyColor = Colors.grey;
   static const Color errorColor = Colors.redAccent;
   static const Color transparentColor = Colors.transparent;
+  static const Color cardColor = Colors.white;
 }
 
 class AppSpacing {

@@ -1,3 +1,5 @@
+import 'dart:developer' as developer;
+
 import 'package:community/core/theme/theme_constants.dart';
 import 'package:community/features/community/presentation/pages/single_community_post_page.dart';
 import 'package:flutter/material.dart';
@@ -30,6 +32,7 @@ class CommunityPostCard extends StatelessWidget {
         shape: RoundedRectangleBorder(
           borderRadius: AppRoundness.largeBorderRadius,
         ),
+        color: Theme.of(context).cardColor,
         elevation: 2,
         margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
         child: Padding(
@@ -38,83 +41,80 @@ class CommunityPostCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const CircleAvatar(
-                radius: 28,
-                backgroundImage:
-                  NetworkImage('https://thispersondoesnotexist.com'),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                  Text(
-                    post.authorName,
-                    style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const CircleAvatar(
+                    radius: 28,
+                    backgroundImage:
+                        NetworkImage('https://thispersondoesnotexist.com'),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          post.authorName,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          post.authorTitle,
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Theme.of(context).colorScheme.secondary,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    post.authorTitle,
-                    style: TextStyle(
-                    fontSize: 14,
-                    color: Theme.of(context).colorScheme.secondary,
-                    ),
-                  ),
-                  ],
-                ),
-                ),
-              ],
+                ],
               ),
               const SizedBox(height: 16),
               Text(
-              post.postTitle,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
+                post.postTitle,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               const SizedBox(height: 8),
               Text(
-              post.content,
-              style: const TextStyle(
-                fontSize: 14,
-              ),
+                post.content,
+                style: const TextStyle(
+                  fontSize: 14,
+                ),
               ),
               const SizedBox(height: 16),
               Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                spacing: AppSpacing.smallPadding,
                 children: [
-                  IconButton(
-                  icon: const Icon(Icons.favorite_border),
-                  onPressed: () {
-                    // Handle like button press
-                  },
+                  Row(
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.favorite_border),
+                        onPressed: () {
+                          developer.log('Like button pressed: ${post.id}',);
+                          // Handle like button press
+                        },
+                      ),
+                      Text('${0}'),
+                    ],
                   ),
-                  Text('${0}'),
-                ],
-                ),
-                Row(
-                children: [
-                  IconButton(
-                  icon: const Icon(Icons.mode_comment_outlined),
-                  onPressed: () {
-                    // Handle comment button press
-                  },
+                  Row(
+                    children: [
+                      const Icon(Icons.mode_comment_outlined),
+                      const SizedBox(width: AppSpacing.smallPadding),
+                      Text('${0}'),
+                    ],
                   ),
-                  Text('${0}'),
                 ],
-                ),
-              ],
               ),
             ],
-            
           ),
         ),
       ),
