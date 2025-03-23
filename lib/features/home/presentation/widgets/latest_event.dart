@@ -1,4 +1,4 @@
-import 'package:community/core/theme/app_spacing.dart';
+import 'package:community/core/theme/theme_constants.dart';
 import 'package:community/features/events/data/models/event_model.dart';
 import 'package:community/features/events/presentation/widgets/event_card.dart';
 import 'package:flutter/material.dart';

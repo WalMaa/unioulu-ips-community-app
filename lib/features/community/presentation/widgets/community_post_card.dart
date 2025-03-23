@@ -1,3 +1,4 @@
+import 'package:community/core/theme/theme_constants.dart';
 import 'package:community/features/community/presentation/pages/single_community_post_page.dart';
 import 'package:flutter/material.dart';
 
@@ -27,7 +28,7 @@ class CommunityPostCard extends StatelessWidget {
       },
       child: Card(
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: AppRoundness.largeBorderRadius,
         ),
         elevation: 2,
         margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
@@ -61,7 +62,7 @@ class CommunityPostCard extends StatelessWidget {
                     post.authorTitle,
                     style: TextStyle(
                     fontSize: 14,
-                    color: Colors.grey[600],
+                    color: Theme.of(context).colorScheme.secondary,
                     ),
                   ),
                   ],
@@ -86,12 +87,12 @@ class CommunityPostCard extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 Row(
                 children: [
                   IconButton(
-                  icon: const Icon(Icons.thumb_up),
+                  icon: const Icon(Icons.favorite_border),
                   onPressed: () {
                     // Handle like button press
                   },
@@ -102,7 +103,7 @@ class CommunityPostCard extends StatelessWidget {
                 Row(
                 children: [
                   IconButton(
-                  icon: const Icon(Icons.comment),
+                  icon: const Icon(Icons.mode_comment_outlined),
                   onPressed: () {
                     // Handle comment button press
                   },
