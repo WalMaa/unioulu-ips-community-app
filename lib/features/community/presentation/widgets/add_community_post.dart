@@ -17,6 +17,9 @@ class CommunityPostFormState extends State<CommunityPostForm> {
   final _contentController = TextEditingController();
   final _authorNameController = TextEditingController();
   final _authorTitleController = TextEditingController();
+  final _pollQuestionController = TextEditingController();
+  final _pollOptionController = TextEditingController();
+  List<String> _pollOptions = [];
   File? _selectedImage;
 
   @override
@@ -25,6 +28,8 @@ class CommunityPostFormState extends State<CommunityPostForm> {
     _contentController.dispose();
     _authorNameController.dispose();
     _authorTitleController.dispose();
+    _pollQuestionController.dispose();
+    _pollOptionController.dispose();
     super.dispose();
   }
 
@@ -44,83 +49,96 @@ class CommunityPostFormState extends State<CommunityPostForm> {
     if (_selectedImage == null) return null;
 
     final response = await appwriteService.uploadFile(
-        bucketId: "storage",
+        bucketId: "buckekt_k",
         file: _selectedImage!,
         fileId: 'unique()' // This generates a unique ID for each file
         );
 
-      final fileId = response['\$id'];
-      return '${appwriteService.endpoint}/storage/buckets/storage/files/$fileId/view?project=$appwriteProjectId&mode=admin';
+    final fileId = response['\$id'];
+    return '${appwriteService.endpoint}/storage/buckets/storage/files/$fileId/view?project=$appwriteProjectId&mode=admin';
+  }
 
+  void _addPollOption() {
+    if (_pollOptionController.text.isNotEmpty) {
+      setState(() {
+        _pollOptions.add(_pollOptionController.text);
+        _pollOptionController.clear();
+      });
+    }
   }
 
   void _submitForm() async {
-  // Store context before async gap
-  final currentContext = context;
-  
-  if (_formKey.currentState!.validate()) {
-    try {
-      // Show loading indicator
-      ScaffoldMessenger.of(currentContext).showSnackBar(
-        const SnackBar(content: Text('Adding post...')),
-      );
-      
-      final appwriteService = AppwriteService();
-      
-      // Upload the image and get its URL
-      final imageUrl = await _uploadImage(appwriteService);
-      
-      // Check if widget is still mounted
-      if (!mounted) return;
+    // Store context before async gap
+    final currentContext = context;
 
-      if (imageUrl == null) {
+    if (_formKey.currentState!.validate()) {
+      try {
+        // Show loading indicator
         ScaffoldMessenger.of(currentContext).showSnackBar(
-          const SnackBar(content: Text('Failed to upload image.')),
+          const SnackBar(content: Text('Adding post...')),
         );
-        return;
+
+        final appwriteService = AppwriteService();
+
+        // Upload the image and get its URL
+        final imageUrl = await _uploadImage(appwriteService);
+
+        // Check if widget is still mounted
+        if (!mounted) return;
+
+        if (imageUrl == null) {
+          ScaffoldMessenger.of(currentContext).showSnackBar(
+            const SnackBar(content: Text('Failed to upload image.')),
+          );
+          return;
+        }
+
+        // Assuming you are collecting poll options as a list of strings
+        List<String> pollOptions = ['Option 1', 'Option 2', 'Option 3']; // Replace with actual options
+
+        // Create the post data including poll options
+        final data = {
+          'postTitle': _postTitleController.text,
+          'content': _contentController.text,
+          'imageUrl': imageUrl,
+          'authorName': _authorNameController.text,
+          'authorTitle': _authorTitleController.text,
+          'createdAt': DateTime.now().toIso8601String(),
+          'updatedAt': DateTime.now().toIso8601String(), // Add this for sorting
+          'pollOptions': pollOptions, // Add poll options
+        };
+        print(data);
+
+        // Make the request to create a new document
+        final response = await appwriteService.createDocument(
+          collectionId: "posts",
+          data: data,
+          documentId: 'unique()', // Pass as separate parameter
+        );
+
+        // Check if widget is still mounted after second async operation
+        if (!mounted) return;
+
+        // Clear loading snackbar
+        ScaffoldMessenger.of(currentContext).clearSnackBars();
+
+        // Show success and navigate
+        ScaffoldMessenger.of(currentContext).showSnackBar(
+          const SnackBar(content: Text('Post added successfully!')),
+        );
+        Navigator.of(currentContext).pop();
+      } catch (e) {
+        // Check if widget is still mounted
+        if (!mounted) return;
+
+        // Show error message
+        ScaffoldMessenger.of(currentContext).showSnackBar(
+          SnackBar(content: Text('Error adding post: ${e.toString()}')),
+        );
       }
-
-      // Create the post data
-      final data = {
-        'postTitle': _postTitleController.text,
-        'content': _contentController.text,
-        'imageUrl': imageUrl,
-        'authorName': _authorNameController.text,
-        'authorTitle': _authorTitleController.text,
-        'createdAt': DateTime.now().toIso8601String(),
-        'updatedAt': DateTime.now().toIso8601String(), // Add this for sorting
-      };
-
-      // Make the request to create a new document
-      // Fix: pass data directly and documentId as a separate parameter
-      await appwriteService.createDocument(
-        collectionId: "posts",
-        data: data,
-        documentId: 'unique()', // Pass as separate parameter
-      );
-      
-      // Check if widget is still mounted after second async operation
-      if (!mounted) return;
-      
-      // Clear loading snackbar
-      ScaffoldMessenger.of(currentContext).clearSnackBars();
-      
-      // Show success and navigate
-      ScaffoldMessenger.of(currentContext).showSnackBar(
-        const SnackBar(content: Text('Post added successfully!')),
-      );
-      Navigator.of(currentContext).pop();
-    } catch (e) {
-      // Check if widget is still mounted
-      if (!mounted) return;
-      
-      // Show error message
-      ScaffoldMessenger.of(currentContext).showSnackBar(
-        SnackBar(content: Text('Error adding post: ${e.toString()}')),
-      );
     }
   }
-}
+
 
   @override
   Widget build(BuildContext context) {
@@ -186,6 +204,39 @@ class CommunityPostFormState extends State<CommunityPostForm> {
                   return null;
                 },
               ),
+              const SizedBox(height: 20),
+
+              // Poll Question Field
+              TextFormField(
+                controller: _pollQuestionController,
+                decoration: const InputDecoration(labelText: 'Poll Question'),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter a poll question';
+                  }
+                  return null;
+                },
+              ),
+
+              // Poll Option Field
+              TextFormField(
+                controller: _pollOptionController,
+                decoration: const InputDecoration(labelText: 'Poll Option'),
+              ),
+              ElevatedButton(
+                onPressed: _addPollOption,
+                child: const Text('Add Poll Option'),
+              ),
+              const SizedBox(height: 16),
+              if (_pollOptions.isNotEmpty)
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text('Poll Options:'),
+                    ..._pollOptions.map((option) => ListTile(title: Text(option))),
+                  ],
+                ),
+
               const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: _submitForm,
