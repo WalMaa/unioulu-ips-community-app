@@ -1,7 +1,7 @@
+import 'package:community/features/community/presentation/widgets/community_post_card.dart';
 import 'package:flutter/material.dart';
 import '../../../../core/services/http_appwrite_service.dart';
 import '../../data/models/post_model.dart';
-import '../pages/community_post.dart';
 
 class LatestCommunityPostsWidget extends StatefulWidget {
   const LatestCommunityPostsWidget({super.key});
@@ -72,7 +72,7 @@ class LatestCommunityPostsWidgetState
                 itemCount: _posts.length,
                 itemBuilder: (context, index) {
                   final post = _posts[index];
-                  return CommunityPost(post: post);
+                  return CommunityPostCard(post: post);
                 },
               );
   }

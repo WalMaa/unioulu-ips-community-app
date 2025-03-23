@@ -63,28 +63,36 @@ sample_topics = [
 
 sample_posts = [
     {
-        "postTitle": "Welcome to the Academic Year 2025-2026!",
-        "content": "Dear students and staff, we're excited to start another academic year at the University of Oulu! This year brings many new opportunities and exciting developments in our academic community.",
+        "postTitle": "Best Study Spots on Campus",
+        "content": "Hey everyone! I'm a second-year student and I wanted to share some of my favorite study spots on campus. The library is great, but I also love the quiet corners in the new Student Technology Hub.",
         "imageUrl": "https://images.unsplash.com/photo-1564981797816-1043664bf78d?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-        "authorName": "Prof. Anna Virtanen",
-        "authorTitle": "Vice Rector for Education",
-        "createdAt": datetime.now().isoformat()
+        "authorName": "John Doe",
+        "authorTitle": "Student",
+        "createdAt": (datetime.now() - timedelta(days=1)).isoformat()
     },
     {
-        "postTitle": "New Student Technology Hub Opening",
-        "content": "We're thrilled to announce the opening of our new Student Technology Hub at Linnanmaa Campus! The hub offers state-of-the-art equipment and spaces for project work, coding, and digital content creation.",
+        "postTitle": "Tips for Balancing Studies and Social Life",
+        "content": "As a senior student, I've learned a lot about balancing studies and social life. My advice is to create a schedule and stick to it, but also make sure to take breaks and enjoy time with friends.",
         "imageUrl": "https://images.unsplash.com/photo-1564981797816-1043664bf78d?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-        "authorName": "Dr. Mikko Järvinen",
-        "authorTitle": "Head of IT Services",
-        "createdAt": (datetime.now() - timedelta(days=2)).isoformat()
+        "authorName": "Jane Smith",
+        "authorTitle": "Student",
+        "createdAt": (datetime.now() - timedelta(days=3)).isoformat()
     },
     {
-        "postTitle": "International Student Ambassador Program Launch",
-        "content": "Join our new International Student Ambassador program! Help welcome new international students and promote cultural exchange on campus. Applications are now open for the spring semester.",
+        "postTitle": "Faculty Insights: The Future of AI",
+        "content": "Artificial Intelligence is rapidly evolving and has the potential to revolutionize many industries. In this post, I will discuss the future trends and the impact of AI on our society.",
         "imageUrl": "https://images.unsplash.com/photo-1564981797816-1043664bf78d?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-        "authorName": "Lisa Chen",
-        "authorTitle": "International Student Coordinator",
-        "createdAt": (datetime.now() - timedelta(days=5)).isoformat()
+        "authorName": "Dr. Sarah Johnson",
+        "authorTitle": "Faculty Member",
+        "createdAt": (datetime.now() - timedelta(days=4)).isoformat()
+    },
+    {
+        "postTitle": "Exploring Quantum Computing",
+        "content": "Quantum computing is an exciting field that promises to solve complex problems that are currently unsolvable with classical computers. In this post, I will introduce the basics of quantum computing and its potential applications.",
+        "imageUrl": "https://images.unsplash.com/photo-1564981797816-1043664bf78d?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        "authorName": "Prof. David Lee",
+        "authorTitle": "Faculty Member",
+        "createdAt": (datetime.now() - timedelta(days=6)).isoformat()
     }
 ]
 
@@ -220,6 +228,15 @@ collections_config = [
             {'type': 'string', 'key': 'authorName', 'size': 255, 'required': True},
             {'type': 'string', 'key': 'authorTitle', 'size': 255, 'required': True},
             {'type': 'datetime', 'key': 'createdAt', 'required': True}
+        ]
+    },
+    # Post likes
+    {
+        'name': 'PostLikes',
+        'collection_id': 'post_likes',
+        'attributes': [
+            {'type': 'string', 'key': 'postId', 'size': 255, 'required': True},
+            {'type': 'string', 'key': 'userId', 'size': 255, 'required': True}
         ]
     },
     # Comments

@@ -1,8 +1,8 @@
+import 'package:community/features/community/presentation/widgets/community_post_card.dart';
 import 'package:flutter/material.dart';
 import '../../../../core/services/http_appwrite_service.dart';
 import '../../data/models/post_model.dart';
 import '../widgets/add_community_post.dart';
-import 'community_post.dart';
 
 class CommunityPage extends StatefulWidget {
   const CommunityPage({super.key});
@@ -52,7 +52,7 @@ class CommunityPageState extends State<CommunityPage> {
               itemCount: posts.length,
               itemBuilder: (context, index) {
                 final post = posts[index];
-                return CommunityPost(post: post);
+                return CommunityPostCard(post: post);
               },
             );
           }
