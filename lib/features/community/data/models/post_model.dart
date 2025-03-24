@@ -8,6 +8,7 @@ class PostModel {
   final String content;
   final String imageUrl;
   List<CommentModel> comments;
+  final bool isLiked;
 
   PostModel({
     required this.id,
@@ -16,6 +17,7 @@ class PostModel {
     required this.postTitle,
     required this.content,
     required this.imageUrl,
+    this.isLiked = false, // Default to not liked
     this.comments = const [], // Initialize with an empty list by default
   });
 
@@ -60,6 +62,28 @@ class PostModel {
               ?.map((commentJson) => CommentModel.fromMap(commentJson))
               .toList() ??
           [],
+    );
+  }
+
+  PostModel copyWith({
+    String? id,
+    String? authorName,
+    String? authorTitle,
+    String? postTitle,
+    String? content,
+    String? imageUrl,
+    List<CommentModel>? comments,
+    bool? isLiked,
+  }) {
+    return PostModel(
+      id: id ?? this.id,
+      authorName: authorName ?? this.authorName,
+      authorTitle: authorTitle ?? this.authorTitle,
+      postTitle: postTitle ?? this.postTitle,
+      content: content ?? this.content,
+      imageUrl: imageUrl ?? this.imageUrl,
+      comments: comments ?? this.comments,
+      isLiked: isLiked ?? this.isLiked,
     );
   }
 }

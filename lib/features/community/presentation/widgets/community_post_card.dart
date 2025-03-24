@@ -1,32 +1,17 @@
-import 'dart:developer' as developer;
-
 import 'package:community/core/theme/theme_constants.dart';
-import 'package:community/features/community/presentation/bloc/community_bloc.dart';
 import 'package:community/features/community/presentation/pages/single_community_post_page.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart'; // Import for CommunityBloc
 import '../../data/models/post_model.dart';
 
-class CommunityPostCard extends StatefulWidget {
+class CommunityPostCard extends StatelessWidget {  // Changed to StatelessWidget
   final PostModel post;
+  final VoidCallback? onLikePressed;
 
   const CommunityPostCard({
     super.key,
     required this.post,
+    this.onLikePressed,
   });
-
-  @override
-  CommunityPostCardState createState() => CommunityPostCardState();
-}
-
-class CommunityPostCardState extends State<CommunityPostCard> {
-  late final PostModel post;
-
-  @override
-  void initState() {
-    super.initState();
-    post = widget.post;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,6 +38,7 @@ class CommunityPostCardState extends State<CommunityPostCard> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Profile section
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -87,6 +73,7 @@ class CommunityPostCardState extends State<CommunityPostCard> {
                 ],
               ),
               const SizedBox(height: 16),
+              // Post content
               Text(
                 post.postTitle,
                 style: const TextStyle(
@@ -102,23 +89,20 @@ class CommunityPostCardState extends State<CommunityPostCard> {
                 ),
               ),
               const SizedBox(height: 16),
+              // Actions row
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Row(
                     children: [
                       IconButton(
-                        icon: const Icon(Icons.favorite_border),
-                        onPressed: () {
-                          developer.log('Like button pressed: ${post.id}');
-                          // Handle like button press
-
-                          context.read<CommunityBloc>().add(
-                                ToggleLike(postId: post.id),
-                              );
-                        },
+                        icon: Icon(
+                          post.isLiked ? Icons.favorite : Icons.favorite_border,
+                          color: post.isLiked ? Colors.red : null,
+                        ),
+                        onPressed: onLikePressed,  // Use the callback parameter
                       ),
-                      Text('${0}'),
+                      Text('${0}'),  // Like count placeholder
                     ],
                   ),
                   const SizedBox(width: AppSpacing.smallPadding),
@@ -126,7 +110,7 @@ class CommunityPostCardState extends State<CommunityPostCard> {
                     children: [
                       const Icon(Icons.mode_comment_outlined),
                       const SizedBox(width: AppSpacing.smallPadding),
-                      Text('${0}'),
+                      Text('${0}'),  // Comment count placeholder
                     ],
                   ),
                 ],

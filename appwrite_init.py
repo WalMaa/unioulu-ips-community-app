@@ -275,6 +275,21 @@ def create_event_like_index():
         print(result)
     except AppwriteException as e:
         print(f"Error creating event like index: {str(e)}")
+        
+        
+def create_post_like_index():
+    try:
+        print("Creating unique index for post likes...")
+        result = databases.create_index(
+            db_id,
+            'post_likes',
+            'postId_username_index',
+            'unique',
+            ['postId', 'userId']
+        )
+        print(result)
+    except AppwriteException as e:
+        print(f"Error creating event like index: {str(e)}")
 
 def create_sample_posts():
     try:
@@ -409,6 +424,7 @@ if __name__ == "__main__":
         create_sample_topics()
         create_sample_posts()
         create_event_like_index()
+        create_post_like_index()
         create_comments()
     except AppwriteException as e:
         print("Exception: ", e.message)

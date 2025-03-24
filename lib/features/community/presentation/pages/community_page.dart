@@ -63,6 +63,12 @@ class CommunityView extends StatelessWidget {
                   final post = state.posts[index];
                   return CommunityPostCard(
                     post: post,
+                    onLikePressed: () {
+                      // Define the callback here
+                      context.read<CommunityBloc>().add(
+                            ToggleLike(postId: post.id),
+                          );
+                    },
                     
                   );
                 },
