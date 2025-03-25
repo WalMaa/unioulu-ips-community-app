@@ -66,7 +66,6 @@ class EventService {
         },
         documentId: 'unique()',
       );
-      
     } catch (e) {
       developer.log('Failed to like event: ${e.toString()}');
       throw Exception('Failed to like event: ${e.toString()}');
@@ -86,7 +85,8 @@ class EventService {
 
       if (response.containsKey('documents') && response['documents'] is List) {
         final documents = response['documents'] as List;
-        developer.log('Successfully fetched ${documents.length} likes for event $eventId');
+        developer.log(
+            'Successfully fetched ${documents.length} likes for event $eventId');
         return documents.length;
       } else {
         throw Exception('Failed to fetch like count: ${response.toString()}');
@@ -111,7 +111,7 @@ class EventService {
         queries: [
           Query.equal('userId', userId),
           Query.equal('eventId', eventId),
-      ],
+        ],
       );
 
       // Check if document exists and delete it
@@ -154,30 +154,55 @@ class EventService {
         ],
       );
 
-       // Parse the response
+      // Parse the response
       if (response.containsKey('documents') && response['documents'] is List) {
-        final documents = response['documents'] as List;
-        developer.log('Successfully fetched ${documents.length} events');
+        final eventLikes = response['documents'] as List;
+        developer.log('Successfully fetched ${eventLikes.length} events');
 
-        return documents
+        if (eventLikes.isEmpty) {
+          developer.log('No liked events found');
+          return [];
+        }
+
+        // Extract the event IDs that the user has liked
+        final likedEventIds = eventLikes.map((doc) => doc['eventId']).toList();
+
+        // Query the 'posts' collection to fetch the full post data for each liked post
+        final eventsResponse = await appwriteService.listDocuments(
+          collectionId: 'posts',
+          queries: [
+            Query.contains('\$id',
+                likedEventIds),
+          ],
+        );
+
+         // Parse and return the list of PostModel objects
+      if (eventsResponse.containsKey('documents') && eventsResponse['documents'] is List) {
+        final events = eventsResponse['documents'] as List;
+        developer.log('Successfully fetched ${events.length} posts');
+
+        return events
             .map((doc) {
               try {
                 if (doc is Map<String, dynamic>) {
-                  return EventModel.fromMap(doc['data'] ?? doc);
+                  return EventModel.fromMap(doc);
                 }
-                return EventModel.fromMap(jsonDecode(jsonEncode(doc))['data'] ??
-                    jsonDecode(jsonEncode(doc)));
+                return EventModel.fromMap(jsonDecode(jsonEncode(doc)));
               } catch (e) {
-                developer.log('Error parsing event document: $e');
+                developer.log('Error parsing post document: $e');
                 return null;
               }
             })
             .whereType<EventModel>()
             .toList();
+      } else {
+        developer.log('No posts found for liked post IDs');
+        return [];
       }
+    }
 
-      developer.log('No liked events found or invalid response format');
-      return [];
+    developer.log('No liked posts found or invalid response format');
+    return [];
     } catch (e) {
       developer.log('Failed to get liked events: ${e.toString()}');
       return []; // Return empty list on error instead of throwing

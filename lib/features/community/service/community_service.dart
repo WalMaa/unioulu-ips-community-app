@@ -50,6 +50,7 @@ Future<List<PostModel>> getUserLikedPosts(String userId) async {
   }
 
   try {
+    // Step 1: Get all liked post IDs from the 'post_likes' collection
     final response = await _appwriteService.listDocuments(
       collectionId: 'post_likes',
       queries: [
@@ -57,35 +58,60 @@ Future<List<PostModel>> getUserLikedPosts(String userId) async {
       ],
     );
 
-    // Parse the response
-      if (response.containsKey('documents') && response['documents'] is List) {
-        final documents = response['documents'] as List;
-        developer.log('Successfully fetched ${documents.length} events');
+    if (response.containsKey('documents') && response['documents'] is List) {
+      final postLikes = response['documents'] as List;
 
-        return documents
+      if (postLikes.isEmpty) {
+        developer.log('No likes found for user');
+        return [];
+      }
+
+      // Extract the post IDs that the user has liked
+      final likedPostIds = postLikes
+          .map((doc) => doc['postId'])
+          .toList();
+
+      // Query the 'posts' collection to fetch the full post data for each liked post
+      final postsResponse = await _appwriteService.listDocuments(
+        collectionId: 'posts',
+        queries: [
+          Query.contains('\$id', likedPostIds),
+        ],
+      );
+
+      // Parse and return the list of PostModel objects
+      if (postsResponse.containsKey('documents') && postsResponse['documents'] is List) {
+        final posts = postsResponse['documents'] as List;
+        developer.log('Successfully fetched ${posts.length} posts');
+
+        return posts
             .map((doc) {
               try {
                 if (doc is Map<String, dynamic>) {
-                  return PostModel.fromMap(doc['data'] ?? doc);
+                  return PostModel.fromMap(doc);
                 }
-                return PostModel.fromMap(jsonDecode(jsonEncode(doc))['data'] ??
-                    jsonDecode(jsonEncode(doc)));
+                return PostModel.fromMap(jsonDecode(jsonEncode(doc)));
               } catch (e) {
-                developer.log('Error parsing event document: $e');
+                developer.log('Error parsing post document: $e');
                 return null;
               }
             })
             .whereType<PostModel>()
             .toList();
+      } else {
+        developer.log('No posts found for liked post IDs');
+        return [];
       }
-
-      developer.log('No liked events found or invalid response format');
-      return [];
-    } catch (e) {
-      developer.log('Failed to get liked events: ${e.toString()}');
-      return []; // Return empty list on error instead of throwing
     }
+
+    developer.log('No liked posts found or invalid response format');
+    return [];
+  } catch (e) {
+    developer.log('Failed to get liked posts: ${e.toString()}');
+    return [];
+  }
 }
+
 
   // Like a post (create a like document)
   Future<Map<String, dynamic>> likePost(String userId, String postId) async {
