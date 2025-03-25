@@ -102,7 +102,7 @@ class CommunityPostCard extends StatelessWidget {  // Changed to StatelessWidget
                         ),
                         onPressed: onLikePressed,  // Use the callback parameter
                       ),
-                      Text('${0}'),  // Like count placeholder
+                      Text('${post.likeCount}'),  // Like count placeholder
                     ],
                   ),
                   const SizedBox(width: AppSpacing.smallPadding),
@@ -110,7 +110,7 @@ class CommunityPostCard extends StatelessWidget {  // Changed to StatelessWidget
                     children: [
                       const Icon(Icons.mode_comment_outlined),
                       const SizedBox(width: AppSpacing.smallPadding),
-                      Text('${0}'),  // Comment count placeholder
+                      Text('${0}'),
                     ],
                   ),
                 ],

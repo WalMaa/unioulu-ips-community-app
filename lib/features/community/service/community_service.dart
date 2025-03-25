@@ -12,7 +12,7 @@ class CommunityService {
   CommunityService({required AppwriteService appwriteService}) 
       : _appwriteService = appwriteService;
 
-  Future<List<PostModel>> getPosts() async {
+Future<List<PostModel>> getPosts() async {
   try {
     final response = await _appwriteService.listDocuments(
       collectionId: "posts",
@@ -21,8 +21,8 @@ class CommunityService {
     if (response.containsKey('documents') && response['documents'] is List) {
       final documents = response['documents'] as List;
       
-      // Properly convert to PostModel objects
-      return documents.map((doc) {
+      // Convert to PostModel objects
+      final posts = documents.map((doc) {
         try {
           if (doc is Map<String, dynamic>) {
             return PostModel.fromMap(doc['data'] ?? doc);
@@ -32,13 +32,46 @@ class CommunityService {
           return null;
         }
       })
-      .whereType<PostModel>()  // Filter out nulls
+      .whereType<PostModel>()
       .toList();
+      
+      // fetch like counts for each post
+      for (int i = 0; i < posts.length; i++) {
+        try {
+          final likeCount = await getPostLikeCount(posts[i].id);
+          
+          posts[i] = posts[i].copyWith(likeCount: likeCount);
+        } catch (e) {
+          developer.log('Error fetching like count: $e');
+        }
+      }
+      
+      return posts;
     } else {
       throw Exception('Failed to fetch posts: ${response.toString()}');
     }
   } catch (e) {
     throw Exception('Failed to fetch posts: ${e.toString()}');
+  }
+}
+
+// Get like count for a post
+Future<int> getPostLikeCount(String postId) async {
+  try {
+    final response = await _appwriteService.listDocuments(
+      collectionId: 'post_likes',
+      queries: [
+        Query.equal('postId', postId),
+      ],
+    );
+
+    if (response.containsKey('documents') && response['documents'] is List) {
+      return (response['documents'] as List).length;
+    } else {
+      throw Exception('Failed to fetch like count: ${response.toString()}');
+    }
+  } catch (e) {
+    throw Exception('Failed to fetch like count: ${e.toString()}');
   }
 }
 
@@ -135,6 +168,45 @@ Future<List<PostModel>> getUserLikedPosts(String userId) async {
       );
     } catch (e) {
       throw Exception('Failed to like post: $e');
+    }
+  }
+
+  // Unlike a post (delete a like document)
+  Future<void> unlikePost(String userId, String postId) async {
+    if (userId == 'anonymous') {
+      throw Exception('Anonymous users cannot unlike posts');
+    }
+
+    try {
+      final response = await _appwriteService.listDocuments(
+        collectionId: 'post_likes',
+        queries: [
+          Query.and([
+            Query.equal('postId', postId),
+            Query.equal('userId', userId),
+          ]),
+        ],
+      );
+
+      if (response.containsKey('documents') && response['documents'] is List) {
+        final documents = response['documents'] as List;
+
+        if (documents.isEmpty) {
+          throw Exception('Like document not found');
+        }
+
+        final likeDocument = documents.first;
+        final likeDocumentId = likeDocument['\$id'];
+
+        await _appwriteService.deleteDocument(
+          collectionId: 'post_likes',
+          documentId: likeDocumentId,
+        );
+      } else {
+        throw Exception('Failed to fetch like document: ${response.toString()}');
+      }
+    } catch (e) {
+      throw Exception('Failed to unlike post: $e');
     }
   }
 

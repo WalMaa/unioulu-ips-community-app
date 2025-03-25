@@ -45,7 +45,7 @@ class LatestCommunityPostsWidgetState
     setState(() {
       _posts = sortedPosts
           .take(5)
-          .map((json) => PostModel.fromJson(json))
+          .map((json) => PostModel.fromMap(json))
           .toList();
       _isLoading = false;
     });

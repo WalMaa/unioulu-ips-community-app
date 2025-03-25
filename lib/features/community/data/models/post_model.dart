@@ -9,6 +9,7 @@ class PostModel {
   final String imageUrl;
   List<CommentModel> comments;
   final bool isLiked;
+  final int likeCount;
 
   PostModel({
     required this.id,
@@ -17,25 +18,10 @@ class PostModel {
     required this.postTitle,
     required this.content,
     required this.imageUrl,
-    this.isLiked = false, // Default to not liked
-    this.comments = const [], // Initialize with an empty list by default
+    this.isLiked = false,
+    this.comments = const [],
+    this.likeCount = 0,
   });
-
-  // Factory constructor to create from JSON
-  factory PostModel.fromJson(Map<String, dynamic> json) {
-    return PostModel(
-      id: json['\$id'],
-      authorName: json['authorName'] ?? '',
-      authorTitle: json['authorTitle'] ?? '',
-      postTitle: json['postTitle'] ?? '',
-      content: json['content'] ?? '',
-      imageUrl: json['imageUrl'] ?? '',
-      comments: (json['comments'] as List<dynamic>?)
-              ?.map((commentJson) => CommentModel.fromJson(commentJson))
-              .toList() ??
-          [],
-    );
-  }
 
   Map<String, dynamic> toJson() {
     return {
@@ -46,6 +32,8 @@ class PostModel {
       'content': content,
       'imageUrl': imageUrl,
       'comments': comments.map((comment) => comment.toJson()).toList(),
+      'isLiked': isLiked,
+      'likeCount': likeCount,
     };
   }
 
@@ -62,6 +50,8 @@ class PostModel {
               ?.map((commentJson) => CommentModel.fromMap(commentJson))
               .toList() ??
           [],
+      likeCount: map['likeCount'] ?? 0,
+      isLiked: map['isLiked'] ?? false,
     );
   }
 
@@ -74,6 +64,7 @@ class PostModel {
     String? imageUrl,
     List<CommentModel>? comments,
     bool? isLiked,
+    int? likeCount,
   }) {
     return PostModel(
       id: id ?? this.id,
@@ -84,6 +75,7 @@ class PostModel {
       imageUrl: imageUrl ?? this.imageUrl,
       comments: comments ?? this.comments,
       isLiked: isLiked ?? this.isLiked,
+      likeCount: likeCount ?? this.likeCount,
     );
   }
 }
