@@ -69,3 +69,43 @@ class CommunityError extends CommunityState {
   @override
   List<Object> get props => [message];
 }
+
+// State when comments are loading
+class CommentsLoading extends CommunityState {
+  final PostModel post; // Keep the post data
+  
+  const CommentsLoading({required this.post});
+  
+  @override
+  List<Object> get props => [post];
+}
+
+// State when comments are loaded
+class CommentsLoaded extends CommunityState {
+  final PostModel post;
+  final List<CommentModel> comments;
+  
+  const CommentsLoaded({
+    required this.post,
+    required this.comments,
+  });
+  
+  @override
+  List<Object> get props => [post, comments];
+}
+
+// State after adding a comment
+class CommentAdded extends CommunityState {
+  final PostModel post;
+  final List<CommentModel> comments;
+  final String message;
+  
+  const CommentAdded({
+    required this.post,
+    required this.comments,
+    required this.message,
+  });
+  
+  @override
+  List<Object> get props => [post, comments, message];
+}

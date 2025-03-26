@@ -3,6 +3,7 @@ import 'dart:developer' as developer;
 
 import 'package:appwrite/appwrite.dart';
 import 'package:community/core/services/http_appwrite_service.dart';
+import 'package:community/features/community/data/models/comment_model.dart';
 import 'package:community/features/community/data/models/post_model.dart';
 
 class CommunityService {
@@ -53,6 +54,62 @@ class CommunityService {
       }
     } catch (e) {
       throw Exception('Failed to fetch posts: ${e.toString()}');
+    }
+  }
+
+  // Add a comment to a post
+  Future<CommentModel> addComment(CommentModel comment) async {
+    if (comment.username == 'anonymous') {
+      throw Exception('Anonymous users cannot add comments');
+    }
+
+    try {
+      final response = await _appwriteService.createDocument(
+        collectionId: 'post_comments',
+        data: {
+          'documentId': 'unique()',
+          'data': comment,
+        },
+        documentId: 'unique()',
+      );
+      return response.containsKey('data')
+          ? CommentModel.fromMap(response['data'])
+          : CommentModel.fromMap(response);
+    } catch (e) {
+      throw Exception('Failed to add comment: $e');
+    }
+  }
+
+// Get comments for a post
+  Future<List<CommentModel>> getPostComments(String postId) async {
+    try {
+      final response = await _appwriteService.listDocuments(
+        collectionId: 'post_comments',
+        queries: [
+          Query.equal('postId', postId),
+        ],
+      );
+
+      if (response.containsKey('documents') && response['documents'] is List) {
+        final documents = response['documents'] as List;
+        return documents
+            .map((doc) {
+              try {
+                if (doc is Map<String, dynamic>) {
+                  return CommentModel.fromMap(doc['data'] ?? doc);
+                }
+                return null;
+              } catch (e) {
+                return null;
+              }
+            })
+            .whereType<CommentModel>()
+            .toList();
+      } else {
+        throw Exception('Failed to fetch comments: ${response.toString()}');
+      }
+    } catch (e) {
+      throw Exception('Failed to fetch comments: ${e.toString()}');
     }
   }
 

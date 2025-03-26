@@ -2,6 +2,7 @@ import 'dart:developer' as developer;
 
 import 'package:bloc/bloc.dart';
 import 'package:community/features/auth/data/repositories/auth_repository_impl.dart';
+import 'package:community/features/community/data/models/comment_model.dart';
 import 'package:community/features/community/data/models/post_model.dart';
 import 'package:community/features/community/service/community_service.dart';
 import 'package:equatable/equatable.dart';
@@ -21,6 +22,111 @@ class CommunityBloc extends Bloc<CommunityEvent, CommunityState> {
         super(CommunityInitial()) {
     on<FetchCommunityPosts>(_onFetchCommunityPosts);
     on<ToggleLike>(_onToggleLike);
+    on<LoadSinglePost>(_onLoadSinglePost);
+    on<AddComment>(_onAddComment);
+    on<LoadComments>(_onLoadComments);
+  }
+
+  Future<void> _onLoadSinglePost(
+      LoadSinglePost event, Emitter<CommunityState> emit) async {
+    emit(CommentsLoading(post: event.post));
+
+    try {
+      final comments = await _communityService.getPostComments(event.post.id);
+
+      emit(CommentsLoaded(
+        post: event.post,
+        comments: comments,
+      ));
+    } catch (e) {
+      emit(CommunityError(message: 'Failed to load comments: ${e.toString()}'));
+    }
+  }
+
+  Future<void> _onAddComment(
+      AddComment event, Emitter<CommunityState> emit) async {
+    // Get the current state
+    if (state is CommentsLoaded) {
+      final currentState = state as CommentsLoaded;
+      final post = currentState.post;
+      final currentComments = currentState.comments;
+
+      try {
+        // Get user info
+        final username = await _authRepository.getCurrentUserName();
+
+        // Create the comment
+        final newComment = CommentModel(
+          postId: event.postId,
+          username: username,
+          text: event.commentText,
+          dateTime: DateTime.now(),
+        );
+
+        // Add comment optimistically (immediately update UI)
+        final updatedComments = List<CommentModel>.from(currentComments)
+          ..add(newComment);
+
+        emit(CommentsLoaded(
+          post: post,
+          comments: updatedComments,
+        ));
+
+        // Actually save the comment
+        await _communityService.addComment(newComment);
+
+        // Emit success
+        emit(CommentAdded(
+          post: post,
+          comments: updatedComments,
+          message: 'Comment added successfully',
+        ));
+
+        // Reload comments to get server-generated ID and ensure consistency
+        final refreshedComments =
+            await _communityService.getPostComments(event.postId);
+
+        emit(CommentsLoaded(
+          post: post,
+          comments: refreshedComments,
+        ));
+      } catch (e) {
+        emit(CommunityError(message: 'Failed to add comment: ${e.toString()}'));
+
+        // Return to previous state
+        emit(CommentsLoaded(
+          post: post,
+          comments: currentComments,
+        ));
+      }
+    }
+  }
+
+// Load comments for a post
+  Future<void> _onLoadComments(
+      LoadComments event, Emitter<CommunityState> emit) async {
+    if (state is CommentsLoaded || state is CommentsLoading) {
+      final post = state is CommentsLoaded
+          ? (state as CommentsLoaded).post
+          : (state as CommentsLoading).post;
+
+      try {
+        // Emit loading state
+        emit(CommentsLoading(post: post));
+
+        // Load comments
+        final comments = await _communityService.getPostComments(event.postId);
+
+        // Emit loaded state
+        emit(CommentsLoaded(
+          post: post,
+          comments: comments,
+        ));
+      } catch (e) {
+        emit(CommunityError(
+            message: 'Failed to load comments: ${e.toString()}'));
+      }
+    }
   }
 
   Future<void> _onFetchCommunityPosts(
