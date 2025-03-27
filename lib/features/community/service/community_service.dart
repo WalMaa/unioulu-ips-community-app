@@ -65,7 +65,7 @@ class CommunityService {
 
     try {
       final response = await _appwriteService.createDocument(
-        collectionId: 'post_comments',
+        collectionId: 'comments',
         data: {
           'documentId': 'unique()',
           'data': comment,
@@ -84,7 +84,7 @@ class CommunityService {
   Future<List<CommentModel>> getPostComments(String postId) async {
     try {
       final response = await _appwriteService.listDocuments(
-        collectionId: 'post_comments',
+        collectionId: 'comments',
         queries: [
           Query.equal('postId', postId),
         ],

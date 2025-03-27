@@ -172,8 +172,6 @@ class AppwriteService {
       if (response.statusCode == 200) {
         return jsonDecode(response.body);
       } else {
-        developer.log(
-            'Failed to list documents. Status: ${response.statusCode}, Body: ${response.body}');
         throw Exception('Failed to list documents: ${response.body}');
       }
     } catch (e) {
