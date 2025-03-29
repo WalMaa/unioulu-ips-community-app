@@ -250,6 +250,14 @@ collections_config = [
             {'type': 'string', 'key': 'postId', 'size': 255, 'required': True}
         ]
     },
+    {
+        'name': 'CommentLikes',
+        'collection_id': 'comment_likes',
+                'attributes': [
+            {'type': 'string', 'key': 'commentId', 'size': 255, 'required': True},
+            {'type': 'string', 'key': 'userId', 'size': 255, 'required': True}
+        ]
+    },
     # announcements
     {
         'name': 'Announcements',
