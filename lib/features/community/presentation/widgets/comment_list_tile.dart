@@ -1,3 +1,4 @@
+import 'package:community/core/utils/format_date.dart';
 import 'package:community/features/community/data/models/comment_model.dart';
 import 'package:flutter/material.dart';
 
@@ -22,7 +23,7 @@ class CommentListTile extends StatelessWidget {
           Text(comment.username),
           const Spacer(),
           Text(
-            _formatDateTime(comment.dateTime),
+            formatDateTime(comment.dateTime),
             style: TextStyle(
               fontSize: 12,
               color: Colors.grey[600],
@@ -35,21 +36,3 @@ class CommentListTile extends StatelessWidget {
   }
 }
 
-String _formatDateTime(DateTime dateTime) {
-  final now = DateTime.now();
-  final difference = now.difference(dateTime);
-
-  if (difference.inSeconds < 60) {
-    return 'just now';
-  } else if (difference.inMinutes < 60) {
-    return '${difference.inMinutes} minutes ago';
-  } else if (difference.inHours < 24) {
-    return '${difference.inHours} hours ago';
-  } else if (difference.inDays < 30) {
-    return '${difference.inDays} days ago';
-  } else if (difference.inDays < 365) {
-    return '${difference.inDays ~/ 30} months ago';
-  } else {
-    return '${difference.inDays ~/ 365} years ago';
-  }
-}
