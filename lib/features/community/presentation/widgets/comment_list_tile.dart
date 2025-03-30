@@ -29,10 +29,21 @@ class CommentListTile extends StatelessWidget {
               color: Colors.grey[600],
             ),
           ),
+          Row(
+            children: [
+              IconButton(
+                icon: Icon(
+                  comment.isLiked ? Icons.favorite : Icons.favorite_border,
+                  color: comment.isLiked ? Colors.red : null,
+                ),
+                onPressed: onLikePressed,
+              ),
+              Text('${comment.likeCount}'), // Like count placeholder
+            ],
+          ),
         ],
       ),
       subtitle: Text(comment.text),
     );
   }
 }
-
