@@ -3,6 +3,7 @@ import 'package:community/core/services/dependency_injection.dart';
 import 'package:community/core/theme/theme_constants.dart';
 import 'package:community/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:community/features/community/presentation/bloc/community_bloc.dart';
+import 'package:community/features/community/presentation/widgets/comment_list_tile.dart';
 import 'package:community/features/community/service/community_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -226,25 +227,7 @@ class SingleCommunityPostPageView extends StatelessWidget {
             itemCount: comments.length,
             itemBuilder: (context, index) {
               final comment = comments[index];
-              return ListTile(
-                leading: const CircleAvatar(
-                  backgroundImage: NetworkImage('https://thispersondoesnotexist.com/'),
-                ),
-                title: Row(
-                  children: [
-                    Text(comment.username),
-                    const Spacer(),
-                    Text(
-                      _formatDateTime(comment.dateTime),
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey[600],
-                      ),
-                    ),
-                  ],
-                ),
-                subtitle: Text(comment.text),
-              );
+              return CommentListTile(comment: comment);
             },
           ),
       ],

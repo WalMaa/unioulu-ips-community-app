@@ -3,7 +3,7 @@ import 'package:community/features/community/presentation/pages/single_community
 import 'package:flutter/material.dart';
 import '../../data/models/post_model.dart';
 
-class CommunityPostCard extends StatelessWidget {  // Changed to StatelessWidget
+class CommunityPostCard extends StatelessWidget {
   final PostModel post;
   final VoidCallback? onLikePressed;
 
