@@ -172,7 +172,7 @@ class SingleCommunityPostPageView extends StatelessWidget {
                   ),
                   onPressed: () {
                     context.read<CommunityBloc>().add(
-                          ToggleLike(postId: post.id),
+                          TogglePostLike(postId: post.id),
                         );
                   },
                 ),
@@ -227,7 +227,9 @@ class SingleCommunityPostPageView extends StatelessWidget {
             itemCount: comments.length,
             itemBuilder: (context, index) {
               final comment = comments[index];
-              return CommentListTile(comment: comment);
+              return CommentListTile(comment: comment, onLikePressed: ()  {context.read<CommunityBloc>().add(
+                            ToggleCommentLike(commentId: comment.id),
+                          );},);
             },
           ),
       ],

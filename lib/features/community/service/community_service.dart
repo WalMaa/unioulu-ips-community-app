@@ -58,8 +58,8 @@ class CommunityService {
   }
 
   // Add a comment to a post
-  Future<CommentModel> addComment(CommentModel comment) async {
-    if (comment.username == 'anonymous') {
+  Future<CommentModel> addComment(String postId, String text, String username) async {
+    if (username == 'anonymous') {
       throw Exception('Anonymous users cannot add comments');
     }
 
@@ -68,7 +68,14 @@ class CommunityService {
         collectionId: 'comments',
         data: {
           'documentId': 'unique()',
-          'data': comment,
+          'data': {
+            'postId': postId,
+            'text': text,
+            'username': username,
+            'dateTime': DateTime.now().toIso8601String(),
+            'isLiked': false,
+            'likeCount': 0,
+          },
         },
         documentId: 'unique()',
       );
@@ -199,6 +206,31 @@ class CommunityService {
     } catch (e) {
       developer.log('Failed to get liked posts: ${e.toString()}');
       return [];
+    }
+  }
+
+  // Lika a commment (create a like document)
+  Future<Map<String, dynamic>> likeComment(String userId, String commentId) async {
+    if (userId == 'anonymous') {
+      throw Exception('Anonymous users cannot like comments');
+    }
+
+    final newLike = {
+      'commentId': commentId,
+      'userId': userId,
+    };
+
+    try {
+      return await _appwriteService.createDocument(
+        collectionId: 'comment_likes',
+        data: {
+          'documentId': 'unique()',
+          'data': newLike,
+        },
+        documentId: 'unique()',
+      );
+    } catch (e) {
+      throw Exception('Failed to like comment: $e');
     }
   }
 

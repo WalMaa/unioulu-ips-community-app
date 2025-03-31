@@ -65,7 +65,7 @@ class CommunityView extends StatelessWidget {
                     post: post,
                     onLikePressed: () {
                       context.read<CommunityBloc>().add(
-                            ToggleLike(postId: post.id),
+                            TogglePostLike(postId: post.id),
                           );
                     },
                     

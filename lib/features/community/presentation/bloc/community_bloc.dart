@@ -21,7 +21,8 @@ class CommunityBloc extends Bloc<CommunityEvent, CommunityState> {
         _authRepository = authRepository,
         super(CommunityInitial()) {
     on<FetchCommunityPosts>(_onFetchCommunityPosts);
-    on<ToggleLike>(_onToggleLike);
+    on<TogglePostLike>(_onTogglePostLike);
+    on<ToggleCommentLike>(_onToggleCommentLike);
     on<LoadSinglePost>(_onLoadSinglePost);
     on<AddComment>(_onAddComment);
     on<LoadComments>(_onLoadComments);
@@ -55,25 +56,13 @@ class CommunityBloc extends Bloc<CommunityEvent, CommunityState> {
         // Get user info
         final username = await _authRepository.getCurrentUserName();
 
-        // Create the comment
-        final newComment = CommentModel(
-          postId: event.postId,
-          username: username,
-          text: event.commentText,
-          dateTime: DateTime.now(),
-        );
-
-        // Add comment optimistically (immediately update UI)
-        final updatedComments = List<CommentModel>.from(currentComments)
-          ..add(newComment);
-
-        emit(CommentsLoaded(
-          post: post,
-          comments: updatedComments,
-        ));
-
         // Actually save the comment
-        await _communityService.addComment(newComment);
+        final comment = await _communityService.addComment(
+            post.id, event.commentText, username);
+
+        // Create a new list of comments with the new comment added
+        final updatedComments = List<CommentModel>.from(currentComments)
+          ..add(comment);
 
         // Emit success
         emit(CommentAdded(
@@ -164,8 +153,62 @@ class CommunityBloc extends Bloc<CommunityEvent, CommunityState> {
     }
   }
 
-  Future<void> _onToggleLike(
-      ToggleLike event, Emitter<CommunityState> emit) async {
+  Future<void> _onToggleCommentLike(
+      ToggleCommentLike event, Emitter<CommunityState> emit) async {
+    if (state is! CommentsLoaded) {
+      emit(CommunityError(message: 'Comments not loaded'));
+      return;
+    }
+
+    try {
+      final userId = await _authRepository.getCurrentUserId();
+      if (userId == 'anonymous') {
+        emit(CommunityError(message: 'Please log in to like comments'));
+        return;
+      }
+
+      // Check if the comment exists in the current state
+
+      final currentState = state as CommentsLoaded;
+      final post = currentState.post;
+      final comments = currentState.comments;
+      final commentIndex = comments.indexWhere((c) => c.id == event.commentId);
+
+      if (commentIndex == -1) {
+        emit(CommunityError(message: 'Comment not found'));
+        emit(currentState);
+        return;
+      }
+
+      final comment = comments[commentIndex];
+      final isLiked = comment.isLiked;
+      final updatedComments = List<CommentModel>.from(comments);
+      updatedComments[commentIndex] = comment.copyWith(
+        isLiked: !isLiked,
+        likeCount: comment.likeCount + (isLiked ? -1 : 1),
+      );
+
+      if (isLiked) {
+      } else {
+        await _communityService.likeComment(userId, event.commentId);
+      }
+
+      // Return to the updated state (this is important)
+      emit(CommentsLoaded(
+        post: post,
+        comments: updatedComments,
+      ));
+
+      
+    } catch (e) {
+      emit(CommunityError(
+          message: 'Failed to toggle comment like: ${e.toString()}'));
+      return;
+    }
+  }
+
+  Future<void> _onTogglePostLike(
+      TogglePostLike event, Emitter<CommunityState> emit) async {
     // Only proceed if we're in the loaded state
     if (state is CommunityLoaded) {
       final currentState = state as CommunityLoaded;
@@ -259,11 +302,20 @@ class FetchCommunityPosts extends CommunityEvent {
   List<Object> get props => [];
 }
 
-class ToggleLike extends CommunityEvent {
+class TogglePostLike extends CommunityEvent {
   final String postId;
 
-  const ToggleLike({required this.postId});
+  const TogglePostLike({required this.postId});
 
   @override
   List<Object> get props => [postId];
+}
+
+class ToggleCommentLike extends CommunityEvent {
+  final String commentId;
+
+  const ToggleCommentLike({required this.commentId});
+
+  @override
+  List<Object> get props => [commentId];
 }
