@@ -259,6 +259,46 @@ class CommunityService {
     }
   }
 
+  // Unlike a comment (delete a like document)
+  Future<void> unlikeComment(String userId, String commentId) async {
+    if (userId == 'anonymous') {
+      throw Exception('Anonymous users cannot unlike comments');
+    }
+
+    try {
+      final response = await _appwriteService.listDocuments(
+        collectionId: 'comment_likes',
+        queries: [
+          Query.and([
+            Query.equal('commentId', commentId),
+            Query.equal('userId', userId),
+          ]),
+        ],
+      );
+
+      if (response.containsKey('documents') && response['documents'] is List) {
+        final documents = response['documents'] as List;
+
+        if (documents.isEmpty) {
+          throw Exception('Like document not found');
+        }
+
+        final likeDocument = documents.first;
+        final likeDocumentId = likeDocument['\$id'];
+
+        await _appwriteService.deleteDocument(
+          collectionId: 'comment_likes',
+          documentId: likeDocumentId,
+        );
+      } else {
+        throw Exception(
+            'Failed to fetch like document: ${response.toString()}');
+      }
+    } catch (e) {
+      throw Exception('Failed to unlike comment: $e');
+    }
+  }
+
   // Unlike a post (delete a like document)
   Future<void> unlikePost(String userId, String postId) async {
     if (userId == 'anonymous') {

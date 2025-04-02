@@ -189,6 +189,7 @@ class CommunityBloc extends Bloc<CommunityEvent, CommunityState> {
       );
 
       if (isLiked) {
+        await _communityService.unlikeComment(userId, event.commentId);
       } else {
         await _communityService.likeComment(userId, event.commentId);
       }
