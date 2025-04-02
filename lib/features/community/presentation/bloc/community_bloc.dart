@@ -34,6 +34,23 @@ class CommunityBloc extends Bloc<CommunityEvent, CommunityState> {
 
     try {
       final comments = await _communityService.getPostComments(event.post.id);
+      final userId = await _authRepository.getCurrentUserId();
+      final userLikedCommentIds = await _communityService.getUserLikedCommentIds(userId);
+      final commentLikecounts = await _communityService.getCommentLikeCounts(comments.map((c) => c.id).toList());
+
+      // Update the comments with the user's liked status
+      for (int i = 0; i < comments.length; i++) {
+        if (userLikedCommentIds.contains(comments[i].id)) {
+          comments[i] = comments[i].copyWith(isLiked: true);
+        }
+
+        // Update the like count for each comment
+        if (commentLikecounts.containsKey(comments[i].id)) {
+          comments[i] = comments[i].copyWith(
+            likeCount: commentLikecounts[comments[i].id] ?? 0,
+          );
+        }
+      }
 
       emit(CommentsLoaded(
         post: event.post,

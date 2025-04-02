@@ -12,6 +12,32 @@ class CommunityService {
   CommunityService({required AppwriteService appwriteService})
       : _appwriteService = appwriteService;
 
+  // get users liked commentIds
+  Future<List<dynamic>> getUserLikedCommentIds(String userId) async {
+    if (userId == 'anonymous') {
+      developer.log('Anonymous user has no likes');
+      return [];
+    }
+
+    try {
+      final response = await _appwriteService.listDocuments(
+        collectionId: 'comment_likes',
+        queries: [
+          Query.equal('userId', userId),
+        ],
+      );
+
+      if (response.containsKey('documents') && response['documents'] is List) {
+        final documents = response['documents'] as List;
+        return documents.map((doc) => doc['commentId']).toList();
+      } else {
+        throw Exception('Failed to fetch liked comment IDs');
+      }
+    } catch (e) {
+      throw Exception('Failed to fetch liked comment IDs: $e');
+    }
+  }
+
   Future<List<PostModel>> getPosts() async {
     try {
       final response = await _appwriteService.listDocuments(
@@ -336,6 +362,39 @@ class CommunityService {
       }
     } catch (e) {
       throw Exception('Failed to unlike post: $e');
+    }
+  }
+
+  Future<Map<String, int>> getCommentLikeCounts(List<String> commentIds) async {
+    try {
+      // Create a map to hold counts
+      Map<String, int> likeCounts = {};
+
+      // For each comment ID, initialize to 0
+      for (final id in commentIds) {
+        likeCounts[id] = 0;
+      }
+
+      final response = await _appwriteService.listDocuments(
+        collectionId: 'comment_likes',
+      );
+
+      if (response.containsKey('documents') && response['documents'] is List) {
+        final likes = response['documents'] as List;
+
+        // Process all likes
+        for (final like in likes) {
+          final commentId = like['commentId'];
+
+          if (likeCounts.containsKey(commentId)) {
+            likeCounts[commentId] = (likeCounts[commentId] ?? 0) + 1;
+          }
+        }
+      }
+
+      return likeCounts;
+    } catch (e) {
+      throw Exception('Failed to fetch like counts: ${e.toString()}');
     }
   }
 
