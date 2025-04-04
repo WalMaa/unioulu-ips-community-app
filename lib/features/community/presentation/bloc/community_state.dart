@@ -81,11 +81,11 @@ class CommentsLoading extends CommunityState {
 }
 
 // State when comments are loaded
-class CommentsLoaded extends CommunityState {
+class PostLoaded extends CommunityState {
   final PostModel post;
   final List<CommentModel> comments;
   
-  const CommentsLoaded({
+  const PostLoaded({
     required this.post,
     required this.comments,
   });

@@ -99,8 +99,6 @@ class CommunityService {
             'text': text,
             'username': username,
             'dateTime': DateTime.now().toIso8601String(),
-            'isLiked': false,
-            'likeCount': 0,
           },
         },
         documentId: 'unique()',
