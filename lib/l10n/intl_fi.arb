@@ -2,6 +2,7 @@
     "welcome": "Tervetuloa",
     "appName": "IPS Yhteisö",
     "changeLanguage": "Vaihda kieltä",
+    "username": "Käyttäjätunnus",
     "name": "Nimi",
     "login": "Kirjaudu sisään",
     "register": "Rekisteröidy",

@@ -1,6 +1,6 @@
 import 'dart:developer' as developer;
 
-import 'package:community/core/theme/app_spacing.dart';
+import 'package:community/core/theme/theme_constants.dart';
 import 'package:community/core/widgets/custom_text_field.dart';
 import 'package:community/features/auth/presentation/pages/login_screen.dart';
 import 'package:flutter/material.dart';

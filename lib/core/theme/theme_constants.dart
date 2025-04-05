@@ -11,4 +11,19 @@ class AppPallete {
   static const Color greyColor = Colors.grey;
   static const Color errorColor = Colors.redAccent;
   static const Color transparentColor = Colors.transparent;
+  static const Color cardColor = Colors.white;
+}
+
+class AppSpacing {
+  static const double defaultPadding = 16.0;
+  static const double smallPadding = 8.0;
+  static const double extraSmallPadding = 4.0;
+  static const double largePadding = 24.0;
+  static const double extraLargePadding = 32.0;
+}
+
+class AppRoundness {
+  static const BorderRadius defaultBorderRadius = BorderRadius.all(Radius.circular(8.0));
+  static const BorderRadius largeBorderRadius = BorderRadius.all(Radius.circular(16.0));
+  static const BorderRadius extraLargeBorderRadius = BorderRadius.all(Radius.circular(24.0));
 }

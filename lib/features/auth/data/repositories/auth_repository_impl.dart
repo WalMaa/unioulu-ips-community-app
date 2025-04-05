@@ -80,4 +80,15 @@ class AuthRepositoryImpl implements AuthRepository {
       throw Exception('Failed to get current user ID: ${e.toString()}');
     }
   }
+
+Future<String> getCurrentUserName() async {
+    try {
+      final user = await remoteDataSource.getUser();
+      return user.name;
+    } catch (e) {
+      throw Exception('Failed to get current user: ${e.toString()}');
+      
+    }
+}
+
 }

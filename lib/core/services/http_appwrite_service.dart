@@ -172,8 +172,6 @@ class AppwriteService {
       if (response.statusCode == 200) {
         return jsonDecode(response.body);
       } else {
-        developer.log(
-            'Failed to list documents. Status: ${response.statusCode}, Body: ${response.body}');
         throw Exception('Failed to list documents: ${response.body}');
       }
     } catch (e) {
@@ -181,6 +179,37 @@ class AppwriteService {
       rethrow;
     }
   }
+
+  /// Deletes a document from a collection
+  /// [collectionId] - ID of the collection
+  /// [documentId] - ID of the document to delete
+  /// 
+  Future<void> deleteDocument({
+    required String collectionId,
+    required String documentId,
+  }) async {
+    final endpointPath =
+        'databases/$databaseId/collections/$collectionId/documents/$documentId';
+
+    try {
+      final response = await makeRequest(
+        method: 'DELETE',
+        endpointPath: endpointPath,
+      );
+
+      if (response.statusCode == 204) {
+        developer.log('Document deleted successfully');
+      } else {
+        developer.log(
+            'Failed to delete document. Status: ${response.statusCode}, Response: ${response.body}');
+        throw Exception('Failed to delete document: ${response.body}');
+      }
+    } catch (e) {
+      developer.log('Error deleting document: $e');
+      rethrow;
+    }
+  }
+
 
   /// Creates a document in a collection
   ///

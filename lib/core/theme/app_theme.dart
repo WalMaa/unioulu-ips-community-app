@@ -82,6 +82,7 @@ class AppThemeData {
   // Light theme definition
   static final lightTheme = ThemeData.light().copyWith(
     scaffoldBackgroundColor: AppPallete.whiteColor,
+    cardColor: AppPallete.cardColor,
     primaryColor: AppPallete.primaryColor,
     colorScheme: ColorScheme.fromSeed(
       seedColor: AppPallete.primaryColor,

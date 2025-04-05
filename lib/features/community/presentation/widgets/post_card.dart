@@ -1,21 +1,22 @@
+import 'package:community/core/theme/theme_constants.dart';
+import 'package:community/features/community/data/models/post_model.dart';
+import 'package:community/features/community/presentation/pages/single_community_post_page.dart';
 import 'package:flutter/material.dart';
 
-import '../../data/models/post_model.dart';
-import 'single_community_post_page.dart';
+class PostCard extends StatelessWidget {
+  final PostModel post;
+  final VoidCallback? onLikePressed;
 
-class CommunityPost extends StatelessWidget {
-  final PostModel post; // Pass the PostModel
-
-  const CommunityPost({
+  const PostCard({
     super.key,
     required this.post,
+    this.onLikePressed,
   });
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        // print(post.id);
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -27,8 +28,9 @@ class CommunityPost extends StatelessWidget {
       },
       child: Card(
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: AppRoundness.largeBorderRadius,
         ),
+        color: Theme.of(context).cardColor,
         elevation: 2,
         margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
         child: Padding(
@@ -36,6 +38,7 @@ class CommunityPost extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Profile section
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -61,7 +64,7 @@ class CommunityPost extends StatelessWidget {
                           post.authorTitle,
                           style: TextStyle(
                             fontSize: 14,
-                            color: Colors.grey[600],
+                            color: Theme.of(context).colorScheme.secondary,
                           ),
                         ),
                       ],
@@ -70,6 +73,7 @@ class CommunityPost extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 16),
+              // Post content
               Text(
                 post.postTitle,
                 style: const TextStyle(
@@ -83,6 +87,33 @@ class CommunityPost extends StatelessWidget {
                 style: const TextStyle(
                   fontSize: 14,
                 ),
+              ),
+              const SizedBox(height: 16),
+              // Actions row
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Row(
+                    children: [
+                      IconButton(
+                        icon: Icon(
+                          post.isLiked ? Icons.favorite : Icons.favorite_border,
+                          color: post.isLiked ? Colors.red : null,
+                        ),
+                        onPressed: onLikePressed,  // Use the callback parameter
+                      ),
+                      Text('${post.likeCount}'),  // Like count placeholder
+                    ],
+                  ),
+                  const SizedBox(width: AppSpacing.smallPadding),
+                  Row(
+                    children: [
+                      const Icon(Icons.mode_comment_outlined),
+                      const SizedBox(width: AppSpacing.smallPadding),
+                      Text('${0}'),
+                    ],
+                  ),
+                ],
               ),
             ],
           ),
