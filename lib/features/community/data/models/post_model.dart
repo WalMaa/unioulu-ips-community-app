@@ -65,6 +65,13 @@ class PostModel {
       'pollOptions': pollOptions.map((option) => option.toJson()).toList(),
     };
   }
+
+  // Method to update the vote for a given poll option
+  void updateVote(int index) {
+    if (index >= 0 && index < pollOptions.length) {
+      pollOptions[index].votes += 1;
+    }
+  }
 }
 
 class PollOption {

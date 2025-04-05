@@ -5,6 +5,7 @@ import '../../../../core/services/http_appwrite_service.dart';
 import '../../../auth/presentation/bloc/auth_state.dart';
 import '../../data/models/comment_model.dart';
 import '../../data/models/post_model.dart';
+import 'package:get_it/get_it.dart';
 
 class SingleCommunityPostPage extends StatefulWidget {
   const SingleCommunityPostPage({
@@ -76,13 +77,37 @@ class _SingleCommunityPostPageState extends State<SingleCommunityPostPage> {
     }
   }
 
-  // Function to handle vote selection
-  void _voteOnPoll(int optionIndex) {
+  // // Function to handle vote selection
+  // Future<void> _voteOnPoll(int optionIndex) async {
+  //   setState(() {
+  //     _selectedPollOption = optionIndex;
+  //   });
+
+  //   // Handle the vote submission logic here (e.g., sending data to Appwrite or updating the local post object)
+  //   // ✅ Save vote to backend (e.g., Appwrite)
+  //   final appwriteService = GetIt.instance<AppwriteService>();
+  //   await appwriteService.updateDocument(
+  //     collectionId: 'posts', // or your actual post collection ID
+  //     documentId: widget.post.id,
+  //     data: widget.post.toJson(), // Send updated post with incremented votes
+  //   );
+  // }
+
+  void _voteOnPoll(int optionIndex) async {
     setState(() {
+      // Update the selected poll option
       _selectedPollOption = optionIndex;
+      // Increment the vote count for the selected option
+      widget.post.pollOptions![optionIndex].votes++;
     });
 
     // Handle the vote submission logic here (e.g., sending data to Appwrite or updating the local post object)
+    final appwriteService = GetIt.instance<AppwriteService>();
+    await appwriteService.updateDocument(
+      collectionId: 'posts', // or your actual post collection ID
+      documentId: widget.post.id,
+      data: widget.post.toJson(), // Send updated post with incremented votes
+    );
   }
 
   @override
@@ -187,37 +212,38 @@ class _SingleCommunityPostPageState extends State<SingleCommunityPostPage> {
             ),
             const SizedBox(height: 16),
             // Poll Section (if exists)
-            // Poll Section (if exists)
-            if (post.pollOptions != null && post.pollOptions!.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // ✅ Show the poll question from the post
-                    Text(
-                      post.pollQuestion,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
+          if (post.pollOptions != null && post.pollOptions!.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // ✅ Show the poll question from the post
+                  Text(
+                    post.pollQuestion,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
                     ),
-                    const SizedBox(height: 8),
+                  ),
+                  const SizedBox(height: 8),
 
-                    // ✅ Show the poll options
-                    ...List.generate(post.pollOptions!.length, (index) {
-                      return RadioListTile<int>(
-                        title: Text(post.pollOptions![index].option),
-                        value: index,
-                        groupValue: _selectedPollOption,
-                        onChanged: (value) {
-                          _voteOnPoll(value!);
-                        },
-                      );
-                    }),
-                  ],
-                ),
+                  // ✅ Show the poll options
+                  ...List.generate(post.pollOptions!.length, (index) {
+                    return RadioListTile<int>(
+                              title: Text(
+                                '${post.pollOptions![index].option} (${post.pollOptions![index].votes} votes)',
+                              ),
+                              value: index,
+                              groupValue: _selectedPollOption,
+                              onChanged: (value) {
+                                _voteOnPoll(value!);
+                              },
+                    );
+                  }),
+                ],
               ),
+            ),
 
             const SizedBox(height: 16),
             // Comment Input Field
