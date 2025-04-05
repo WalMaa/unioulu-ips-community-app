@@ -1,33 +1,34 @@
 import 'dart:developer' as developer;
 
-import 'package:appwrite/appwrite.dart';
 import 'package:community/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:community/features/events/presentation/bloc/events_bloc.dart';
-import 'package:community/features/events/services/event_service.dart';
+import 'package:community/features/events/repository/event_repository.dart';
+import 'package:community/features/surveys/presentation/pages/survey_intro_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../data/models/event_model.dart';
 import 'package:share_plus/share_plus.dart';
 import '../bloc/events_state.dart';
-import 'package:community/main.dart' show locator;  // Import locator directly
+import 'package:community/main.dart' show locator; // Import locator directly
 
 Future<void> _loadEvents(BuildContext context) async {
   try {
     final authRepository = locator<AuthRepositoryImpl>();
     final eventsBloc = context.read<EventsBloc>();
     String? userId;
-    
+
     try {
       userId = await authRepository.getCurrentUserId();
       developer.log('Loading events from EventLayout with userId: $userId');
     } catch (e) {
       developer.log('Error getting user ID: ${e.toString()}');
-      userId = 'anonymous';  // Fallback to anonymous if we can't get userId
+      userId = 'anonymous'; // Fallback to anonymous if we can't get userId
     }
-    
+
     eventsBloc.add(FetchEvents(userId: userId));
   } catch (e) {
-    developer.log('Critical error loading events from EventLayout: ${e.toString()}');
+    developer
+        .log('Critical error loading events from EventLayout: ${e.toString()}');
     // Always try to load anonymous events as a last resort
   }
 }
@@ -38,7 +39,6 @@ class EventDetailsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return BlocListener<EventsBloc, EventsState>(
       listener: (context, state) {
         if (state is EventsInitial) {
@@ -103,6 +103,25 @@ class EventDetailsPage extends StatelessWidget {
               // The static event image placed outside the TabBarView
               EventLayout(event: event),
               // Tab content occupies the rest of the space
+                            Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: const Size.fromHeight(40),
+                    backgroundColor: Theme.of(context).colorScheme.secondary,
+                  ),
+                  icon: const Icon(Icons.rate_review),
+                  label: const Text('Take Survey'),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => SurveyIntroPage(eventId: event.remoteId),
+                      ),
+                    );
+                  },
+                ),
+              ),
               Expanded(
                 child: TabBarView(
                   children: [
@@ -235,9 +254,10 @@ class EventLayoutState extends State<EventLayout> {
     _fetchLikeCount();
   }
 
+  // TODO: Move logic to bloc
   Future<void> _fetchLikeCount() async {
     try {
-      final eventService = EventService(databases: locator<Databases>());
+      final eventService = EventRepository();
       final count = await eventService.getEventLikeCount(widget.event.remoteId);
       if (mounted) {
         setState(() {
@@ -262,11 +282,10 @@ class EventLayoutState extends State<EventLayout> {
           developer.log('EventLayout detected EventsInitial, loading events');
           _loadEvents(context);
         }
-        
       },
       builder: (context, state) {
         developer.log('Building EventLayout with state: ${state.runtimeType}');
-        
+
         return Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
@@ -310,29 +329,28 @@ class EventLayoutState extends State<EventLayout> {
       },
     );
   }
-  
+
   Widget _buildFavoriteButton(BuildContext context, EventsState state) {
-    
     // Check if the event is favorited
-    final bool isFavorite = state is EventsLoaded && 
+    final bool isFavorite = state is EventsLoaded &&
         state.favorites.contains(widget.event.remoteId);
-        
+
     return TextButton.icon(
-        onPressed: () {
+      onPressed: () {
         // Check if state is loaded before toggling
         if (state is! EventsLoaded) {
           developer.log('State is not EventsLoaded, loading events first');
           _loadEvents(context);
           return; // Add return to prevent action until loaded
         }
-        
-        developer.log('Attempting to toggle favorite for event: ${widget.event.remoteId}');
+
+        developer.log(
+            'Attempting to toggle favorite for event: ${widget.event.remoteId}');
         context.read<EventsBloc>().add(
-          ToggleFavorite(eventId: widget.event.remoteId),
-        );
+              ToggleFavorite(eventId: widget.event.remoteId),
+            );
 
         _likeCount += isFavorite ? -1 : 1;
-
       },
       icon: Icon(
         isFavorite ? Icons.favorite : Icons.favorite_border,

@@ -30,7 +30,7 @@ class EventsBloc extends Bloc<EventsEvent, EventsState> {
       // Get events from repository
       final events = await _eventRepository.getEvents();
       // Get user favorites
-      final favorites = await _eventRepository.getUserLiked(event.userId);
+      final favorites = await _eventRepository.getUserLikedEvents(event.userId);
 
       final eventIds = favorites.map((e) => e.remoteId).toSet();
 

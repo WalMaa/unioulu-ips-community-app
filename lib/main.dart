@@ -1,7 +1,7 @@
 import 'package:community/features/auth/data/repositories/auth_repository_impl.dart';
-import 'package:community/features/community/presentation/bloc/community_bloc.dart';
-import 'package:community/features/community/service/community_service.dart';
 import 'package:community/features/events/presentation/bloc/events_bloc.dart';
+import 'package:community/features/surveys/presentation/bloc/survey_bloc.dart';
+import 'package:community/features/surveys/service/survey_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:isar/isar.dart';
@@ -109,6 +109,9 @@ class MyApp extends StatelessWidget {
             authenticateAnonymous: locator<AuthenticateAnonymous>(),
             account: locator<Account>(),
           ),
+        ),
+        BlocProvider(
+          create: (context) => SurveyBloc(authRepository: locator<AuthRepositoryImpl>(), service: locator<SurveyService>()),
         ),
         BlocProvider(
           create: (context) => EventsBloc(
