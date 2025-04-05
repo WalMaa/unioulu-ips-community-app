@@ -35,6 +35,9 @@ class LatestCommunityPostsWidgetState
     if (!mounted) return;
     
     final List<dynamic> jsonData = response['documents'];
+    for (var json in jsonData) {
+      print('Post: ${json['postTitle']}, Poll Q: ${json['pollQuestion']}, Options: ${json['pollOptions']}');
+    }
 
     // Sort by date if available (assumes you have an 'updatedAt' field in the API response)
     final sortedPosts = jsonData

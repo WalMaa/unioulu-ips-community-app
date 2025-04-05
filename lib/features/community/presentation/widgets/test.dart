@@ -3,7 +3,6 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import '../../../../core/services/http_appwrite_service.dart';
 import '../../../../core/utils/config.dart';
-import 'dart:convert';
 
 class CommunityPostForm extends StatefulWidget {
   const CommunityPostForm({super.key});
@@ -69,70 +68,78 @@ class CommunityPostFormState extends State<CommunityPostForm> {
   }
 
   void _submitForm() async {
-  final currentContext = context;
+    // Store context before async gap
+    final currentContext = context;
 
-  if (_formKey.currentState!.validate()) {
-    try {
-      ScaffoldMessenger.of(currentContext).showSnackBar(
-        const SnackBar(content: Text('Adding post...')),
-      );
-
-      final appwriteService = AppwriteService();
-
-      // Upload Image and get URL
-      final imageUrl = await _uploadImage(appwriteService);
-      if (!mounted) return;
-
-      if (imageUrl == null) {
+    if (_formKey.currentState!.validate()) {
+      try {
+        // Show loading indicator
         ScaffoldMessenger.of(currentContext).showSnackBar(
-          const SnackBar(content: Text('Failed to upload image.')),
+          const SnackBar(content: Text('Adding post...')),
         );
-        return;
+
+        final appwriteService = AppwriteService();
+
+        // Upload the image and get its URL
+        final imageUrl = await _uploadImage(appwriteService);
+
+        // Check if widget is still mounted
+        if (!mounted) return;
+
+        if (imageUrl == null) {
+          ScaffoldMessenger.of(currentContext).showSnackBar(
+            const SnackBar(content: Text('Failed to upload image.')),
+          );
+          return;
+        }
+
+        // Assuming you are collecting poll options as a list of strings
+        List<String> pollOptions = ['Option 1', 'Option 2', 'Option 3']; // Replace with actual options
+
+        // Create the post data including poll options
+        final data = {
+          'postTitle': _postTitleController.text,
+          'content': _contentController.text,
+          'imageUrl': imageUrl,
+          'authorName': _authorNameController.text,
+          'authorTitle': _authorTitleController.text,
+          'createdAt': DateTime.now().toIso8601String(),
+          'updatedAt': DateTime.now().toIso8601String(), // Add this for sorting
+          'pollQuestion': _pollQuestionController.text, // Add pollQuestion here
+          'pollOptions': pollOptions, // Add poll options
+        };
+        print(data);
+
+        // Make the request to create a new document
+        final response = await appwriteService.createDocument(
+          collectionId: "posts",
+          data: data,
+          documentId: 'unique()', // Pass as separate parameter
+        );
+
+        // Check if widget is still mounted after second async operation
+        if (!mounted) return;
+
+        // Clear loading snackbar
+        ScaffoldMessenger.of(currentContext).clearSnackBars();
+
+        // Show success and navigate
+        ScaffoldMessenger.of(currentContext).showSnackBar(
+          const SnackBar(content: Text('Post added successfully!')),
+        );
+        Navigator.of(currentContext).pop();
+      } catch (e) {
+        // Check if widget is still mounted
+        if (!mounted) return;
+
+        // Show error message
+        ScaffoldMessenger.of(currentContext).showSnackBar(
+          SnackBar(content: Text('Error adding post: ${e.toString()}')),
+        );
       }
-
-      // Prepare poll options correctly
-      List<Map<String, dynamic>> formattedPollOptions = _pollOptions
-          .map((option) => {'option': option, 'votes': 0})
-          .toList();
-
-      final dataObj = {
-        'postTitle': _postTitleController.text,
-        'content': _contentController.text,
-        'imageUrl': imageUrl,
-        'authorName': _authorNameController.text,
-        'authorTitle': _authorTitleController.text,
-        'createdAt': DateTime.now().toIso8601String(),
-        'updatedAt': DateTime.now().toIso8601String(),
-        'pollQuestion': _pollQuestionController.text,
-        'pollOptions': formattedPollOptions, // Properly formatted poll options
-      };
-
-      print('Data being sent to Appwrite: ${jsonEncode(dataObj)}');
-
-      final response = await appwriteService.createDocument(
-        collectionId: "posts",
-        data: dataObj,
-        documentId: 'unique()',
-      );
-      print('Document created: ${response['\$id']}');
-
-      if (!mounted) return;
-
-      ScaffoldMessenger.of(currentContext).clearSnackBars();
-
-      ScaffoldMessenger.of(currentContext).showSnackBar(
-        const SnackBar(content: Text('Post added successfully!')),
-      );
-      Navigator.of(currentContext).pop();
-    } catch (e) {
-      if (!mounted) return;
-
-      ScaffoldMessenger.of(currentContext).showSnackBar(
-        SnackBar(content: Text('Error adding post: ${e.toString()}')),
-      );
     }
   }
-}
+
 
   @override
   Widget build(BuildContext context) {

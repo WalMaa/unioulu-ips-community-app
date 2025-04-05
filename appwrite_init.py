@@ -68,8 +68,8 @@ sample_posts = [
         "imageUrl": "https://images.unsplash.com/photo-1564981797816-1043664bf78d?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
         "authorName": "Prof. Anna Virtanen",
         "authorTitle": "Vice Rector for Education",
+        "pollQuestion": "How excited are you for this year?",  # Add pollQuestion
         "pollOptions": ", ".join(["Option 1", "Option 2", "Option 3"]),
-        "pollResult": "",  # This can be updated with the selected option or vote count
         "createdAt": datetime.now().isoformat()
     },
     {
@@ -78,8 +78,9 @@ sample_posts = [
         "imageUrl": "https://images.unsplash.com/photo-1564981797816-1043664bf78d?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
         "authorName": "Dr. Mikko Järvinen",
         "authorTitle": "Head of IT Services",
+        "pollQuestion": "How excited are you for this year?",  # Add pollQuestion
         "pollOptions": ", ".join(["Option 1", "Option 2", "Option 3"]),
-        "pollResult": "",  # This can be updated with the selected option or vote count
+        #"pollResult": "",  # This can be updated with the selected option or vote count
         "createdAt": (datetime.now() - timedelta(days=2)).isoformat()
     },
     {
@@ -88,8 +89,8 @@ sample_posts = [
         "imageUrl": "https://images.unsplash.com/photo-1564981797816-1043664bf78d?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
         "authorName": "Lisa Chen",
         "authorTitle": "International Student Coordinator",
+        "pollQuestion": "How excited are you for this year?",  # Add pollQuestion
         "pollOptions": ", ".join(["Option 1", "Option 2", "Option 3"]),
-        "pollResult": "",  # This can be updated with the selected option or vote count
         "createdAt": (datetime.now() - timedelta(days=5)).isoformat()
     }
 ]
@@ -225,8 +226,9 @@ collections_config = [
             {'type': 'string', 'key': 'imageUrl', 'size': 255,},
             {'type': 'string', 'key': 'authorName', 'size': 255, 'required': True},
             {'type': 'string', 'key': 'authorTitle', 'size': 255, 'required': True},
+            {'type': 'string', 'key': 'pollQuestion', 'size': 255},
             {'type': 'string', 'key': 'pollOptions', 'size': 1024},  # Store poll options as a string array
-            {'type': 'string', 'key': 'pollResult', 'size': 1024},    # Optional: Store the selected poll result or vote count
+            #{'type': 'string', 'key': 'pollResult', 'size': 1024},    # Optional: Store the selected poll result or vote count
             {'type': 'datetime', 'key': 'createdAt', 'required': True}
         ]
     },
@@ -277,8 +279,9 @@ def create_sample_posts():
                 "authorName": post['authorName'],
                 "authorTitle": post['authorTitle'],
                 "createdAt": post['createdAt'],
+                "pollQuestion": post['pollQuestion'],  # Include pollQuestion
                 "pollOptions": post.get('pollOptions', []),  # Ensure poll options are included
-                "pollResult": post.get('pollResult', ''),    # Optional: Add poll result field
+                #"pollResult": post.get('pollResult', ''),    # Optional: Add poll result field
             }
             print(f"Creating post with data: {post_data}") 
             result = databases.create_document(
@@ -404,23 +407,31 @@ def create_collections(databases: Databases):
 # Add 'pollOptions' and 'pollResult' fields to the 'Posts' collection schema
 def add_poll_fields_to_posts(databases):
     try:
-        # Add 'pollOptions' as a string array attribute
+        # Add 'pollQuestion' as a string attribute (for storing the poll question)
         databases.create_string_attribute(
             db_id,
             'posts',
-            'pollOptions',
+            'pollQuestion',
             size=1024,
             required=False
         )
+        # # Add 'pollOptions' as a string array attribute
+        # databases.create_string_attribute(
+        #     db_id,
+        #     'posts',
+        #     'pollOptions',
+        #     size=1024,
+        #     required=False
+        # )
         
-        # Add 'pollResult' as a string attribute
-        databases.create_string_attribute(
-            db_id,
-            'posts',
-            'pollResult',
-            size=255,
-            required=False
-        )
+        # # Add 'pollResult' as a string attribute
+        # databases.create_string_attribute(
+        #     db_id,
+        #     'posts',
+        #     'pollResult',
+        #     size=255,
+        #     required=False
+        # )
         print("Poll fields added successfully.")
     except AppwriteException as e:
         print(f"Error adding poll fields: {str(e)}")
@@ -433,7 +444,7 @@ if __name__ == "__main__":
         create_collections(databases)
         create_sample_events()
         create_sample_topics()
-        #add_poll_fields_to_posts(databases)
+        add_poll_fields_to_posts(databases)
         create_sample_posts()
         create_event_like_index()
         create_comments()

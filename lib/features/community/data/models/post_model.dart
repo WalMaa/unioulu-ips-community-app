@@ -1,4 +1,5 @@
 import 'comment_model.dart';
+import 'dart:convert'; // Import this at the top
 
 class PostModel {
   final String id;
@@ -7,8 +8,9 @@ class PostModel {
   final String postTitle;
   final String content;
   final String imageUrl;
+  final String pollQuestion; // Add this field
   List<CommentModel> comments;
-  List<PollOption> pollOptions; // Add poll options here
+  List<PollOption> pollOptions;
 
   PostModel({
     required this.id,
@@ -17,8 +19,9 @@ class PostModel {
     required this.postTitle,
     required this.content,
     required this.imageUrl,
+    required this.pollQuestion, // Initialize here
     this.comments = const [],
-    this.pollOptions = const [], // Initialize with an empty list
+    this.pollOptions = const [],
   });
 
   factory PostModel.fromJson(Map<String, dynamic> json) {
@@ -29,15 +32,26 @@ class PostModel {
       postTitle: json['postTitle'] ?? '',
       content: json['content'] ?? '',
       imageUrl: json['imageUrl'] ?? '',
+      pollQuestion: json['pollQuestion'] ?? '',
       comments: (json['comments'] as List<dynamic>?)
-          ?.map((commentJson) => CommentModel.fromJson(commentJson))
-          .toList() ?? [],
-      pollOptions: (json['pollOptions'] as List<dynamic>?)
-          ?.map((optionJson) => PollOption.fromJson(optionJson))
-          .toList() ?? [],
+              ?.map((commentJson) => CommentModel.fromJson(commentJson))
+              .toList() ??
+          [],
+      pollOptions: json['pollOptions'] is List
+          ? (json['pollOptions'] as List<dynamic>)
+              .map((optionJson) => optionJson is Map<String, dynamic>
+                  ? PollOption.fromJson(optionJson)
+                  : PollOption(option: optionJson.toString().trim()))
+              .toList()
+          : (json['pollOptions'] is String
+              ? (json['pollOptions'] as String)
+                  .split(',')
+                  .map((option) => PollOption(option: option.trim()))
+                  .toList()
+              : []),
     );
   }
-
+  
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -46,6 +60,7 @@ class PostModel {
       'postTitle': postTitle,
       'content': content,
       'imageUrl': imageUrl,
+      'pollQuestion': pollQuestion, // Serialize pollQuestion
       'comments': comments.map((comment) => comment.toJson()).toList(),
       'pollOptions': pollOptions.map((option) => option.toJson()).toList(),
     };
