@@ -69,7 +69,7 @@ sample_posts = [
         "authorName": "Prof. Anna Virtanen",
         "authorTitle": "Vice Rector for Education",
         "pollQuestion": "How excited are you for this year?",  # Add pollQuestion
-        "pollOptions": ", ".join(["Option 1", "Option 2", "Option 3"]),
+        "pollOptions": ", ".join(["Excited", "Very Excited", "Not Excited"]),
         "createdAt": datetime.now().isoformat()
     },
     {
@@ -79,7 +79,7 @@ sample_posts = [
         "authorName": "Dr. Mikko Järvinen",
         "authorTitle": "Head of IT Services",
         "pollQuestion": "How excited are you for this year?",  # Add pollQuestion
-        "pollOptions": ", ".join(["Option 1", "Option 2", "Option 3"]),
+        "pollOptions": ", ".join(["Excited", "Very Excited", "Not Excited"]),
         #"pollResult": "",  # This can be updated with the selected option or vote count
         "createdAt": (datetime.now() - timedelta(days=2)).isoformat()
     },
@@ -90,7 +90,17 @@ sample_posts = [
         "authorName": "Lisa Chen",
         "authorTitle": "International Student Coordinator",
         "pollQuestion": "How excited are you for this year?",  # Add pollQuestion
-        "pollOptions": ", ".join(["Option 1", "Option 2", "Option 3"]),
+        "pollOptions": ", ".join(["Excited", "Very Excited", "Not Excited"]),
+        "createdAt": (datetime.now() - timedelta(days=5)).isoformat()
+    },
+    {
+        "postTitle": "Vote Now! Help Us Plan the Perfect Summer Event",
+        "content": "We want to know what kind of activities you'd love to see. Whether you're into relaxing beach days, adventurous hikes, or exciting music festivals, your opinion matters!.",
+        "imageUrl": "https://images.unsplash.com/photo-1564981797816-1043664bf78d?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        "authorName": "Dr. Anna",
+        "authorTitle": "Vice Rector for Education",
+        "pollQuestion": "What type of activities would you prefer for the upcoming Summer Event?",  # Add pollQuestion
+        "pollOptions": ", ".join(["Beach Day", "Hiking and Nature Walks", "Outdoor Picnic", "Music Festival"]),
         "createdAt": (datetime.now() - timedelta(days=5)).isoformat()
     }
 ]

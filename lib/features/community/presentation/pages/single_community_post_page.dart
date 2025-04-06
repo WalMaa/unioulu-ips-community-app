@@ -25,6 +25,12 @@ class _SingleCommunityPostPageState extends State<SingleCommunityPostPage> {
   late List<CommentModel> _comments = [];
   int? _selectedPollOption;
 
+  double _calculatePollPercentage(int index) {
+    final totalVotes = widget.post.pollOptions!.fold<int>(0, (sum, item) => sum + item.votes);
+    if (totalVotes == 0) return 0;
+    return widget.post.pollOptions![index].votes / totalVotes;
+  }
+
   // Function to fetch comments for the post
   Future<void> _fetchComments() async {
     print(widget.post.id);
@@ -212,38 +218,87 @@ class _SingleCommunityPostPageState extends State<SingleCommunityPostPage> {
             ),
             const SizedBox(height: 16),
             // Poll Section (if exists)
-          if (post.pollOptions != null && post.pollOptions!.isNotEmpty)
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // ✅ Show the poll question from the post
-                  Text(
-                    post.pollQuestion,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
+            if (post.pollOptions != null && post.pollOptions!.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      post.pollQuestion,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 8),
+                    const SizedBox(height: 12),
 
-                  // ✅ Show the poll options
-                  ...List.generate(post.pollOptions!.length, (index) {
-                    return RadioListTile<int>(
-                              title: Text(
-                                '${post.pollOptions![index].option} (${post.pollOptions![index].votes} votes)',
+                    ...List.generate(post.pollOptions!.length, (index) {
+                      final option = post.pollOptions![index];
+                      final isSelected = _selectedPollOption == index;
+                      final percentage = _calculatePollPercentage(index) * 100;
+
+                      return GestureDetector(
+                        onTap: () {
+                          if (_selectedPollOption == null) {
+                            _voteOnPoll(index);
+                          }
+                        },
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 300),
+                          margin: const EdgeInsets.symmetric(vertical: 6),
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: isSelected ? Colors.blue.shade50 : Colors.grey.shade100,
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: isSelected ? Colors.blue : Colors.grey.shade300,
+                              width: 1.5,
+                            ),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                option.option,
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                  color: isSelected ? Colors.blue : Colors.black87,
+                                ),
                               ),
-                              value: index,
-                              groupValue: _selectedPollOption,
-                              onChanged: (value) {
-                                _voteOnPoll(value!);
-                              },
-                    );
-                  }),
-                ],
+                              const SizedBox(height: 6),
+                              LinearProgressIndicator(
+                                value: _calculatePollPercentage(index),
+                                minHeight: 8,
+                                backgroundColor: Colors.grey.shade300,
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  isSelected ? Colors.blue : Colors.teal,
+                                ),
+                              ),
+                              const SizedBox(height: 6),
+                              Text(
+                                '${percentage.toStringAsFixed(1)}% (${option.votes} votes)',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.grey.shade600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    }),
+                    const SizedBox(height: 8),
+                    if (_selectedPollOption != null)
+                      const Text(
+                        'Thanks for voting!',
+                        style: TextStyle(color: Colors.green, fontSize: 14),
+                      ),
+                  ],
+                ),
               ),
-            ),
+
 
             const SizedBox(height: 16),
             // Comment Input Field
