@@ -13,13 +13,13 @@ import 'package:community/features/surveys/presentation/bloc/survey_bloc.dart';
 class SurveyQuestionPage extends StatefulWidget {
   final String eventId;
   final Survey survey;
-  
+
   const SurveyQuestionPage({
-    super.key, 
+    super.key,
     required this.eventId,
     required this.survey,
   });
-  
+
   @override
   State<SurveyQuestionPage> createState() => _SurveyQuestionPageState();
 }
@@ -27,13 +27,13 @@ class SurveyQuestionPage extends StatefulWidget {
 class _SurveyQuestionPageState extends State<SurveyQuestionPage> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
-  
+
   @override
   void dispose() {
     _pageController.dispose();
     super.dispose();
   }
-  
+
   void _nextQuestion() {
     if (_currentPage < widget.survey.questions.length - 1) {
       _pageController.nextPage(
@@ -50,7 +50,7 @@ class _SurveyQuestionPageState extends State<SurveyQuestionPage> {
         eventId: widget.eventId,
         surveyId: widget.survey.id,
       ));
-      
+
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
@@ -59,7 +59,7 @@ class _SurveyQuestionPageState extends State<SurveyQuestionPage> {
       );
     }
   }
-  
+
   void _previousQuestion() {
     if (_currentPage > 0) {
       _pageController.previousPage(
@@ -71,7 +71,7 @@ class _SurveyQuestionPageState extends State<SurveyQuestionPage> {
       });
     }
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<SurveyBloc, SurveyState>(
@@ -89,13 +89,20 @@ class _SurveyQuestionPageState extends State<SurveyQuestionPage> {
             body: const Center(child: CircularProgressIndicator()),
           );
         }
-        
+
         final questions = widget.survey.questions;
-        final currentAnswers = (state as SurveyLoaded).answers;
-        
-        return WillPopScope(
-          onWillPop: () async {
-            final shouldPop = await showDialog<bool>(
+        final currentAnswers = state.answers;
+
+        return PopScope(
+          canPop: false,
+          onPopInvokedWithResult: (bool didPop, Object? result) async {
+            // If already popped, don't show dialog
+            if (didPop) {
+              return;
+            }
+
+            // Show confirmation dialog
+            final bool shouldPop = await showDialog(
               context: context,
               builder: (context) => AlertDialog(
                 title: const Text('Quit Survey?'),
@@ -112,7 +119,10 @@ class _SurveyQuestionPageState extends State<SurveyQuestionPage> {
                 ],
               ),
             );
-            return shouldPop ?? false;
+
+            if (context.mounted && shouldPop) {
+              Navigator.pop(context);
+            }
           },
           child: Scaffold(
             appBar: AppBar(
@@ -129,7 +139,7 @@ class _SurveyQuestionPageState extends State<SurveyQuestionPage> {
                     Theme.of(context).primaryColor,
                   ),
                 ),
-                
+
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Text(
@@ -137,7 +147,7 @@ class _SurveyQuestionPageState extends State<SurveyQuestionPage> {
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
                 ),
-                
+
                 // Questions
                 Expanded(
                   child: PageView.builder(
@@ -146,7 +156,7 @@ class _SurveyQuestionPageState extends State<SurveyQuestionPage> {
                     itemCount: questions.length,
                     itemBuilder: (context, index) {
                       final question = questions[index];
-                      
+
                       switch (question.type) {
                         case QuestionType.multipleChoice:
                           return MultipleChoiceQuestion(
@@ -154,11 +164,11 @@ class _SurveyQuestionPageState extends State<SurveyQuestionPage> {
                             selectedOption: currentAnswers[question.id],
                             onOptionSelected: (answer) {
                               context.read<SurveyBloc>().add(
-                                AnswerQuestion(
-                                  questionId: question.id,
-                                  answer: answer,
-                                ),
-                              );
+                                    AnswerQuestion(
+                                      questionId: question.id,
+                                      answer: answer,
+                                    ),
+                                  );
                             },
                           );
                         case QuestionType.rating:
@@ -167,11 +177,11 @@ class _SurveyQuestionPageState extends State<SurveyQuestionPage> {
                             rating: currentAnswers[question.id] ?? 0,
                             onRatingChanged: (rating) {
                               context.read<SurveyBloc>().add(
-                                AnswerQuestion(
-                                  questionId: question.id,
-                                  answer: rating,
-                                ),
-                              );
+                                    AnswerQuestion(
+                                      questionId: question.id,
+                                      answer: rating,
+                                    ),
+                                  );
                             },
                           );
                         case QuestionType.text:
@@ -180,18 +190,18 @@ class _SurveyQuestionPageState extends State<SurveyQuestionPage> {
                             text: currentAnswers[question.id] ?? '',
                             onTextChanged: (text) {
                               context.read<SurveyBloc>().add(
-                                AnswerQuestion(
-                                  questionId: question.id,
-                                  answer: text,
-                                ),
-                              );
+                                    AnswerQuestion(
+                                      questionId: question.id,
+                                      answer: text,
+                                    ),
+                                  );
                             },
                           );
                       }
                     },
                   ),
                 ),
-                
+
                 // Navigation buttons
                 Padding(
                   padding: const EdgeInsets.all(16.0),
@@ -208,33 +218,35 @@ class _SurveyQuestionPageState extends State<SurveyQuestionPage> {
                         )
                       else
                         const SizedBox(),
-                        
                       ElevatedButton(
                         onPressed: () {
                           final currentQuestion = questions[_currentPage];
                           final answer = currentAnswers[currentQuestion.id];
-                          
+
                           // Check if question is required and has an answer
-                          if (currentQuestion.isRequired && 
-                              (answer == null || 
-                               (answer is String && answer.isEmpty) ||
-                               (answer is int && answer == 0))) {
+                          if (currentQuestion.isRequired &&
+                              (answer == null ||
+                                  (answer is String && answer.isEmpty) ||
+                                  (answer is int && answer == 0))) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                content: Text('Please answer this question before continuing'),
+                                content: Text(
+                                    'Please answer this question before continuing'),
                                 backgroundColor: Colors.red,
                               ),
                             );
                             return;
                           }
-                          
+
                           _nextQuestion();
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Theme.of(context).primaryColor,
                         ),
                         child: Text(
-                          _currentPage == questions.length - 1 ? 'Submit' : 'Next',
+                          _currentPage == questions.length - 1
+                              ? 'Submit'
+                              : 'Next',
                         ),
                       ),
                     ],

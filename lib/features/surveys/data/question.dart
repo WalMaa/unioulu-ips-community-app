@@ -29,4 +29,18 @@ class Question {
     );
   }
 
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'text': text,
+      'type': type.index,
+      'options': options,
+      'isRequired': isRequired,
+    };
+  }
+
+  @override
+  String toString() {
+    return 'Question{id: $id, text: $text, type: $type, options: $options, isRequired: $isRequired}';
+  }
 }

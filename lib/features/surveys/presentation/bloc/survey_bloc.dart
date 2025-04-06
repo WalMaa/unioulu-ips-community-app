@@ -1,4 +1,4 @@
-// survey_bloc.dart
+import 'dart:developer' as developer;
 import 'package:bloc/bloc.dart';
 import 'package:community/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:community/features/surveys/data/response.dart';
@@ -24,6 +24,7 @@ class SurveyBloc extends Bloc<SurveyEvent, SurveyState> {
     emit(SurveyLoading());
     try {
       final survey = await service.getSurveyForEvent(event.eventId);
+      developer.log('Survey loaded: ${survey.toString()}');
       emit(SurveyLoaded(
         survey: survey,
         answers: {},

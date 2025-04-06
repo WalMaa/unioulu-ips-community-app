@@ -24,4 +24,19 @@ class Survey {
       questions: List<Question>.from(map['questions'].map((x) => Question.fromMap(x))),
     );
   }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'title': title,
+      'description': description,
+      'event_id': eventId,
+      'questions': List<dynamic>.from(questions.map((x) => x.toMap())),
+    };
+  }
+
+  @override
+  String toString() {
+    return 'Survey{id: $id, title: $title, description: $description, eventId: $eventId, questions: $questions}';
+  }
 }
