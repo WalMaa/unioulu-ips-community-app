@@ -1,3 +1,4 @@
+import 'package:community/core/widgets/custom_button.dart';
 import 'package:community/features/surveys/presentation/bloc/survey_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -55,18 +56,14 @@ class SurveyCompletionPage extends StatelessWidget {
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 40),
-                  ElevatedButton(
+                  CustomButton(
                     onPressed: () {
                       Navigator.popUntil(
                         context, 
                         (route) => route.isFirst || route.settings.name == '/event_detail',
                       );
                     },
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-                      backgroundColor: Theme.of(context).primaryColor,
-                    ),
-                    child: const Text('Return to Event'),
+                    text: 'Back to Event',
                   ),
                 ],
               ),

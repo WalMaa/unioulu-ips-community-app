@@ -1,5 +1,6 @@
 import 'dart:developer' as developer;
 
+import 'package:community/core/widgets/custom_button.dart';
 import 'package:community/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:community/features/events/presentation/bloc/events_bloc.dart';
 import 'package:community/features/events/repository/event_repository.dart';
@@ -105,13 +106,8 @@ class EventDetailsPage extends StatelessWidget {
               // Tab content occupies the rest of the space
                             Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: ElevatedButton.icon(
-                  style: ElevatedButton.styleFrom(
-                    minimumSize: const Size.fromHeight(40),
-                    backgroundColor: Theme.of(context).colorScheme.secondary,
-                  ),
-                  icon: const Icon(Icons.rate_review),
-                  label: const Text('Take Survey'),
+                child: CustomButton(
+                  text: 'Take Survey',
                   onPressed: () {
                     Navigator.push(
                       context,

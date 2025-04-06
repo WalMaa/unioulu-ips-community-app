@@ -1,5 +1,6 @@
 // survey_intro_page.dart
 import 'package:community/core/services/dependency_injection.dart';
+import 'package:community/core/widgets/custom_button.dart';
 import 'package:community/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:community/features/surveys/presentation/bloc/survey_bloc.dart';
 import 'package:community/features/surveys/presentation/bloc/survey_event.dart';
@@ -67,24 +68,25 @@ class SurveyIntroPage extends StatelessWidget {
                     const Spacer(),
                     SizedBox(
                       width: double.infinity,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          backgroundColor: Theme.of(context).primaryColor,
-                          foregroundColor: Colors.white,
-                        ),
+                      child: CustomButton(
+                        text: 'Start Survey',
                         onPressed: () {
+                          final surveyBloc = context.read<SurveyBloc>();
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => SurveyQuestionPage(
-                                eventId: eventId,
-                                survey: survey,
+                              builder: (context) => MultiBlocProvider(
+                                providers: [
+                                  BlocProvider.value(value: surveyBloc),
+                                ],
+                                child: SurveyQuestionPage(
+                                  eventId: eventId,
+                                  survey: survey,
+                                ),
                               ),
                             ),
                           );
                         },
-                        child: const Text('Start Survey'),
                       ),
                     ),
                   ],

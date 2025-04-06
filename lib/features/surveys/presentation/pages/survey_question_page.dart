@@ -1,3 +1,4 @@
+import 'package:community/core/widgets/custom_button.dart';
 import 'package:community/features/surveys/data/question.dart';
 import 'package:community/features/surveys/data/survey.dart';
 import 'package:community/features/surveys/presentation/bloc/survey_event.dart';
@@ -209,16 +210,13 @@ class _SurveyQuestionPageState extends State<SurveyQuestionPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       if (_currentPage > 0)
-                        ElevatedButton(
+                        CustomButton(
                           onPressed: _previousQuestion,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.grey,
-                          ),
-                          child: const Text('Previous'),
+                          text: 'Previous',
                         )
                       else
                         const SizedBox(),
-                      ElevatedButton(
+                      CustomButton(
                         onPressed: () {
                           final currentQuestion = questions[_currentPage];
                           final answer = currentAnswers[currentQuestion.id];
@@ -240,14 +238,9 @@ class _SurveyQuestionPageState extends State<SurveyQuestionPage> {
 
                           _nextQuestion();
                         },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Theme.of(context).primaryColor,
-                        ),
-                        child: Text(
-                          _currentPage == questions.length - 1
-                              ? 'Submit'
-                              : 'Next',
-                        ),
+                        text: _currentPage < questions.length - 1
+                            ? 'Next'
+                            : 'Submit',
                       ),
                     ],
                   ),
