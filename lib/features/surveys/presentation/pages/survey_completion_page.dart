@@ -7,7 +7,7 @@ import 'package:community/features/surveys/presentation/bloc/survey_bloc.dart';
 class SurveyCompletionPage extends StatelessWidget {
   final String eventId;
   
-  const SurveyCompletionPage({Key? key, required this.eventId}) : super(key: key);
+  const SurveyCompletionPage({super.key, required this.eventId});
   
   @override
   Widget build(BuildContext context) {
