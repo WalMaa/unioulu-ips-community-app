@@ -167,6 +167,7 @@ sample_events = [
 
 
 
+# Appwrite does not support unique indexes on relationship types as of early 2025 so we have to use a stringtype for identifiers
 collections_config = [
     #Events
     {
@@ -196,7 +197,6 @@ collections_config = [
         ]
     },
     # Event likes
-    # Appwrite does not support unique indexes on relationship types as of early 2025 so we have to use a stringtype for identifiers
     {
         'name': 'EventLikes',
         'collection_id': 'event_likes',
@@ -258,7 +258,7 @@ collections_config = [
             {'type': 'string', 'key': 'userId', 'size': 255, 'required': True}
         ]
     },
-    # announcements
+    # Announcements
     {
         'name': 'Announcements',
         'collection_id': 'announcements',
@@ -268,6 +268,26 @@ collections_config = [
             {'type': 'datetime', 'key': 'date', 'required': True}
         ]
     }
+    # Surveys
+    {
+        'name': 'Surveys',
+        'collection_id': 'surveys',
+        'attributes': [
+            {'type': 'string', 'key': 'description', 'size': 1024, 'required': True},
+            {'type': 'string', 'key': 'eventId', 'size': 255, 'required': True},
+        ]
+    }
+    # Survey questions
+    {
+        'name': 'SurveyQuestions',
+        'collection_id': 'survey_questions',
+        'attributes': [
+            {'type': 'string', 'key': 'question', 'size': 1024, 'required': True},
+            {'type': 'string', 'key': 'surveyId', 'size': 255, 'required': True},
+            {'type': 'enum', 'key': 'questionType', 'size': 255, 'required': True, 'enum': ['multipleChoice', 'text', 'rating']},
+            {'type': 'boolean', 'key': 'isRequired', 'required': True},
+        ]
+    },
 ]
 
 def create_event_like_index():
