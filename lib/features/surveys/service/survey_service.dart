@@ -1,6 +1,6 @@
 
 
-import 'package:community/features/surveys/data/question.dart';
+import 'package:community/features/surveys/data/survey_question.dart';
 import 'package:community/features/surveys/data/survey.dart';
 import 'package:community/features/surveys/data/survey_response.dart';
 
@@ -12,16 +12,22 @@ class SurveyService {
     // TODO: Replace with actual API call
 
     var questions = [
-      Question(
+      SurveyQuestion(
         id: '1',
         text: 'How would you rate the event?',
         type: QuestionType.rating,
         options: ['1', '2', '3', '4', '5'],
       ),
-      Question(
+      SurveyQuestion(
         id: '2',
         text: 'What did you like most about the event?',
         type: QuestionType.text,
+      ),
+      SurveyQuestion(
+        id: '3',
+        text: 'Would you recommend this event to a friend?',
+        type: QuestionType.multipleChoice,
+        options: ['Yes', 'No', 'Maybe'],
       ),
     ];
 

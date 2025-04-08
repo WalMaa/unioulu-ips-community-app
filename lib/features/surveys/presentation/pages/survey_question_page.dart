@@ -1,5 +1,5 @@
 import 'package:community/core/widgets/custom_button.dart';
-import 'package:community/features/surveys/data/question.dart';
+import 'package:community/features/surveys/data/survey_question.dart';
 import 'package:community/features/surveys/data/survey.dart';
 import 'package:community/features/surveys/presentation/bloc/survey_event.dart';
 import 'package:community/features/surveys/presentation/bloc/survey_state.dart';

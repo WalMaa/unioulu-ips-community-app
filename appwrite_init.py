@@ -166,6 +166,8 @@ sample_events = [
 ]
 
 
+    
+
 
 # Appwrite does not support unique indexes on relationship types as of early 2025 so we have to use a stringtype for identifiers
 collections_config = [
@@ -267,16 +269,17 @@ collections_config = [
             {'type': 'string', 'key': 'content', 'size': 1024, 'required': True},
             {'type': 'datetime', 'key': 'date', 'required': True}
         ]
-    }
+    },
     # Surveys
     {
         'name': 'Surveys',
         'collection_id': 'surveys',
         'attributes': [
+            {'type': 'string', 'key': 'title', 'size': 255, 'required': True},
             {'type': 'string', 'key': 'description', 'size': 1024, 'required': True},
             {'type': 'string', 'key': 'eventId', 'size': 255, 'required': True},
         ]
-    }
+    },
     # Survey questions
     {
         'name': 'SurveyQuestions',
@@ -285,9 +288,31 @@ collections_config = [
             {'type': 'string', 'key': 'question', 'size': 1024, 'required': True},
             {'type': 'string', 'key': 'surveyId', 'size': 255, 'required': True},
             {'type': 'enum', 'key': 'questionType', 'size': 255, 'required': True, 'enum': ['multipleChoice', 'text', 'rating']},
+            # Has to be a string because of Appwrite's limitated data types. The options are comma separated values.
+            {'type': 'string', 'key': 'options', 'size': 1024},
             {'type': 'boolean', 'key': 'isRequired', 'required': True},
         ]
     },
+    # Survey Responses
+    {
+        'name': 'SurveyResponses',
+        'collection_id': 'survey_responses',
+        'attributes': [
+            {'type': 'string', 'key': 'surveyId', 'size': 255, 'required': True},
+            {'type': 'string', 'key': 'userId', 'size': 255, 'required': True},
+            {'type': 'string', 'key': 'eventId', 'size': 255, 'required': True},
+        ]
+    },
+    # Survey Response Answers
+    {
+        'name': 'SurveyResponseAnswers',
+        'collection_id': 'survey_response_answers',
+        'attributes': [
+            {'type': 'string', 'key': 'responseId', 'size': 255, 'required': True},
+            {'type': 'string', 'key': 'questionId', 'size': 255, 'required': True},
+            {'type': 'string', 'key': 'answer', 'size': 1024, 'required': True},
+        ]
+    }
 ]
 
 def create_event_like_index():
@@ -386,6 +411,70 @@ def create_comments():
         except AppwriteException as e:
             print(f"Error creating comments: {str(e)}")
                 
+def create_sample_surveys():
+    # Create a sample survey for each event
+    # Get all events from the database and create surveys for each event
+    try:
+        events = databases.list_documents(db_id, 'events')
+    except AppwriteException as e:
+        print(f"Error getting events: {str(e)}")
+    for event in events['documents']:
+        sample_survey = {
+            "title": f"{event['title_en']} Feedback",
+            "description": "We value your feedback! Please fill out this survey to help us improve future events.",
+            "eventId": event['$id']
+        }
+        # Save survey to the database
+        try:
+            survey_result = databases.create_document(
+                db_id,
+                'surveys',
+                'unique()',
+                sample_survey
+            )
+            print(f"Created survey for event: {event['title_en']}")
+            
+            # Create sample questions for the survey
+            sample_questions = [
+                {
+                    "question": "How would you rate the event overall?",
+                    "surveyId": survey_result['$id'],
+                    "questionType": "rating",
+                    "options": "",
+                    "isRequired": True
+                },
+                {
+                    "question": "What did you like most about the event?",
+                    "surveyId": survey_result['$id'],
+                    "questionType": "text",
+                    "options": "",
+                    "isRequired": True
+                },
+                {
+                    "question": "Would you recommend this event to a friend?",
+                    "surveyId": survey_result['$id'],
+                    "questionType": "multipleChoice",
+                    "options": "Yes,No,Maybe",
+                    "isRequired": True
+                }
+            ]
+            
+            # Save questions to the database
+            for question in sample_questions:
+                question_result = databases.create_document(
+                    db_id,
+                    'survey_questions',
+                    'unique()',
+                    question
+                )
+                print(f"Created question for survey: {question['question']}")
+        except AppwriteException as e:
+            print(f"Error creating survey questions: {str(e)}")
+        
+
+        
+    
+
 
 def create_sample_events():
     try:
@@ -446,16 +535,22 @@ def create_collections(databases: Databases):
             # If not specified, set required to False
             required = attribute.get('required', False)
             two_way_key = attribute.get('two_way_key', None)
-            if attribute['type'] == 'string':
-                result = databases.create_string_attribute(db_id, collection['collection_id'], attribute['key'], attribute['size'], required)
-            elif attribute['type'] == 'datetime':
-                result = databases.create_datetime_attribute(db_id, collection['collection_id'], attribute['key'], required)
-            elif attribute['type'] == 'integer':
-                result = databases.create_integer_attribute(db_id, collection['collection_id'], attribute['key'], required)
-            elif attribute['type'] == 'relationship':
+            attribute_key = attribute['key']
+            attribute_type = attribute['type']
+            if attribute_type == 'string':
+                result = databases.create_string_attribute(db_id, collection['collection_id'], attribute_key, attribute['size'], required)
+            elif attribute_type == 'datetime':
+                result = databases.create_datetime_attribute(db_id, collection['collection_id'], attribute_key, required)
+            elif attribute_type == 'integer':
+                result = databases.create_integer_attribute(db_id, collection['collection_id'], attribute_key, required)
+            elif attribute_type == 'relationship':
                 result = databases.create_relationship_attribute(db_id, collection['collection_id'], attribute['related_collection'], attribute['relationship_type'], attribute['two_way'], two_way_key, attribute['on_delete'])
+            elif attribute_type == 'enum':
+                result = databases.create_enum_attribute(db_id, collection['collection_id'], attribute_key, attribute['enum'], required)
+            elif attribute_type == 'boolean':
+                result = databases.create_boolean_attribute(db_id, collection['collection_id'], attribute_key, required)
             else:
-                raise ValueError(f'Unknown attribute type: {attribute["type"]}')
+                raise ValueError(f'Unknown attribute type: {attribute_type}')
  
  
 if __name__ == "__main__":   
@@ -470,6 +565,7 @@ if __name__ == "__main__":
         create_post_like_index()
         create_comment_like_index()
         create_comments()
+        create_sample_surveys()
     except AppwriteException as e:
         print("Exception: ", e.message)
     

@@ -1,11 +1,11 @@
-import 'package:community/features/surveys/data/question.dart';
+import 'package:community/features/surveys/data/survey_question.dart';
 
 class Survey {
   final String id;
   final String title;
   final String description;
   final String eventId;
-  final List<Question> questions;
+  final List<SurveyQuestion> questions;
   
   Survey({
     required this.id,
@@ -21,7 +21,7 @@ class Survey {
       title: map['title'],
       description: map['description'],
       eventId: map['event_id'],
-      questions: List<Question>.from(map['questions'].map((x) => Question.fromMap(x))),
+      questions: List<SurveyQuestion>.from(map['questions'].map((x) => SurveyQuestion.fromMap(x))),
     );
   }
 

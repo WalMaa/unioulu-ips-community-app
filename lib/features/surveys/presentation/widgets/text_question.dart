@@ -1,9 +1,9 @@
 // text_question.dart
-import 'package:community/features/surveys/data/question.dart';
+import 'package:community/features/surveys/data/survey_question.dart';
 import 'package:flutter/material.dart';
 
 class TextQuestion extends StatefulWidget {
-  final Question question;
+  final SurveyQuestion question;
   final String text;
   final Function(String) onTextChanged;
   

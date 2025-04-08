@@ -1,8 +1,8 @@
-import 'package:community/features/surveys/data/question.dart';
+import 'package:community/features/surveys/data/survey_question.dart';
 import 'package:flutter/material.dart';
 
 class MultipleChoiceQuestion extends StatelessWidget {
-  final Question question;
+  final SurveyQuestion question;
   final String? selectedOption;
   final Function(String) onOptionSelected;
   
