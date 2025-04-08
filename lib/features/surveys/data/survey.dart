@@ -17,11 +17,11 @@ class Survey {
 
   factory Survey.fromMap(Map<String, dynamic> map) {
     return Survey(
-      id: map['id'],
+      id: map['\$id'],
       title: map['title'],
       description: map['description'],
-      eventId: map['event_id'],
-      questions: List<SurveyQuestion>.from(map['questions'].map((x) => SurveyQuestion.fromMap(x))),
+      eventId: map['eventId'],
+      questions: []
     );
   }
 
