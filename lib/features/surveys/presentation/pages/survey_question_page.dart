@@ -1,5 +1,5 @@
 import 'package:community/core/widgets/custom_button.dart';
-import 'package:community/features/surveys/data/question.dart';
+import 'package:community/features/surveys/data/survey_question.dart';
 import 'package:community/features/surveys/data/survey.dart';
 import 'package:community/features/surveys/presentation/bloc/survey_event.dart';
 import 'package:community/features/surveys/presentation/bloc/survey_state.dart';
@@ -158,7 +158,7 @@ class _SurveyQuestionPageState extends State<SurveyQuestionPage> {
                     itemBuilder: (context, index) {
                       final question = questions[index];
 
-                      switch (question.type) {
+                      switch (question.questionType) {
                         case QuestionType.multipleChoice:
                           return MultipleChoiceQuestion(
                             question: question,

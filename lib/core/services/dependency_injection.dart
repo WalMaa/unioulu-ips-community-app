@@ -91,5 +91,5 @@ void _registerCommonServices() {
   locator.registerLazySingleton<EventRepository>(
       () => EventRepository());
   locator.registerLazySingleton<CommunityService>(() => CommunityService(appwriteService: locator<AppwriteService>()));
-  locator.registerLazySingleton<SurveyService>(() => SurveyService());
+  locator.registerLazySingleton<SurveyService>(() => SurveyService(appwriteService: locator<AppwriteService>()));
 }

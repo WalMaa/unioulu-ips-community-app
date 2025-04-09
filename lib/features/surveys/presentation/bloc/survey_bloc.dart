@@ -64,7 +64,6 @@ class SurveyBloc extends Bloc<SurveyEvent, SurveyState> {
           userId: userId,
           eventId: event.eventId,
           responses: responses,
-          submittedAt: DateTime.now(),
         );
         
         await service.submitSurveyResponse(surveyResponse);

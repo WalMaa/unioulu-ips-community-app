@@ -1,17 +1,17 @@
-import 'package:community/features/surveys/data/question.dart';
+import 'package:community/features/surveys/data/survey_question.dart';
 import 'package:flutter/material.dart';
 
 class RatingQuestion extends StatelessWidget {
-  final Question question;
+  final SurveyQuestion question;
   final int rating;
   final Function(int) onRatingChanged;
   
   const RatingQuestion({
-    Key? key,
+    super.key,
     required this.question,
     required this.rating,
     required this.onRatingChanged,
-  }) : super(key: key);
+  });
   
   @override
   Widget build(BuildContext context) {
@@ -21,7 +21,7 @@ class RatingQuestion extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            question.text,
+            question.questionText,
             style: Theme.of(context).textTheme.titleLarge,
           ),
           if (question.isRequired)

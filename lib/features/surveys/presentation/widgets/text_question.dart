@@ -1,9 +1,9 @@
 // text_question.dart
-import 'package:community/features/surveys/data/question.dart';
+import 'package:community/features/surveys/data/survey_question.dart';
 import 'package:flutter/material.dart';
 
 class TextQuestion extends StatefulWidget {
-  final Question question;
+  final SurveyQuestion question;
   final String text;
   final Function(String) onTextChanged;
   
@@ -49,7 +49,7 @@ class _TextQuestionState extends State<TextQuestion> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            widget.question.text,
+            widget.question.questionText,
             style: Theme.of(context).textTheme.titleLarge,
           ),
           if (widget.question.isRequired)
