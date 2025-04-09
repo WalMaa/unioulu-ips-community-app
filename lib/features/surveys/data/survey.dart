@@ -5,7 +5,7 @@ class Survey {
   final String title;
   final String description;
   final String eventId;
-  final List<SurveyQuestion> questions;
+  late List<SurveyQuestion> questions;
   
   Survey({
     required this.id,

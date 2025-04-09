@@ -49,7 +49,7 @@ class _TextQuestionState extends State<TextQuestion> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            widget.question.text,
+            widget.question.questionText,
             style: Theme.of(context).textTheme.titleLarge,
           ),
           if (widget.question.isRequired)

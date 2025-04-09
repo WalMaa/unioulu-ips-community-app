@@ -158,7 +158,7 @@ class _SurveyQuestionPageState extends State<SurveyQuestionPage> {
                     itemBuilder: (context, index) {
                       final question = questions[index];
 
-                      switch (question.type) {
+                      switch (question.questionType) {
                         case QuestionType.multipleChoice:
                           return MultipleChoiceQuestion(
                             question: question,

@@ -6,25 +6,25 @@ enum QuestionType {
 
 class SurveyQuestion {
   final String id;
-  final String text;
-  final QuestionType type;
+  final String questionText;
+  final QuestionType questionType;
   final List<String>? options;
   final bool isRequired;
   
   SurveyQuestion({
     required this.id,
-    required this.text,
-    required this.type,
+    required this.questionText,
+    required this.questionType,
     this.options,
     this.isRequired = true,
   });
 
   factory SurveyQuestion.fromMap(Map<String, dynamic> map) {
     return SurveyQuestion(
-      id: map['id'] ?? '',
-      text: map['text'] ?? '',
-      type: QuestionType.values[map['type']],
-      options: List<String>.from(map['options'] ?? []),
+      id: map['\$id'] ?? '',
+      questionText: map['question'] ?? '',
+      questionType: (map['questionType'] as String?)?.toQuestionType() ?? QuestionType.text,
+      options: List<String>.from(map['options'].split(',') ?? []),
       isRequired: map['isRequired'] ?? true,
     );
   }
@@ -32,8 +32,8 @@ class SurveyQuestion {
   Map<String, dynamic> toMap() {
     return {
       'id': id,
-      'text': text,
-      'type': type.index,
+      'question': questionText,
+      'questionType': questionType.index,
       'options': options,
       'isRequired': isRequired,
     };
@@ -41,6 +41,22 @@ class SurveyQuestion {
 
   @override
   String toString() {
-    return 'Question{id: $id, text: $text, type: $type, options: $options, isRequired: $isRequired}';
+    return 'Question{id: $id, question: $questionText, questionType: $questionType, options: $options, isRequired: $isRequired}';
+  }
+}
+
+
+extension QuestionTypeExtension on String {
+  QuestionType toQuestionType() {
+    switch (this) {
+      case 'multipleChoice':
+        return QuestionType.multipleChoice;
+      case 'rating':
+        return QuestionType.rating;
+      case 'text':
+        return QuestionType.text;
+      default:
+        return QuestionType.text; // Default fallback
+    }
   }
 }

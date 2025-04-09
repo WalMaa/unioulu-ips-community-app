@@ -21,7 +21,7 @@ class MultipleChoiceQuestion extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            question.text,
+            question.questionText,
             style: Theme.of(context).textTheme.titleLarge,
           ),
           if (question.isRequired)

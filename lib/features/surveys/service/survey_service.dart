@@ -1,5 +1,3 @@
-
-
 import 'dart:developer' as developer;
 
 import 'package:appwrite/appwrite.dart';
@@ -11,20 +9,42 @@ import 'package:community/features/surveys/data/survey_response.dart';
 class SurveyService {
   final AppwriteService _appwriteService;
 
-  SurveyService({required AppwriteService appwriteService}) 
-    : _appwriteService = appwriteService;
-  
-  
-  Future<Survey> getSurveyForEvent(String eventId) async {
+  SurveyService({required AppwriteService appwriteService})
+      : _appwriteService = appwriteService;
 
+  Future<List<SurveyQuestion>> getQuestionsForSurvey(String surveyId) async {
     try {
       final response = await _appwriteService.listDocuments(
-        collectionId: "surveys", 
-        queries: [ Query.equal('eventId', eventId)] );
+          collectionId: "survey_questions",
+          queries: [Query.equal('surveyId', surveyId)]);
+
+      if (response['documents'].isNotEmpty) {
+        final questionsData = response['documents'];
+        List<SurveyQuestion> questions = questionsData
+            .map<SurveyQuestion>((question) => SurveyQuestion.fromMap(question))
+            .toList();
+        return questions;
+      } else {
+        throw Exception('No questions found for survey $surveyId');
+      }
+    } catch (e) {
+      developer.log('Error fetching questions for survey $surveyId: $e',
+          error: e, stackTrace: StackTrace.current);
+    }
+    return [];
+  }
+
+  Future<Survey> getSurveyForEvent(String eventId) async {
+    try {
+      final response = await _appwriteService.listDocuments(
+          collectionId: "surveys", queries: [Query.equal('eventId', eventId)]);
 
       if (response['documents'].isNotEmpty) {
         final surveyData = response['documents'][0];
-        return Survey.fromMap(surveyData);
+        Survey survey = Survey.fromMap(surveyData);
+        List<SurveyQuestion> questions = await getQuestionsForSurvey(survey.id);
+        survey.questions = questions;
+        return survey;
       } else {
         throw Exception('No survey found for event $eventId');
       }
@@ -32,41 +52,18 @@ class SurveyService {
       developer.log('Error fetching survey for event $eventId: $e',
           error: e, stackTrace: StackTrace.current);
     }
-
-    var questions = [
-      SurveyQuestion(
-        id: '1',
-        text: 'How would you rate the event?',
-        type: QuestionType.rating,
-        options: ['1', '2', '3', '4', '5'],
-      ),
-      SurveyQuestion(
-        id: '2',
-        text: 'What did you like most about the event?',
-        type: QuestionType.text,
-      ),
-      SurveyQuestion(
-        id: '3',
-        text: 'Would you recommend this event to a friend?',
-        type: QuestionType.multipleChoice,
-        options: ['Yes', 'No', 'Maybe'],
-      ),
-    ];
-
-    Survey survey = Survey(
-      id: '1',
-      title: 'Sample Survey',
-      description: 'This is a sample survey description.',
+    return Survey(
+      id: '',
+      title: '',
+      description: '',
       eventId: eventId,
-      questions: questions,
+      questions: [],
     );
-    return survey;
   }
-  
+
   Future<void> submitSurveyResponse(SurveyResponse responseModel) async {
     // TODO: Replace with actual API call
     // Simulate a network call
     await Future.delayed(Duration(seconds: 1));
-    
   }
 }
