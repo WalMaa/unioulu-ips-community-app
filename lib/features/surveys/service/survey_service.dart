@@ -50,13 +50,28 @@ class SurveyService {
   }
 
   Future<void> submitSurveyResponse(SurveyResponse responseModel) async {
-    await _appwriteService
+    final response = await _appwriteService
         .createDocument(collectionId: "survey_responses", data: {
       'documentId': 'unique()',
       'data': {
         'eventId': responseModel.eventId,
         'surveyId': responseModel.surveyId,
+        'userId': responseModel.userId,
       }
     });
+
+    final surveyResponse = SurveyResponse.fromMap(response);
+
+    final responses = responseModel.responses;
+    for( var response in responses) {
+      await _appwriteService.createDocument(collectionId: "survey_response_answers", data: {
+        'documentId': 'unique()',
+        'data': {
+          'responseId': surveyResponse.id,
+          'questionId': response.questionId,
+          'answer': response.answer.toString(),
+        }
+      });
+    }
   }
 }

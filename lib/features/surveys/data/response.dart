@@ -13,4 +13,11 @@ class Response {
       'answer': answer,
     };
   }
+
+  factory Response.fromMap(Map<String, dynamic> map) {
+    return Response(
+      questionId: map['questionId'],
+      answer: map['answer'],
+    );
+  }
 }
