@@ -35,35 +35,28 @@ class SurveyService {
   }
 
   Future<Survey> getSurveyForEvent(String eventId) async {
-    try {
-      final response = await _appwriteService.listDocuments(
-          collectionId: "surveys", queries: [Query.equal('eventId', eventId)]);
+    final response = await _appwriteService.listDocuments(
+        collectionId: "surveys", queries: [Query.equal('eventId', eventId)]);
 
-      if (response['documents'].isNotEmpty) {
-        final surveyData = response['documents'][0];
-        Survey survey = Survey.fromMap(surveyData);
-        List<SurveyQuestion> questions = await getQuestionsForSurvey(survey.id);
-        survey.questions = questions;
-        return survey;
-      } else {
-        throw Exception('No survey found for event $eventId');
-      }
-    } catch (e) {
-      developer.log('Error fetching survey for event $eventId: $e',
-          error: e, stackTrace: StackTrace.current);
+    if (response['documents'].isNotEmpty) {
+      final surveyData = response['documents'][0];
+      Survey survey = Survey.fromMap(surveyData);
+      List<SurveyQuestion> questions = await getQuestionsForSurvey(survey.id);
+      survey.questions = questions;
+      return survey;
+    } else {
+      throw Exception('No survey found for event $eventId');
     }
-    return Survey(
-      id: '',
-      title: '',
-      description: '',
-      eventId: eventId,
-      questions: [],
-    );
   }
 
   Future<void> submitSurveyResponse(SurveyResponse responseModel) async {
-    // TODO: Replace with actual API call
-    // Simulate a network call
-    await Future.delayed(Duration(seconds: 1));
+    await _appwriteService
+        .createDocument(collectionId: "survey_responses", data: {
+      'documentId': 'unique()',
+      'data': {
+        'eventId': responseModel.eventId,
+        'surveyId': responseModel.surveyId,
+      }
+    });
   }
 }

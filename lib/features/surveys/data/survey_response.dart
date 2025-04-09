@@ -14,4 +14,14 @@ class SurveyResponse {
     required this.responses,
     required this.submittedAt,
   });
+
+  Map<String, dynamic> toMap() {
+    return {
+      'surveyId': surveyId,
+      'userId': userId,
+      'eventId': eventId,
+      'responses': responses.map((response) => response.toMap()).toList(),
+      'submittedAt': submittedAt.toIso8601String(),
+    };
+  }
 }

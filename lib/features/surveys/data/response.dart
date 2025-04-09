@@ -6,4 +6,11 @@ class Response {
     required this.questionId,
     required this.answer,
   });
+
+  Map<String, dynamic> toMap() {
+    return {
+      'questionId': questionId,
+      'answer': answer,
+    };
+  }
 }

@@ -7,11 +7,11 @@ class RatingQuestion extends StatelessWidget {
   final Function(int) onRatingChanged;
   
   const RatingQuestion({
-    Key? key,
+    super.key,
     required this.question,
     required this.rating,
     required this.onRatingChanged,
-  }) : super(key: key);
+  });
   
   @override
   Widget build(BuildContext context) {
