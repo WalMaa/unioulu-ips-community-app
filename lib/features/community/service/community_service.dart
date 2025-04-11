@@ -38,10 +38,25 @@ class CommunityService {
     }
   }
 
-  Future<List<PostModel>> getPosts() async {
+  Future<List<PostModel>> getPosts({
+    int? limit,
+    bool sortByLatest = true,
+  }) async {
     try {
+      List<String> queries = [];
+
+      // Add sorting query
+      if (sortByLatest) {
+        queries.add(Query.orderDesc('\$createdAt'));
+      }
+
+      if (limit != null) {
+        queries.add(Query.limit(limit));
+      }
+
       final response = await _appwriteService.listDocuments(
         collectionId: "posts",
+        queries: queries,
       );
 
       if (response.containsKey('documents') && response['documents'] is List) {
@@ -84,7 +99,8 @@ class CommunityService {
   }
 
   // Add a comment to a post
-  Future<CommentModel> addComment(String postId, String text, String username) async {
+  Future<CommentModel> addComment(
+      String postId, String text, String username) async {
     if (username == 'anonymous') {
       throw Exception('Anonymous users cannot add comments');
     }
@@ -234,7 +250,8 @@ class CommunityService {
   }
 
   // Lika a commment (create a like document)
-  Future<Map<String, dynamic>> likeComment(String userId, String commentId) async {
+  Future<Map<String, dynamic>> likeComment(
+      String userId, String commentId) async {
     if (userId == 'anonymous') {
       throw Exception('Anonymous users cannot like comments');
     }

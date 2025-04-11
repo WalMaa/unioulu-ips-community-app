@@ -4,7 +4,7 @@ abstract class CommunityEvent extends Equatable {
   const CommunityEvent();
 
   @override
-  List<Object> get props => [];
+  List<Object?> get props => [];
 }
 
 class LoadSinglePost extends CommunityEvent {
@@ -36,4 +36,37 @@ class LoadComments extends CommunityEvent {
   
   @override
   List<Object> get props => [postId];
+}
+
+class FetchCommunityPosts extends CommunityEvent {
+  final int? limit;
+  final bool sortByLatest;
+  final String? userId;
+
+  const FetchCommunityPosts({
+    this.limit,
+    this.sortByLatest = true,
+    this.userId,
+  });
+
+  @override
+  List<Object?> get props => [limit, sortByLatest, userId];
+}
+
+class TogglePostLike extends CommunityEvent {
+  final String postId;
+
+  const TogglePostLike({required this.postId});
+
+  @override
+  List<Object> get props => [postId];
+}
+
+class ToggleCommentLike extends CommunityEvent {
+  final String commentId;
+
+  const ToggleCommentLike({required this.commentId});
+
+  @override
+  List<Object> get props => [commentId];
 }

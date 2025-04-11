@@ -135,40 +135,43 @@ class CommunityBloc extends Bloc<CommunityEvent, CommunityState> {
     }
   }
 
-  Future<void> _onFetchCommunityPosts(
-      FetchCommunityPosts event, Emitter<CommunityState> emit) async {
-    emit(CommunityLoading());
+Future<void> _onFetchCommunityPosts(
+    FetchCommunityPosts event, Emitter<CommunityState> emit) async {
+  emit(CommunityLoading());
 
-    try {
-      // Get community posts from service
-      final posts = await _communityService.getPosts();
+  try {
+    // Get community posts from service
+    final posts = await _communityService.getPosts(
+      limit: event.limit,
+      sortByLatest: event.sortByLatest,
+    );
 
-      // Get current user ID
-      final userId = await _authRepository.getCurrentUserId();
+    // Get current user ID
+    final userId = await _authRepository.getCurrentUserId();
 
-      // Get user's liked posts (if logged in)
-      Set<String> likedPostIds = {};
-      if (userId != 'anonymous') {
-        // Get liked posts
-        final likedPosts = await _communityService.getUserLikedPosts(userId);
-        likedPostIds = likedPosts.map((post) => post.id).toSet();
+    // Get user's liked posts (if logged in)
+    Set<String> likedPostIds = {};
+    if (userId != 'anonymous') {
+      // Get liked posts
+      final likedPosts = await _communityService.getUserLikedPosts(userId);
+      likedPostIds = likedPosts.map((post) => post.id).toSet();
 
-        // Update post models with liked status
-        for (int i = 0; i < posts.length; i++) {
-          if (likedPostIds.contains(posts[i].id)) {
-            posts[i] = posts[i].copyWith(isLiked: true);
-          }
+      // Update post models with liked status
+      for (int i = 0; i < posts.length; i++) {
+        if (likedPostIds.contains(posts[i].id)) {
+          posts[i] = posts[i].copyWith(isLiked: true);
         }
       }
-
-      emit(CommunityLoaded(
-        posts: posts,
-        likedPosts: likedPostIds,
-      ));
-    } catch (e) {
-      emit(CommunityError(message: e.toString()));
     }
+
+    emit(CommunityLoaded(
+      posts: posts,
+      likedPosts: likedPostIds,
+    ));
+  } catch (e) {
+    emit(CommunityError(message: e.toString()));
   }
+}
 
   Future<void> _onToggleCommentLike(
       ToggleCommentLike event, Emitter<CommunityState> emit) async {
@@ -352,27 +355,3 @@ Future<void> _onTogglePostLike(
 
 }
 
-class FetchCommunityPosts extends CommunityEvent {
-  const FetchCommunityPosts();
-
-  @override
-  List<Object> get props => [];
-}
-
-class TogglePostLike extends CommunityEvent {
-  final String postId;
-
-  const TogglePostLike({required this.postId});
-
-  @override
-  List<Object> get props => [postId];
-}
-
-class ToggleCommentLike extends CommunityEvent {
-  final String commentId;
-
-  const ToggleCommentLike({required this.commentId});
-
-  @override
-  List<Object> get props => [commentId];
-}

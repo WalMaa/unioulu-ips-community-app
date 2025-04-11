@@ -69,12 +69,6 @@ class SplashPage extends StatelessWidget {
                 const SizedBox(height: AppSpacing.defaultPadding),
                 Column(
                   children: [
-                    Text(
-                      AppLocalizations.of(context)!.welcome,
-                      style: const TextStyle(
-                          fontWeight: FontWeight.bold, fontSize: 26),
-                    ),
-                    const SizedBox(height: AppSpacing.defaultPadding),
                     Row(
                       children: [
                         const Spacer(),
@@ -89,6 +83,12 @@ class SplashPage extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: AppSpacing.defaultPadding),
+                    Text(
+                      AppLocalizations.of(context)!.appName,
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold, fontSize: 26),
+                    ),
+                    const SizedBox(height: AppSpacing.extraLargePadding),
                   ],
                 ),
                 Row(
@@ -114,7 +114,7 @@ class SplashPage extends StatelessWidget {
                                 .toUpperCase(),
                           ),
                           const SizedBox(height: 16),
-                          ElevatedButton(
+                          CustomButton(
                             onPressed: () {
                               Navigator.push(
                                 context,
@@ -125,15 +125,9 @@ class SplashPage extends StatelessWidget {
                                 ),
                               );
                             },
-                            style: ElevatedButton.styleFrom(
-                              elevation: 0,
-                            ),
-                            child: Text(
-                              AppLocalizations.of(context)!
-                                  .register
-                                  .toUpperCase(),
-                              style: const TextStyle(color: Colors.black),
-                            ),
+                            text: AppLocalizations.of(context)!
+                                .register
+                                .toUpperCase(),
                           ),
                         ],
                       ),

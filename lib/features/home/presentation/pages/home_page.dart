@@ -52,129 +52,287 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget _buildModeratorScaffold(BuildContext context, String currentLocale,
+  Widget _buildAdminScaffold(BuildContext context, String currentLocale,
       AppwriteService appwriteService) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Moderator Dashboard'),
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Welcome, Moderator',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const EventForm()),
-                    );
-                  },
-                  child: const Text('Add New Event'),
-                ),
-                const SizedBox(height: 10),
-                ElevatedButton(
-                  onPressed: () {
-                    // Navigate to content management page
-                  },
-                  child: const Text('Manage Content'),
-                ),
-                const SizedBox(height: 20),
-                const Text(
-                  'Quick Stats',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                // Add some moderator-specific stats or widgets here
-              ],
-            ),
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Community App'),
+          bottom: const TabBar(
+            tabs: [
+              Tab(
+                  text: 'Admin Dashboard',
+                  icon: Icon(Icons.admin_panel_settings)),
+              Tab(text: 'User View', icon: Icon(Icons.person)),
+            ],
           ),
+        ),
+        body: TabBarView(
+          children: [
+            // Admin Dashboard Tab
+            SafeArea(
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Welcome, Admin',
+                        style: TextStyle(
+                            fontSize: 24, fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 20),
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const EventForm()),
+                          );
+                        },
+                        child: const Text('Add New Event'),
+                      ),
+                      const SizedBox(height: 10),
+                      CustomButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const AddAnnouncementForm(),
+                            ),
+                          );
+                        },
+                        text: 'Add New Announcement',
+                      ),
+                      const SizedBox(height: 10),
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const TopicForm()),
+                          );
+                        },
+                        child: const Text('Add New Topic'),
+                      ),
+                      const SizedBox(height: 10),
+                      ElevatedButton(
+                        onPressed: () {
+                          // Navigate to user management page
+                        },
+                        child: const Text('Manage Users'),
+                      ),
+                      const SizedBox(height: 10),
+                      ElevatedButton(
+                        onPressed: () {
+                          // Navigate to content management page
+                        },
+                        child: const Text('Manage Content'),
+                      ),
+                      const SizedBox(height: 20),
+                      const Text(
+                        'Quick Stats',
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                      // Add some admin-specific stats or widgets here
+                    ],
+                  ),
+                ),
+              ),
+            ),
+
+            // User View Tab - Reuse the user scaffold content
+            BlocBuilder<AuthBloc, AuthState>(
+              builder: (context, state) {
+                if (state is AuthAuthenticated) {
+                  return _buildUserContentView(
+                      context, currentLocale, appwriteService, state.user.name);
+                }
+                return const Center(child: Text('Authentication error'));
+              },
+            ),
+          ],
         ),
       ),
     );
   }
 
-  Widget _buildAdminScaffold(BuildContext context, String currentLocale,
+  Widget _buildModeratorScaffold(BuildContext context, String currentLocale,
       AppwriteService appwriteService) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Admin Dashboard'),
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Community App'),
+          bottom: const TabBar(
+            tabs: [
+              Tab(text: 'Moderator Tools', icon: Icon(Icons.shield)),
+              Tab(text: 'User View', icon: Icon(Icons.person)),
+            ],
+          ),
+        ),
+        body: TabBarView(
+          children: [
+            // Moderator Dashboard Tab
+            SafeArea(
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Welcome, Moderator',
+                        style: TextStyle(
+                            fontSize: 24, fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 20),
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const EventForm()),
+                          );
+                        },
+                        child: const Text('Add New Event'),
+                      ),
+                      const SizedBox(height: 10),
+                      ElevatedButton(
+                        onPressed: () {
+                          // Navigate to content management page
+                        },
+                        child: const Text('Manage Content'),
+                      ),
+                      const SizedBox(height: 20),
+                      const Text(
+                        'Quick Stats',
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                      // Add some moderator-specific stats or widgets here
+                    ],
+                  ),
+                ),
+              ),
+            ),
+
+            // User View Tab - Reuse the user scaffold content
+            BlocBuilder<AuthBloc, AuthState>(
+              builder: (context, state) {
+                if (state is AuthAuthenticated) {
+                  return _buildUserContentView(
+                      context, currentLocale, appwriteService, state.user.name);
+                }
+                return const Center(child: Text('Authentication error'));
+              },
+            ),
+          ],
+        ),
       ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
+    );
+  }
+
+// Extract the user scaffold content into its own method
+  Widget _buildUserContentView(BuildContext context, String currentLocale,
+      AppwriteService appwriteService, String userName) {
+    return SafeArea(
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.max,
               children: [
-                const Text(
-                  'Welcome, Admin',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                Expanded(
+                  flex: 2,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      const Text('Hello,', style: TextStyle(fontSize: 24.0)),
+                      Text(
+                        userName,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 22.0,
+                        ),
+                      ),
+                      const Text(
+                        'Let\'s explore what\'s new...',
+                        style: TextStyle(
+                          fontSize: 16.0,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 2,
+                      ),
+                    ],
+                  ),
                 ),
-                const SizedBox(height: 20),
-                ElevatedButton(
+                Expanded(
+                  flex: 1,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        onPressed: () {},
+                        icon: const Icon(Icons.favorite),
+                      ),
+                      IconButton(
+                        onPressed: () {},
+                        icon: const Icon(Icons.settings),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10.0),
+            Center(
+              child: CustomButton(
                   onPressed: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const EventForm()),
-                    );
-                  },
-                  child: const Text('Add New Event'),
-                ),
-                const SizedBox(height: 10),
-                CustomButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const AddAnnouncementForm(),
+                        builder: (context) => const AnnouncementsPage(),
                       ),
                     );
                   },
-                  text: 'Add New Announcement',
-                ),
-                const SizedBox(height: 10),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const TopicForm()),
-                    );
-                  },
-                  child: const Text('Add New Topic'),
-                ),
-                const SizedBox(height: 10),
-                ElevatedButton(
-                  onPressed: () {
-                    // Navigate to user management page
-                  },
-                  child: const Text('Manage Users'),
-                ),
-                const SizedBox(height: 10),
-                ElevatedButton(
-                  onPressed: () {
-                    // Navigate to content management page
-                  },
-                  child: const Text('Manage Content'),
-                ),
-                const SizedBox(height: 20),
-                const Text(
-                  'Quick Stats',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                // Add some admin-specific stats or widgets here
-              ],
+                  text: 'Announcements'),
             ),
-          ),
+            const SizedBox(height: 10.0),
+            const Text(
+              'Topics',
+              style: TextStyle(
+                fontSize: 16.0,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            TopicListWidget(
+              currentLocale: currentLocale,
+              appwriteService: appwriteService,
+            ),
+            const SizedBox(height: 10.0),
+            const LatestEventsWidget(),
+            const SizedBox(height: 10.0),
+            const Text(
+              'Community',
+              style: TextStyle(
+                fontSize: 16.0,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 10.0),
+            const LatestCommunityPostsWidget(),
+          ],
         ),
       ),
     );
@@ -183,103 +341,8 @@ class HomePage extends StatelessWidget {
   Widget _buildUserScaffold(BuildContext context, String currentLocale,
       AppwriteService appwriteService, String userName) {
     return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  Expanded(
-                    flex: 2,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        const Text('Hello,', style: TextStyle(fontSize: 24.0)),
-                        Text(
-                          userName,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 22.0,
-                          ),
-                        ),
-                        const Text(
-                          'Let\'s explore what\'s new...',
-                          style: TextStyle(
-                            fontSize: 16.0,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 2,
-                        ),
-                      ],
-                    ),
-                  ),
-                  Expanded(
-                    flex: 1,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        IconButton(
-                          onPressed: () {},
-                          icon: const Icon(Icons.favorite),
-                        ),
-                        IconButton(
-                          onPressed: () {},
-                          icon: const Icon(Icons.settings),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 10.0),
-              Center(
-                child: CustomButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const AnnouncementsPage(),
-                        ),
-                      );
-                    },
-                    text: 'Announcements'),
-              ),
-              const SizedBox(height: 10.0),
-              const Text(
-                'Topics',
-                style: TextStyle(
-                  fontSize: 16.0,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              TopicListWidget(
-                currentLocale: currentLocale,
-                appwriteService: appwriteService,
-              ),
-              const SizedBox(height: 10.0),
-              const LatestEventsWidget(),
-              const SizedBox(height: 10.0),
-              const Text(
-                'Community',
-                style: TextStyle(
-                  fontSize: 16.0,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 10.0),
-              const LatestCommunityPostsWidget(),
-            ],
-          ),
-        ),
-      ),
+      body: _buildUserContentView(
+          context, currentLocale, appwriteService, userName),
     );
   }
 }

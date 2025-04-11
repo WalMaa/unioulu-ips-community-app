@@ -1,4 +1,6 @@
 import 'package:community/features/auth/data/repositories/auth_repository_impl.dart';
+import 'package:community/features/community/presentation/bloc/community_bloc.dart';
+import 'package:community/features/community/service/community_service.dart';
 import 'package:community/features/events/presentation/bloc/events_bloc.dart';
 import 'package:community/features/surveys/presentation/bloc/survey_bloc.dart';
 import 'package:community/features/surveys/service/survey_service.dart';
@@ -88,6 +90,11 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
+            create: (context) => CommunityBloc(
+                  communityService: locator<CommunityService>(),
+                  authRepository: locator<AuthRepositoryImpl>(),
+                )),
+        BlocProvider(
           create: (context) => ThemeBloc(
             getTheme: locator<GetTheme>(),
             setTheme: locator<SetTheme>(),
@@ -111,7 +118,9 @@ class MyApp extends StatelessWidget {
           ),
         ),
         BlocProvider(
-          create: (context) => SurveyBloc(authRepository: locator<AuthRepositoryImpl>(), service: locator<SurveyService>()),
+          create: (context) => SurveyBloc(
+              authRepository: locator<AuthRepositoryImpl>(),
+              service: locator<SurveyService>()),
         ),
         BlocProvider(
           create: (context) => EventsBloc(
