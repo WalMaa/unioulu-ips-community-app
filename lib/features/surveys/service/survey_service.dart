@@ -4,7 +4,7 @@ import 'package:appwrite/appwrite.dart';
 import 'package:community/core/services/http_appwrite_service.dart';
 import 'package:community/features/surveys/data/survey_question.dart';
 import 'package:community/features/surveys/data/survey.dart';
-import 'package:community/features/surveys/data/survey_response.dart';
+import 'package:community/features/surveys/data/survey_submission.dart';
 
 class SurveyService {
   final AppwriteService _appwriteService;
@@ -49,7 +49,7 @@ class SurveyService {
     }
   }
 
-  Future<void> submitSurveyResponse(SurveyResponse responseModel) async {
+  Future<void> submitSurveyResponse(SurveySubmission responseModel) async {
     final response = await _appwriteService
         .createDocument(collectionId: "survey_responses", data: {
       'documentId': 'unique()',
@@ -60,7 +60,7 @@ class SurveyService {
       }
     });
 
-    final surveyResponse = SurveyResponse.fromMap(response);
+    final surveyResponse = SurveySubmission.fromMap(response);
 
     final responses = responseModel.responses;
     for( var response in responses) {

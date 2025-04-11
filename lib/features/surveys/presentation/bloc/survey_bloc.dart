@@ -2,7 +2,7 @@ import 'dart:developer' as developer;
 import 'package:bloc/bloc.dart';
 import 'package:community/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:community/features/surveys/data/response.dart';
-import 'package:community/features/surveys/data/survey_response.dart';
+import 'package:community/features/surveys/data/survey_submission.dart';
 import 'package:community/features/surveys/presentation/bloc/survey_event.dart';
 import 'package:community/features/surveys/presentation/bloc/survey_state.dart';
 import 'package:community/features/surveys/service/survey_service.dart';
@@ -59,7 +59,7 @@ class SurveyBloc extends Bloc<SurveyEvent, SurveyState> {
           );
         }).toList();
         
-        final surveyResponse = SurveyResponse(
+        final surveyResponse = SurveySubmission(
           surveyId: event.surveyId,
           userId: userId,
           eventId: event.eventId,

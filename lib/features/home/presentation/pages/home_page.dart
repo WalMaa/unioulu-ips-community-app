@@ -55,20 +55,29 @@ class HomePage extends StatelessWidget {
   Widget _buildAdminScaffold(BuildContext context, String currentLocale,
       AppwriteService appwriteService) {
     return DefaultTabController(
-      length: 2,
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Community App'),
-          bottom: const TabBar(
-            tabs: [
-              Tab(
+    length: 2,
+    child: Scaffold(
+      body: Column(
+        children: [
+          // Custom tab bar without an AppBar
+          Container(
+            color: Theme.of(context).primaryColor,
+            child: const TabBar(
+              tabs: [
+                Tab(
                   text: 'Admin Dashboard',
-                  icon: Icon(Icons.admin_panel_settings)),
-              Tab(text: 'User View', icon: Icon(Icons.person)),
-            ],
+                  icon: Icon(Icons.admin_panel_settings),
+                ),
+                Tab(text: 'User View', icon: Icon(Icons.person)),
+              ],
+              indicatorColor: Colors.white,
+              labelColor: Colors.white,
+              unselectedLabelColor: Colors.white70,
+            ),
           ),
-        ),
-        body: TabBarView(
+          // Tab content
+          Expanded(
+            child: TabBarView(
           children: [
             // Admin Dashboard Tab
             SafeArea(
@@ -157,6 +166,9 @@ class HomePage extends StatelessWidget {
           ],
         ),
       ),
+        ],
+      ),
+    ),
     );
   }
 

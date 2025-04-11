@@ -1,13 +1,13 @@
 import 'package:community/features/surveys/data/response.dart';
 
-class SurveyResponse {
+class SurveySubmission {
   final String id;
   final String surveyId;
   final String userId;
   final String eventId;
   final List<Response> responses;
   
-  SurveyResponse({
+  SurveySubmission({
     this.id = '',
     required this.surveyId,
     required this.userId,
@@ -25,8 +25,8 @@ class SurveyResponse {
     };
   }
 
-  factory SurveyResponse.fromMap(Map<String, dynamic> map) {
-    return SurveyResponse(
+  factory SurveySubmission.fromMap(Map<String, dynamic> map) {
+    return SurveySubmission(
       id: map['\$id'] ?? '',
       surveyId: map['surveyId'],
       userId: map['userId'],
