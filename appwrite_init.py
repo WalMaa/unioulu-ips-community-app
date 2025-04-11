@@ -68,7 +68,6 @@ sample_posts = [
         "imageUrl": "https://images.unsplash.com/photo-1564981797816-1043664bf78d?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
         "authorName": "John Doe",
         "authorTitle": "Student",
-        "createdAt": (datetime.now() - timedelta(days=1)).isoformat()
     },
     {
         "postTitle": "Tips for Balancing Studies and Social Life",
@@ -76,7 +75,6 @@ sample_posts = [
         "imageUrl": "https://images.unsplash.com/photo-1564981797816-1043664bf78d?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
         "authorName": "Jane Smith",
         "authorTitle": "Student",
-        "createdAt": (datetime.now() - timedelta(days=3)).isoformat()
     },
     {
         "postTitle": "Faculty Insights: The Future of AI",
@@ -84,7 +82,6 @@ sample_posts = [
         "imageUrl": "https://images.unsplash.com/photo-1564981797816-1043664bf78d?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
         "authorName": "Dr. Sarah Johnson",
         "authorTitle": "Faculty Member",
-        "createdAt": (datetime.now() - timedelta(days=4)).isoformat()
     },
     {
         "postTitle": "Exploring Quantum Computing",
@@ -92,7 +89,6 @@ sample_posts = [
         "imageUrl": "https://images.unsplash.com/photo-1564981797816-1043664bf78d?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
         "authorName": "Prof. David Lee",
         "authorTitle": "Faculty Member",
-        "createdAt": (datetime.now() - timedelta(days=6)).isoformat()
     }
 ]
 
@@ -117,7 +113,6 @@ sample_events = [
         "price": "Free",
         "posterPhotoUrl": "https://images.unsplash.com/photo-1564981797816-1043664bf78d?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
         "topics": "Academic, Student Life",
-        "updatedAt": datetime.now().isoformat()
     },
     {
         "title_en": "Research Seminar: AI in Healthcare",
@@ -139,7 +134,6 @@ sample_events = [
         "price": "Free",
         "posterPhotoUrl": "https://images.unsplash.com/photo-1564981797816-1043664bf78d?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
         "topics": "Research, Academic",
-        "updatedAt": datetime.now().isoformat()
     },
     {
         "title_en": "Student Sports Day",
@@ -161,7 +155,6 @@ sample_events = [
         "price": "5€",
         "posterPhotoUrl": "https://images.unsplash.com/photo-1564981797816-1043664bf78d?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
         "topics": "Sports, Student Life",
-        "updatedAt": datetime.now().isoformat()
     }
 ]
 
@@ -195,7 +188,6 @@ collections_config = [
             {'type': 'string', 'key': 'price', 'size': 25},
             {'type': 'string', 'key': 'posterPhotoUrl', 'size': 255, 'required': True},
             {'type': 'string', 'key': 'topics', 'size': 255, 'required': True},
-            {'type': 'datetime', 'key': 'updatedAt'}
         ]
     },
     # Event likes
@@ -229,7 +221,6 @@ collections_config = [
             {'type': 'string', 'key': 'imageUrl', 'size': 255,},
             {'type': 'string', 'key': 'authorName', 'size': 255, 'required': True},
             {'type': 'string', 'key': 'authorTitle', 'size': 255, 'required': True},
-            {'type': 'datetime', 'key': 'createdAt', 'required': True}
         ]
     },
     # Post likes
