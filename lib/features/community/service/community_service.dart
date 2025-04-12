@@ -39,62 +39,58 @@ class CommunityService {
   }
 
   Future<List<PostModel>> getPosts({
-    int? limit,
+    int? limit = 50,
     bool sortByLatest = true,
   }) async {
-    try {
-      List<String> queries = [];
+    List<String> queries = [];
 
-      // Add sorting query
-      if (sortByLatest) {
-        queries.add(Query.orderDesc('\$createdAt'));
-      }
+    // Add sorting query
+    if (sortByLatest) {
+      queries.add(Query.orderDesc('\$createdAt'));
+    }
 
-      if (limit != null) {
-        queries.add(Query.limit(limit));
-      }
+    if (limit != null) {
+      queries.add(Query.limit(limit));
+    }
 
-      final response = await _appwriteService.listDocuments(
-        collectionId: "posts",
-        queries: queries,
-      );
+    final response = await _appwriteService.listDocuments(
+      collectionId: "posts",
+      queries: queries,
+    );
 
-      if (response.containsKey('documents') && response['documents'] is List) {
-        final documents = response['documents'] as List;
+    if (response.containsKey('documents') && response['documents'] is List) {
+      final documents = response['documents'] as List;
 
-        // Convert to PostModel objects
-        final posts = documents
-            .map((doc) {
-              try {
-                if (doc is Map<String, dynamic>) {
-                  return PostModel.fromMap(doc['data'] ?? doc);
-                }
-                return null;
-              } catch (e) {
-                return null;
+      // Convert to PostModel objects
+      final posts = documents
+          .map((doc) {
+            try {
+              if (doc is Map<String, dynamic>) {
+                return PostModel.fromMap(doc['data'] ?? doc);
               }
-            })
-            .whereType<PostModel>()
-            .toList();
+              return null;
+            } catch (e) {
+              return null;
+            }
+          })
+          .whereType<PostModel>()
+          .toList();
 
-        // Get all post IDs
-        final postIds = posts.map((p) => p.id).toList();
+      // Get all post IDs
+      final postIds = posts.map((p) => p.id).toList();
 
-        // Fetch like counts for all posts at once
-        final likeCounts = await getPostLikeCounts(postIds);
+      // Fetch like counts for all posts at once
+      final likeCounts = await getPostLikeCounts(postIds);
 
-        // Update posts with like counts
-        for (int i = 0; i < posts.length; i++) {
-          final count = likeCounts[posts[i].id] ?? 0;
-          posts[i] = posts[i].copyWith(likeCount: count);
-        }
-
-        return posts;
-      } else {
-        throw Exception('Failed to fetch posts: ${response.toString()}');
+      // Update posts with like counts
+      for (int i = 0; i < posts.length; i++) {
+        final count = likeCounts[posts[i].id] ?? 0;
+        posts[i] = posts[i].copyWith(likeCount: count);
       }
-    } catch (e) {
-      throw Exception('Failed to fetch posts: ${e.toString()}');
+
+      return posts;
+    } else {
+      throw Exception('Failed to fetch posts: ${response.toString()}');
     }
   }
 

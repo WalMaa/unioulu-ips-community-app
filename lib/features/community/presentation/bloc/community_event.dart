@@ -44,7 +44,7 @@ class FetchCommunityPosts extends CommunityEvent {
   final String? userId;
 
   const FetchCommunityPosts({
-    this.limit,
+    this.limit = 50,
     this.sortByLatest = true,
     this.userId,
   });
