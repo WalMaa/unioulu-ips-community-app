@@ -48,6 +48,10 @@ void main() {
           imageUrl: '')
     ];
 
+    when(communityService.getPosts(limit: 50, sortByLatest: true))
+        .thenAnswer((_) async => posts);
+    
+    
 
     // Act
     communityBloc.add(FetchCommunityPosts());
@@ -57,7 +61,8 @@ void main() {
       communityBloc.stream,
       emitsInOrder([
         isA<CommunityLoading>(),
-        isA<CommunityLoaded>(),
+        isA<CommunityLoaded>()
+            .having((state) => state.posts, 'posts', posts),
       ]),
     );
   });
