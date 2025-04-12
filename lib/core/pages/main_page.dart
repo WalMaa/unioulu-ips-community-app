@@ -12,7 +12,7 @@ class MainPage extends StatelessWidget {
     const HomePage(),
     const EventsPage(),
     const CommunityPage(),
-    ChatbotScreen(),
+    ChatbotScreen(),  // ChatbotScreen added to the list of pages
     const MorePage(),
   ];
 
@@ -70,9 +70,8 @@ class MainPage extends StatelessWidget {
               unselectedItemColor:
                   Theme.of(context).textTheme.headlineSmall!.color,
               onTap: (index) {
-                if (index != 3) {
-                  context.read<BottomNavBarBloc>().add(SelectTabEvent(index));
-                }
+                // Change the tab view without pushing a new route
+                context.read<BottomNavBarBloc>().add(SelectTabEvent(index));
               },
             );
           },
