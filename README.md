@@ -146,41 +146,22 @@ flutter doctor
 This command will display any missing dependencies or issues that need to be resolved before proceeding. Make sure to resolve any issues if prompted.
 
 ---
-### 3. Install Git
 
-To manage your code and collaborate with other contributors, you'll need to install Git.
 
-- [Download Git](https://git-scm.com/downloads)
+### 3. Clone the Project
 
-Follow the instructions for your operating system to complete the installation.
-
----
-
-### 4. Install an IDE
-
-We recommend using Visual Studio Code (VS Code) for development, but you can use any IDE of your choice.
-
-- [Download VS Code](https://code.visualstudio.com/download)
-
-After downloading and installing VS Code, make sure to install the necessary extensions for Flutter and Dart for a smooth development experience.
-
----
-
-### 5. Clone the Project
-
-Once you have Git installed, you can clone the project repository to your local machine.
 
 1. Open your terminal or command prompt.
 2. Navigate to the directory where you want to store the project.
 3. Run the following command to clone the repository:
 
 ```bash
-git clone https://github.com/salscoding/unioulu-ips-community-app.git
+git clone https://github.com/WalMaa/unioulu-ips-community-app.git
 ```
 
 ---
 
-### 6. Set Up the Project
+### 4. Set Up the Project
 
 After cloning the project, follow these steps:
 
@@ -198,7 +179,7 @@ flutter pub get
 
 ---
 
-### 7. Run the Application
+### 5. Run the Application
 
 Now, you can run the Flutter app on your preferred device or emulator. Ensure your device is connected or the emulator is running, then use the following command:
 
@@ -269,6 +250,18 @@ Users can view and add important announcements. These announcements are displaye
 
 #### 3. Event Management:
 The app features an event management section where users can view and manage events. The latest 3 events are displayed in a horizontal list format, allowing for quick access to upcoming activities.
+
+#### 4. Language Support:
+The app supports multiple languages, including English, Finnish, and Swedish. Users can switch between languages seamlessly.
+
+#### 5. Like and Comment System:
+Users can like and comment on posts, fostering interaction and engagement within the community.
+
+#### 6. Event surveys:
+Event surveys are available for users to provide feedback on events they attended. This feature helps in gathering insights and improving future events.
+
+#### 7. Community post polls:
+Community post polls allow users to create polls within posts, enabling community members to vote and express their opinions on various topics.
 
 #### Appwrite Integration:
 Appwrite is used for backend services such as data storage, user authentication, and API calls. The data for community posts, announcements, and events are securely stored and managed through Appwrite’s database service.
