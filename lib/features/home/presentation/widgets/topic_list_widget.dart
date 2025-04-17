@@ -68,7 +68,7 @@ class TopicListWidget extends StatelessWidget {
                           padding: const EdgeInsets.all(20),
                           decoration: BoxDecoration(
                             color: isSelected 
-                                ? Theme.of(context).colorScheme.primary.withOpacity(0.2)
+                                ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.2)
                                 : Theme.of(context).scaffoldBackgroundColor,
                             shape: BoxShape.circle,
                             border: isSelected 
