@@ -7,7 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class CommentsSection extends StatelessWidget {
   final String postId;
   
-  const CommentsSection({Key? key, required this.postId}) : super(key: key);
+  const CommentsSection({super.key, required this.postId});
   
   @override
   Widget build(BuildContext context) {

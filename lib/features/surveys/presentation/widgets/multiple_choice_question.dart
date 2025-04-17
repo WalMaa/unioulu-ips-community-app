@@ -7,11 +7,11 @@ class MultipleChoiceQuestion extends StatelessWidget {
   final Function(String) onOptionSelected;
   
   const MultipleChoiceQuestion({
-    Key? key,
+    super.key,
     required this.question,
     required this.selectedOption,
     required this.onOptionSelected,
-  }) : super(key: key);
+  });
   
   @override
   Widget build(BuildContext context) {

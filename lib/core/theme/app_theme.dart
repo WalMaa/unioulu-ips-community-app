@@ -128,8 +128,7 @@ class AppThemeData {
       case AppTheme.dark:
         return darkTheme;
       case AppTheme.light:
-      default:
-        return lightTheme;
+      return lightTheme;
     }
   }
 }

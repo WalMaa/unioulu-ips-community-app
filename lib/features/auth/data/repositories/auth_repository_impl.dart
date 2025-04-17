@@ -45,8 +45,6 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<User> authenticateAnonymous() async {
-    final appwrite.Session session =
-        await remoteDataSource.authenticateAnonymous();
     final appwrite.User user = await remoteDataSource.getUser();
     final userModel = UserModel.fromAppwriteUser(user);
     await isar.writeTxn(() async {

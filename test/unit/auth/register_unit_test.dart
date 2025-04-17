@@ -28,7 +28,6 @@ import 'register_unit_test.mocks.dart';
 ])
 
 void main() {
-  late MockAuthRepository mockAuthRepository;
   late MockRegister mockRegister;
   late MockLogin mockLogin;
   late MockLogout mockLogout;
@@ -38,7 +37,6 @@ void main() {
   late AuthBloc authBloc;
 
   setUp(() {
-    mockAuthRepository = MockAuthRepository();
 
     // Initialize all mock use cases with the mock repository
     mockRegister = MockRegister();

@@ -6,10 +6,10 @@ class CommentInputField extends StatefulWidget {
   final Function(String postId, String commentText) onCommentSubmit;
 
   const CommentInputField({
-    Key? key,
+    super.key,
     required this.postId,
     required this.onCommentSubmit,
-  }) : super(key: key);
+  });
 
   @override
   State<CommentInputField> createState() => _CommentInputFieldState();
