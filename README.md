@@ -41,6 +41,10 @@ We are using a self-hosted **Appwrite** instance. Follow the steps below to set 
 
 #### Run the Appwrite Server
 
+Copy the appwrite env file from https://appwrite.io/install/env and place it in the appwrite folder.
+
+If you do not want to use Docker Compose, the appwrite docs have a guide for other methods: https://appwrite.io/docs/advanced/self-hosting
+
 After installing Docker, run the following command to start the Appwrite server:
 
 ```bash
