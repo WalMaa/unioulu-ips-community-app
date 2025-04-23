@@ -7,4 +7,5 @@ abstract class AuthRepository {
   Future<User> authenticateAnonymous();
   Future<User> updateProfile(String name);
   Future<void> resetPassword(String email);
+  Future<String> getCurrentUserId();
 }

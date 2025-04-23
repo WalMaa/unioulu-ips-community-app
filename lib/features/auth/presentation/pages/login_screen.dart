@@ -1,9 +1,13 @@
+import 'dart:developer' as developer;
+
+import 'package:community/core/theme/theme_constants.dart';
+import 'package:community/core/widgets/custom_text_field.dart';
+import 'package:community/core/widgets/password_text_field.dart';
 import 'package:community/features/auth/presentation/pages/register_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
-import '../../../../core/constants.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/widgets/custom_button.dart';
 import '../../../language/presentation/pages/language_page.dart';
 import '../../../theme/presentation/bloc/theme_bloc.dart';
 import '../../presentation/bloc/auth_bloc.dart';
@@ -74,7 +78,7 @@ class LoginPage extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: defaultPadding),
+                const SizedBox(height: AppSpacing.defaultPadding),
                 Column(
                   children: [
                     Text(
@@ -82,18 +86,21 @@ class LoginPage extends StatelessWidget {
                       style: const TextStyle(
                           fontWeight: FontWeight.bold, fontSize: 25),
                     ),
-                    const SizedBox(height: defaultPadding * 2),
+                    const SizedBox(height: AppSpacing.extraLargePadding),
                     Row(
                       children: [
                         const Spacer(),
                         Expanded(
-                          flex: 8,
-                          child: SvgPicture.asset("assets/icons/login.svg"),
+                          flex: 1,
+                          child: Image.asset(
+                            "assets/images/unioululogo.png",
+                            fit: BoxFit.contain,
+                          ),
                         ),
                         const Spacer(),
                       ],
                     ),
-                    const SizedBox(height: defaultPadding * 2),
+                    const SizedBox(height: AppSpacing.extraLargePadding),
                   ],
                 ),
                 Row(
@@ -104,91 +111,92 @@ class LoginPage extends StatelessWidget {
                       child: Form(
                         child: Column(
                           children: [
-                            TextFormField(
+                            CustomTextField(
                               controller: emailController,
                               keyboardType: TextInputType.emailAddress,
                               textInputAction: TextInputAction.next,
-                              cursorColor: kPrimaryColor,
-                              decoration: InputDecoration(
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                  borderSide: const BorderSide(
-                                    color: Colors.indigo,
-                                  ),
-                                ),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                hintText:
-                                    AppLocalizations.of(context)!.yourEmail,
-                                prefixIcon: Padding(
-                                  padding: const EdgeInsets.all(defaultPadding),
-                                  child: Icon(
-                                    Icons.email_outlined,
-                                    color: Theme.of(context)
-                                        .textTheme
-                                        .headlineSmall!
-                                        .color,
-                                  ),
-                                ),
-                              ),
+                              hintText: AppLocalizations.of(context)!.yourEmail,
+                              prefixIcon: Icons.email_outlined,
+                              
                             ),
                             Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: defaultPadding),
-                              child: TextFormField(
+                              padding: const EdgeInsets.only(
+                                  top: AppSpacing.defaultPadding),
+                              // Password field
+                              child: PasswordTextField(
                                 controller: passwordController,
                                 textInputAction: TextInputAction.done,
-                                obscureText: true,
-                                cursorColor: kPrimaryColor,
-                                decoration: InputDecoration(
-                                  enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                    borderSide: const BorderSide(
-                                      color: Colors.indigo,
-                                    ),
-                                  ),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  hintText: AppLocalizations.of(context)!
-                                      .yourPassword,
-                                  prefixIcon: Padding(
-                                    padding:
-                                        const EdgeInsets.all(defaultPadding),
-                                    child: Icon(
-                                      Icons.lock_outline,
-                                      color: Theme.of(context)
-                                          .textTheme
-                                          .headlineSmall!
-                                          .color,
-                                    ),
-                                  ),
-                                ),
+                                hintText: AppLocalizations.of(context)!.yourPassword,
                               ),
                             ),
-                            const SizedBox(height: defaultPadding),
-                            ElevatedButton(
+                            // Forgot password
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  left: AppSpacing.smallPadding,
+                                  top: AppSpacing.extraSmallPadding),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    AppLocalizations.of(context)!
+                                        .forgotPassword,
+                                    style: TextStyle(
+                                      fontSize: Theme.of(context)
+                                          .textTheme
+                                          .bodySmall!
+                                          .fontSize,
+                                    ),
+                                  ),
+                                  GestureDetector(
+                                    onTap: () {
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              ResetPasswordPage(),
+                                        ),
+                                      );
+                                    },
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: AppSpacing.extraSmallPadding),
+                                      child: Text(
+                                        AppLocalizations.of(context)!
+                                            .resetPassword,
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: Theme.of(context)
+                                              .textTheme
+                                              .bodySmall!
+                                              .fontSize,
+                                          color: Theme.of(context).primaryColor,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(height: AppSpacing.defaultPadding),
+                            // Login button
+                            CustomButton(
+                              text: AppLocalizations.of(context)!.login,
                               onPressed: () {
-                                print(
+                                developer.log(
                                     "Login button pressed: ${emailController.text} ${passwordController.text}");
                                 context.read<AuthBloc>().add(LoginEvent(
                                     email: emailController.text,
                                     password: passwordController.text));
                               },
-                              child: Text(
-                                AppLocalizations.of(context)!
-                                    .login
-                                    .toUpperCase(),
-                              ),
+                              padding: 20.0,
+                              minimumSize: Size(200, 20),
                             ),
-                            const SizedBox(height: defaultPadding),
+                            const SizedBox(height: AppSpacing.defaultPadding),
+                            // Don't have an account
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: <Widget>[
                                 Text(
                                   "${AppLocalizations.of(context)!.dontHaveAnAccount} ",
-                                  style: const TextStyle(color: kPrimaryColor),
                                 ),
                                 GestureDetector(
                                   onTap: () {
@@ -203,31 +211,16 @@ class LoginPage extends StatelessWidget {
                                   },
                                   child: Text(
                                     AppLocalizations.of(context)!.register,
-                                    style: const TextStyle(
-                                      color: kPrimaryColor,
+                                    style: TextStyle(
                                       fontWeight: FontWeight.bold,
+                                      color: Theme.of(context).primaryColor,
                                     ),
                                   ),
                                 ),
                               ],
                             ),
-                            const SizedBox(height: defaultPadding),
-                            TextButton(
-                              onPressed: () {
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (context) => ResetPasswordPage(),
-                                  ),
-                                );
-                              },
-                              child: Text(
-                                AppLocalizations.of(context)!.forgotPassword,
-                                style: const TextStyle(
-                                  color: kPrimaryColor,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
+                            const SizedBox(height: AppSpacing.defaultPadding),
+                            const SizedBox(height: AppSpacing.defaultPadding),
                           ],
                         ),
                       ),

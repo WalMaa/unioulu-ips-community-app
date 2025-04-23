@@ -1,7 +1,8 @@
 {
     "welcome": "Välkommen",
-    "appName": "IPS Community",
+    "appName": "WeConnect",
     "changeLanguage": "Byt språk",
+    "username": "Användarnamn",
     "name": "Namn",
     "login": "Logga in",
     "register": "Registrera",

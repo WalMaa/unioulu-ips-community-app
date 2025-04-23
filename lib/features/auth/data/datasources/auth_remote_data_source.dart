@@ -1,3 +1,5 @@
+import 'dart:developer' as developer;
+
 import 'package:appwrite/appwrite.dart';
 import 'package:appwrite/models.dart' as appwrite;
 import 'package:get_it/get_it.dart';
@@ -40,7 +42,7 @@ class AuthRemoteDataSource {
       return user;
     } catch (e) {
       // Handle any exceptions that occur during user creation or label assignment
-      print('Error during user registration: $e');
+      developer.log('Error during user registration: $e');
       rethrow;
     }
   }

@@ -6,9 +6,8 @@ enum AppTheme {
   dark,
 }
 
-const Color primaryColor = Color.fromARGB(255, 35, 64, 141);
-
 class AppThemeData {
+
   // Common text theme settings
   static TextTheme _buildTextTheme(Color textColor) {
     return TextTheme(
@@ -83,9 +82,10 @@ class AppThemeData {
   // Light theme definition
   static final lightTheme = ThemeData.light().copyWith(
     scaffoldBackgroundColor: AppPallete.whiteColor,
-    primaryColor: primaryColor,
+    cardColor: AppPallete.cardColor,
+    primaryColor: AppPallete.primaryColor,
     colorScheme: ColorScheme.fromSeed(
-      seedColor: primaryColor,
+      seedColor: AppPallete.primaryColor,
       brightness: Brightness.light,
     ),
     appBarTheme: const AppBarTheme(
@@ -104,9 +104,9 @@ class AppThemeData {
   // Dark theme definition
   static final darkTheme = ThemeData.dark().copyWith(
     scaffoldBackgroundColor: AppPallete.backgroundColor,
-    primaryColor: primaryColor, // Use the same primary color
+    primaryColor: AppPallete.primaryColor,
     colorScheme: ColorScheme.fromSeed(
-      seedColor: primaryColor,
+      seedColor: AppPallete.primaryColor,
       brightness: Brightness.dark,
     ),
     appBarTheme: const AppBarTheme(
@@ -128,8 +128,7 @@ class AppThemeData {
       case AppTheme.dark:
         return darkTheme;
       case AppTheme.light:
-      default:
-        return lightTheme;
+      return lightTheme;
     }
   }
 }

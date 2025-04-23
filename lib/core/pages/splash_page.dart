@@ -1,6 +1,6 @@
+import 'package:community/core/theme/theme_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
 import '../../features/auth/presentation/bloc/auth_bloc.dart';
 import '../../features/auth/presentation/bloc/auth_event.dart';
 import '../../features/auth/presentation/bloc/auth_state.dart';
@@ -9,8 +9,8 @@ import '../../features/auth/presentation/pages/register_screen.dart';
 import '../../features/language/presentation/pages/language_page.dart';
 import '../../features/theme/presentation/bloc/theme_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import '../constants.dart';
 import '../theme/app_theme.dart';
+import '../widgets/custom_button.dart';
 
 class SplashPage extends StatelessWidget {
   const SplashPage({super.key});
@@ -66,28 +66,29 @@ class SplashPage extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: defaultPadding),
+                const SizedBox(height: AppSpacing.defaultPadding),
                 Column(
                   children: [
-                    Text(
-                      AppLocalizations.of(context)!.welcome,
-                      style: const TextStyle(
-                          fontWeight: FontWeight.bold, fontSize: 26),
-                    ),
-                    const SizedBox(height: defaultPadding),
                     Row(
                       children: [
                         const Spacer(),
                         Expanded(
-                          flex: 8,
-                          child: SvgPicture.asset(
-                            "assets/icons/welcome.svg",
+                          flex: 1,
+                          child: Image.asset(
+                            "assets/images/unioululogo.png",
+                            fit: BoxFit.contain,
                           ),
                         ),
                         const Spacer(),
                       ],
                     ),
-                    const SizedBox(height: defaultPadding),
+                    const SizedBox(height: AppSpacing.defaultPadding),
+                    Text(
+                      AppLocalizations.of(context)!.appName,
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold, fontSize: 26),
+                    ),
+                    const SizedBox(height: AppSpacing.extraLargePadding),
                   ],
                 ),
                 Row(
@@ -97,7 +98,7 @@ class SplashPage extends StatelessWidget {
                       flex: 8,
                       child: Column(
                         children: [
-                          ElevatedButton(
+                          CustomButton(
                             onPressed: () {
                               Navigator.push(
                                 context,
@@ -108,12 +109,12 @@ class SplashPage extends StatelessWidget {
                                 ),
                               );
                             },
-                            child: Text(
-                              AppLocalizations.of(context)!.login.toUpperCase(),
-                            ),
+                            text: AppLocalizations.of(context)!
+                                .login
+                                .toUpperCase(),
                           ),
                           const SizedBox(height: 16),
-                          ElevatedButton(
+                          CustomButton(
                             onPressed: () {
                               Navigator.push(
                                 context,
@@ -124,16 +125,9 @@ class SplashPage extends StatelessWidget {
                                 ),
                               );
                             },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: kPrimaryLightColor,
-                              elevation: 0,
-                            ),
-                            child: Text(
-                              AppLocalizations.of(context)!
-                                  .register
-                                  .toUpperCase(),
-                              style: const TextStyle(color: Colors.black),
-                            ),
+                            text: AppLocalizations.of(context)!
+                                .register
+                                .toUpperCase(),
                           ),
                         ],
                       ),

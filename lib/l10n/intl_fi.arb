@@ -1,7 +1,8 @@
 {
     "welcome": "Tervetuloa",
-    "appName": "IPS Yhteisö",
+    "appName": "WeConnect",
     "changeLanguage": "Vaihda kieltä",
+    "username": "Käyttäjätunnus",
     "name": "Nimi",
     "login": "Kirjaudu sisään",
     "register": "Rekisteröidy",

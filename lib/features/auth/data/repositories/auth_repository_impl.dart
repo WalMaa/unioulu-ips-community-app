@@ -25,8 +25,7 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<User> login(String email, String password) async {
-    final appwrite.Session session =
-        await remoteDataSource.login(email, password);
+    await remoteDataSource.login(email, password);
     final appwrite.User user = await remoteDataSource.getUser();
     final userModel = UserModel.fromAppwriteUser(user);
     await isar.writeTxn(() async {
@@ -46,8 +45,6 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<User> authenticateAnonymous() async {
-    final appwrite.Session session =
-        await remoteDataSource.authenticateAnonymous();
     final appwrite.User user = await remoteDataSource.getUser();
     final userModel = UserModel.fromAppwriteUser(user);
     await isar.writeTxn(() async {
@@ -71,4 +68,25 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<void> resetPassword(String email) {
     return remoteDataSource.resetPassword(email);
   }
+
+  @override
+  Future<String> getCurrentUserId() async {
+    try {
+      final user = await remoteDataSource.getUser();
+      return user.$id;
+    } catch (e) {
+      throw Exception('Failed to get current user ID: ${e.toString()}');
+    }
+  }
+
+Future<String> getCurrentUserName() async {
+    try {
+      final user = await remoteDataSource.getUser();
+      return user.name;
+    } catch (e) {
+      throw Exception('Failed to get current user: ${e.toString()}');
+      
+    }
+}
+
 }

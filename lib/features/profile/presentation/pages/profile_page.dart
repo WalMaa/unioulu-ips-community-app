@@ -3,11 +3,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:community/features/more/presentation/bloc/more_bloc.dart';
 
 class ProfilePage extends StatefulWidget {
+  const ProfilePage({super.key});
+
   @override
-  _ProfilePageState createState() => _ProfilePageState();
+  ProfilePageState createState() => ProfilePageState();
 }
 
-class _ProfilePageState extends State<ProfilePage> {
+class ProfilePageState extends State<ProfilePage> {
   TextEditingController nameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController(); // For verifying email change

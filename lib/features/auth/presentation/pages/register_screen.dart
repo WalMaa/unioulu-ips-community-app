@@ -1,9 +1,12 @@
+import 'dart:developer' as developer;
+
+import 'package:community/core/theme/theme_constants.dart';
+import 'package:community/core/widgets/custom_text_field.dart';
 import 'package:community/features/auth/presentation/pages/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
-import '../../../../core/constants.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/widgets/custom_button.dart';
 import '../../../language/presentation/pages/language_page.dart';
 import '../../../theme/presentation/bloc/theme_bloc.dart';
 import '../../presentation/bloc/auth_bloc.dart';
@@ -71,7 +74,7 @@ class RegisterPage extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: defaultPadding),
+                const SizedBox(height: AppSpacing.defaultPadding),
                 Column(
                   children: [
                     Text(
@@ -79,18 +82,21 @@ class RegisterPage extends StatelessWidget {
                       style: const TextStyle(
                           fontWeight: FontWeight.bold, fontSize: 25),
                     ),
-                    const SizedBox(height: defaultPadding),
+                    const SizedBox(height: AppSpacing.defaultPadding),
                     Row(
                       children: [
                         const Spacer(),
                         Expanded(
-                          flex: 8,
-                          child: SvgPicture.asset("assets/icons/signup.svg"),
+                          flex: 1,
+                          child: Image.asset(
+                            "assets/images/unioululogo.png",
+                            fit: BoxFit.contain,
+                          ),
                         ),
                         const Spacer(),
                       ],
                     ),
-                    const SizedBox(height: defaultPadding),
+                    const SizedBox(height: AppSpacing.defaultPadding),
                   ],
                 ),
                 Row(
@@ -101,104 +107,42 @@ class RegisterPage extends StatelessWidget {
                       child: Form(
                         child: Column(
                           children: [
-                            TextFormField(
+                            CustomTextField(
                               keyboardType: TextInputType.name,
                               textInputAction: TextInputAction.next,
-                              cursorColor: kPrimaryColor,
                               controller: nameController,
-                              decoration: InputDecoration(
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                  borderSide: const BorderSide(
-                                    color: Colors.indigo,
-                                  ),
-                                ),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                hintText: AppLocalizations.of(context)!.name,
-                                prefixIcon: Padding(
-                                  padding: const EdgeInsets.all(defaultPadding),
-                                  child: Icon(
-                                    Icons.person_outline,
-                                    color: Theme.of(context)
-                                        .textTheme
-                                        .headlineSmall!
-                                        .color,
-                                  ),
-                                ),
-                              ),
+                              hintText: AppLocalizations.of(context)!.username,
+                              prefixIcon: Icons.person_outline,
                             ),
                             Padding(
                               padding: const EdgeInsets.symmetric(
-                                  vertical: defaultPadding),
-                              child: TextFormField(
+                                  vertical: AppSpacing.defaultPadding),
+                              child: CustomTextField(
                                 keyboardType: TextInputType.emailAddress,
                                 textInputAction: TextInputAction.next,
-                                cursorColor: kPrimaryColor,
                                 controller: emailController,
-                                decoration: InputDecoration(
-                                  enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                    borderSide: const BorderSide(
-                                      color: Colors.indigo,
-                                    ),
-                                  ),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  hintText: AppLocalizations.of(context)!.email,
-                                  prefixIcon: Padding(
-                                    padding:
-                                        const EdgeInsets.all(defaultPadding),
-                                    child: Icon(
-                                      Icons.email_outlined,
-                                      color: Theme.of(context)
-                                          .textTheme
-                                          .headlineSmall!
-                                          .color,
-                                    ),
-                                  ),
-                                ),
+                                hintText: AppLocalizations.of(context)!.email,
+                                prefixIcon: Icons.email_outlined,
                               ),
                             ),
-                            TextFormField(
+                            CustomTextField(
                               keyboardType: TextInputType.visiblePassword,
                               textInputAction: TextInputAction.done,
                               obscureText: true,
-                              cursorColor: kPrimaryColor,
                               controller: passwordController,
-                              decoration: InputDecoration(
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                  borderSide: const BorderSide(
-                                    color: Colors.indigo,
-                                  ),
-                                ),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                hintText:
-                                    AppLocalizations.of(context)!.password,
-                                prefixIcon: Padding(
-                                  padding: const EdgeInsets.all(defaultPadding),
-                                  child: Icon(
-                                    Icons.lock_outline,
-                                    color: Theme.of(context)
-                                        .textTheme
-                                        .headlineSmall!
-                                        .color,
-                                  ),
-                                ),
-                              ),
+                              hintText: AppLocalizations.of(context)!.password,
+                              prefixIcon: Icons.lock_outline,
                             ),
-                            const SizedBox(height: defaultPadding / 2),
-                            ElevatedButton(
+                            const SizedBox(height: AppSpacing.defaultPadding),
+                            CustomButton(
+                              minimumSize: Size(200, 20),
+                              padding: 20,
                               onPressed: () {
-                                print("Register Name: ${nameController.text}");
-                                print(
+                                developer.log(
+                                    "Register Name: ${nameController.text}");
+                                developer.log(
                                     "Register Email: ${emailController.text}");
-                                print(
+                                developer.log(
                                     "Register Password: ${passwordController.text}");
                                 context.read<AuthBloc>().add(
                                       RegisterEvent(
@@ -208,17 +152,15 @@ class RegisterPage extends StatelessWidget {
                                       ),
                                     );
                               },
-                              child: Text(AppLocalizations.of(context)!
-                                  .register
-                                  .toUpperCase()),
+                              text: (AppLocalizations.of(context)!.register),
                             ),
-                            const SizedBox(height: defaultPadding),
+                            const SizedBox(height: AppSpacing.defaultPadding),
+                            // Already have an account
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: <Widget>[
                                 Text(
                                   "${AppLocalizations.of(context)!.alreadyHaveAnAccount} ",
-                                  style: const TextStyle(color: kPrimaryColor),
                                 ),
                                 GestureDetector(
                                   onTap: () {
@@ -233,9 +175,9 @@ class RegisterPage extends StatelessWidget {
                                   },
                                   child: Text(
                                     AppLocalizations.of(context)!.login,
-                                    style: const TextStyle(
-                                      color: kPrimaryColor,
+                                    style: TextStyle(
                                       fontWeight: FontWeight.bold,
+                                      color: Theme.of(context).primaryColor,
                                     ),
                                   ),
                                 )

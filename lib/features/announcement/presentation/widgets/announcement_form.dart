@@ -5,10 +5,10 @@ class AddAnnouncementForm extends StatefulWidget {
   const AddAnnouncementForm({super.key});
 
   @override
-  _AddAnnouncementFormState createState() => _AddAnnouncementFormState();
+  AddAnnouncementFormState createState() => AddAnnouncementFormState();
 }
 
-class _AddAnnouncementFormState extends State<AddAnnouncementForm> {
+class AddAnnouncementFormState extends State<AddAnnouncementForm> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _contentController = TextEditingController();

@@ -87,12 +87,12 @@ P _themeModelDeserializeProp<P>(
 }
 
 const _ThemeModelthemeEnumValueMap = {
-  r'Light': r'Light',
-  r'Dark': r'Dark',
+  r'light': r'light',
+  r'dark': r'dark',
 };
 const _ThemeModelthemeValueEnumMap = {
-  r'Light': AppTheme.light,
-  r'Dark': AppTheme.dark,
+  r'light': AppTheme.light,
+  r'dark': AppTheme.dark,
 };
 
 Id _themeModelGetId(ThemeModel object) {

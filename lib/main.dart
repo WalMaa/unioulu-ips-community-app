@@ -1,4 +1,9 @@
+import 'package:community/features/auth/data/repositories/auth_repository_impl.dart';
+import 'package:community/features/community/presentation/bloc/community_bloc.dart';
+import 'package:community/features/community/service/community_service.dart';
 import 'package:community/features/events/presentation/bloc/events_bloc.dart';
+import 'package:community/features/surveys/presentation/bloc/survey_bloc.dart';
+import 'package:community/features/surveys/service/survey_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:isar/isar.dart';
@@ -19,6 +24,7 @@ import 'features/auth/domain/usecases/update_profile.dart';
 import 'features/auth/presentation/bloc/auth_bloc.dart';
 import 'features/auth/presentation/pages/login_screen.dart';
 import 'features/events/data/models/event_model.dart';
+import 'features/events/repository/event_repository.dart';
 import 'features/home/data/models/topic_model.dart';
 import 'features/language/presentation/bloc/language_event.dart';
 import 'features/theme/presentation/bloc/theme_bloc.dart';
@@ -34,7 +40,6 @@ import 'features/theme/data/models/theme_model.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:community/features/more/presentation/bloc/more_bloc.dart';
-
 
 final GetIt locator = GetIt.instance;
 
@@ -64,6 +69,7 @@ Future<void> _initializeDatabase() async {
 }
 
 void _initializeAppwrite() {
+  WidgetsFlutterBinding.ensureInitialized();
   final client = Client()
     ..setEndpoint(appwriteEndpoint)
     ..setProject(appwriteProjectId)
@@ -83,6 +89,11 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
+        BlocProvider(
+            create: (context) => CommunityBloc(
+                  communityService: locator<CommunityService>(),
+                  authRepository: locator<AuthRepositoryImpl>(),
+                )),
         BlocProvider(
           create: (context) => ThemeBloc(
             getTheme: locator<GetTheme>(),
@@ -107,11 +118,19 @@ class MyApp extends StatelessWidget {
           ),
         ),
         BlocProvider(
+          create: (context) => SurveyBloc(
+              authRepository: locator<AuthRepositoryImpl>(),
+              service: locator<SurveyService>()),
+        ),
+        BlocProvider(
           create: (context) => EventsBloc(
+            eventRepository: locator<EventRepository>(),
+            authRepository: locator<AuthRepositoryImpl>(),
           ),
         ),
         BlocProvider(
-          create: (context) => MoreBloc(locator<Account>()), // Add MoreBloc here
+          create: (context) =>
+              MoreBloc(locator<Account>()), // Add MoreBloc here
         ),
       ],
       child: BlocBuilder<ThemeBloc, ThemeState>(

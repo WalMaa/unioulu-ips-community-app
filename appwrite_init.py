@@ -63,18 +63,19 @@ sample_topics = [
 
 sample_posts = [
     {
-        "postTitle": "Welcome to the Academic Year 2025-2026!",
-        "content": "Dear students and staff, we're excited to start another academic year at the University of Oulu! This year brings many new opportunities and exciting developments in our academic community.",
+        "postTitle": "Best Study Spots on Campus",
+        "content": "Hey everyone! I'm a second-year student and I wanted to share some of my favorite study spots on campus. The library is great, but I also love the quiet corners in the new Student Technology Hub.",
         "imageUrl": "https://images.unsplash.com/photo-1564981797816-1043664bf78d?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
         "authorName": "Prof. Anna Virtanen",
         "authorTitle": "Vice Rector for Education",
         "pollQuestion": "How excited are you for this year?",  # Add pollQuestion
         "pollOptions": ", ".join(["Excited", "Very Excited", "Not Excited"]),
         "createdAt": datetime.now().isoformat()
+
     },
     {
-        "postTitle": "New Student Technology Hub Opening",
-        "content": "We're thrilled to announce the opening of our new Student Technology Hub at Linnanmaa Campus! The hub offers state-of-the-art equipment and spaces for project work, coding, and digital content creation.",
+        "postTitle": "Tips for Balancing Studies and Social Life",
+        "content": "As a senior student, I've learned a lot about balancing studies and social life. My advice is to create a schedule and stick to it, but also make sure to take breaks and enjoy time with friends.",
         "imageUrl": "https://images.unsplash.com/photo-1564981797816-1043664bf78d?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
         "authorName": "Dr. Mikko Järvinen",
         "authorTitle": "Head of IT Services",
@@ -82,10 +83,11 @@ sample_posts = [
         "pollOptions": ", ".join(["Excited", "Very Excited", "Not Excited"]),
         #"pollResult": "",  # This can be updated with the selected option or vote count
         "createdAt": (datetime.now() - timedelta(days=2)).isoformat()
+
     },
     {
-        "postTitle": "International Student Ambassador Program Launch",
-        "content": "Join our new International Student Ambassador program! Help welcome new international students and promote cultural exchange on campus. Applications are now open for the spring semester.",
+        "postTitle": "Faculty Insights: The Future of AI",
+        "content": "Artificial Intelligence is rapidly evolving and has the potential to revolutionize many industries. In this post, I will discuss the future trends and the impact of AI on our society.",
         "imageUrl": "https://images.unsplash.com/photo-1564981797816-1043664bf78d?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
         "authorName": "Lisa Chen",
         "authorTitle": "International Student Coordinator",
@@ -102,6 +104,7 @@ sample_posts = [
         "pollQuestion": "What type of activities would you prefer for the upcoming Summer Event?",  # Add pollQuestion
         "pollOptions": ", ".join(["Beach Day", "Hiking and Nature Walks", "Outdoor Picnic", "Music Festival"]),
         "createdAt": (datetime.now() - timedelta(days=5)).isoformat()
+
     }
 ]
 
@@ -126,7 +129,6 @@ sample_events = [
         "price": "Free",
         "posterPhotoUrl": "https://images.unsplash.com/photo-1564981797816-1043664bf78d?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
         "topics": "Academic, Student Life",
-        "updatedAt": datetime.now().isoformat()
     },
     {
         "title_en": "Research Seminar: AI in Healthcare",
@@ -148,7 +150,6 @@ sample_events = [
         "price": "Free",
         "posterPhotoUrl": "https://images.unsplash.com/photo-1564981797816-1043664bf78d?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
         "topics": "Research, Academic",
-        "updatedAt": datetime.now().isoformat()
     },
     {
         "title_en": "Student Sports Day",
@@ -170,12 +171,14 @@ sample_events = [
         "price": "5€",
         "posterPhotoUrl": "https://images.unsplash.com/photo-1564981797816-1043664bf78d?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
         "topics": "Sports, Student Life",
-        "updatedAt": datetime.now().isoformat()
     }
 ]
 
 
+    
 
+
+# Appwrite does not support unique indexes on relationship types as of early 2025 so we have to use a stringtype for identifiers
 collections_config = [
     #Events
     {
@@ -201,17 +204,15 @@ collections_config = [
             {'type': 'string', 'key': 'price', 'size': 25},
             {'type': 'string', 'key': 'posterPhotoUrl', 'size': 255, 'required': True},
             {'type': 'string', 'key': 'topics', 'size': 255, 'required': True},
-            {'type': 'datetime', 'key': 'updatedAt'}
         ]
     },
     # Event likes
-    # Appwrite does not support unique indexes on relationship types as of early 2025 so we have to use a stringtype for identifiers
     {
         'name': 'EventLikes',
         'collection_id': 'event_likes',
         'attributes': [
             {'type': 'string', 'key': 'eventId', 'size': 255, 'required': True},
-            {'type': 'string', 'key': 'username', 'size': 255, 'required': True}
+            {'type': 'string', 'key': 'userId', 'size': 255, 'required': True}
         ]
         
     },
@@ -242,6 +243,15 @@ collections_config = [
             {'type': 'datetime', 'key': 'createdAt', 'required': True}
         ]
     },
+    # Post likes
+    {
+        'name': 'PostLikes',
+        'collection_id': 'post_likes',
+        'attributes': [
+            {'type': 'string', 'key': 'postId', 'size': 255, 'required': True},
+            {'type': 'string', 'key': 'userId', 'size': 255, 'required': True}
+        ]
+    },
     # Comments
     {
         'name': 'Comments',
@@ -250,10 +260,18 @@ collections_config = [
             {'type': 'string', 'key': 'text', 'size': 1024, 'required': True},
             {'type': 'string', 'key': 'username', 'size': 255, 'required': True},
             {'type': 'datetime', 'key': 'dateTime', 'required': True},
-            {'type': 'relationship', 'related_collection': 'posts', "relationship_type": "manyToOne", "two_way": False, 'key': 'postId', "on_delete": "cascade"}
+            {'type': 'string', 'key': 'postId', 'size': 255, 'required': True}
         ]
     },
-    # announcements
+    {
+        'name': 'CommentLikes',
+        'collection_id': 'comment_likes',
+                'attributes': [
+            {'type': 'string', 'key': 'commentId', 'size': 255, 'required': True},
+            {'type': 'string', 'key': 'userId', 'size': 255, 'required': True}
+        ]
+    },
+    # Announcements
     {
         'name': 'Announcements',
         'collection_id': 'announcements',
@@ -261,6 +279,49 @@ collections_config = [
             {'type': 'string', 'key': 'title', 'size': 255, 'required': True},
             {'type': 'string', 'key': 'content', 'size': 1024, 'required': True},
             {'type': 'datetime', 'key': 'date', 'required': True}
+        ]
+    },
+    # Surveys
+    {
+        'name': 'Surveys',
+        'collection_id': 'surveys',
+        'attributes': [
+            {'type': 'string', 'key': 'title', 'size': 255, 'required': True},
+            {'type': 'string', 'key': 'description', 'size': 1024, 'required': True},
+            {'type': 'string', 'key': 'eventId', 'size': 255, 'required': True},
+        ]
+    },
+    # Survey questions
+    {
+        'name': 'SurveyQuestions',
+        'collection_id': 'survey_questions',
+        'attributes': [
+            {'type': 'string', 'key': 'question', 'size': 1024, 'required': True},
+            {'type': 'string', 'key': 'surveyId', 'size': 255, 'required': True},
+            {'type': 'enum', 'key': 'questionType', 'size': 255, 'required': True, 'enum': ['multipleChoice', 'text', 'rating']},
+            # Has to be a string because of Appwrite's limitated data types. The options are comma separated values.
+            {'type': 'string', 'key': 'options', 'size': 1024},
+            {'type': 'boolean', 'key': 'isRequired', 'required': True},
+        ]
+    },
+    # Survey Responses
+    {
+        'name': 'SurveyResponses',
+        'collection_id': 'survey_responses',
+        'attributes': [
+            {'type': 'string', 'key': 'surveyId', 'size': 255, 'required': True},
+            {'type': 'string', 'key': 'userId', 'size': 255, 'required': True},
+            {'type': 'string', 'key': 'eventId', 'size': 255, 'required': True},
+        ]
+    },
+    # Survey Response Answers
+    {
+        'name': 'SurveyResponseAnswers',
+        'collection_id': 'survey_response_answers',
+        'attributes': [
+            {'type': 'string', 'key': 'responseId', 'size': 255, 'required': True},
+            {'type': 'string', 'key': 'questionId', 'size': 255, 'required': True},
+            {'type': 'string', 'key': 'answer', 'size': 1024, 'required': True},
         ]
     }
 ]
@@ -273,7 +334,37 @@ def create_event_like_index():
             'event_likes',
             'eventId_username_index',
             'unique',
-            ['eventId', 'username']
+            ['eventId', 'userId']
+        )
+        print(result)
+    except AppwriteException as e:
+        print(f"Error creating event like index: {str(e)}")
+        
+        
+def create_post_like_index():
+    try:
+        print("Creating unique index for post likes...")
+        result = databases.create_index(
+            db_id,
+            'post_likes',
+            'postId_username_index',
+            'unique',
+            ['postId', 'userId']
+        )
+        print(result)
+    except AppwriteException as e:
+        print(f"Error creating event like index: {str(e)}")
+        
+
+def create_comment_like_index():
+    try:
+        print("Creating unique index for comment likes...")
+        result = databases.create_index(
+            db_id,
+            'comment_likes',
+            'commentId_username_index',
+            'unique',
+            ['commentId', 'userId']
         )
         print(result)
     except AppwriteException as e:
@@ -343,6 +434,70 @@ def create_comments():
         except AppwriteException as e:
             print(f"Error creating comments: {str(e)}")
                 
+def create_sample_surveys():
+    # Create a sample survey for each event
+    # Get all events from the database and create surveys for each event
+    try:
+        events = databases.list_documents(db_id, 'events')
+    except AppwriteException as e:
+        print(f"Error getting events: {str(e)}")
+    for event in events['documents']:
+        sample_survey = {
+            "title": f"{event['title_en']} Feedback",
+            "description": "We value your feedback! Please fill out this survey to help us improve future events.",
+            "eventId": event['$id']
+        }
+        # Save survey to the database
+        try:
+            survey_result = databases.create_document(
+                db_id,
+                'surveys',
+                'unique()',
+                sample_survey
+            )
+            print(f"Created survey for event: {event['title_en']}")
+            
+            # Create sample questions for the survey
+            sample_questions = [
+                {
+                    "question": "How would you rate the event overall?",
+                    "surveyId": survey_result['$id'],
+                    "questionType": "rating",
+                    "options": "",
+                    "isRequired": True
+                },
+                {
+                    "question": "What did you like most about the event?",
+                    "surveyId": survey_result['$id'],
+                    "questionType": "text",
+                    "options": "",
+                    "isRequired": True
+                },
+                {
+                    "question": "Would you recommend this event to a friend?",
+                    "surveyId": survey_result['$id'],
+                    "questionType": "multipleChoice",
+                    "options": "Yes,No,Maybe",
+                    "isRequired": True
+                }
+            ]
+            
+            # Save questions to the database
+            for question in sample_questions:
+                question_result = databases.create_document(
+                    db_id,
+                    'survey_questions',
+                    'unique()',
+                    question
+                )
+                print(f"Created question for survey: {question['question']}")
+        except AppwriteException as e:
+            print(f"Error creating survey questions: {str(e)}")
+        
+
+        
+    
+
 
 def create_sample_events():
     try:
@@ -403,16 +558,22 @@ def create_collections(databases: Databases):
             # If not specified, set required to False
             required = attribute.get('required', False)
             two_way_key = attribute.get('two_way_key', None)
-            if attribute['type'] == 'string':
-                result = databases.create_string_attribute(db_id, collection['collection_id'], attribute['key'], attribute['size'], required)
-            elif attribute['type'] == 'datetime':
-                result = databases.create_datetime_attribute(db_id, collection['collection_id'], attribute['key'], required)
-            elif attribute['type'] == 'integer':
-                result = databases.create_integer_attribute(db_id, collection['collection_id'], attribute['key'], required)
-            elif attribute['type'] == 'relationship':
+            attribute_key = attribute['key']
+            attribute_type = attribute['type']
+            if attribute_type == 'string':
+                result = databases.create_string_attribute(db_id, collection['collection_id'], attribute_key, attribute['size'], required)
+            elif attribute_type == 'datetime':
+                result = databases.create_datetime_attribute(db_id, collection['collection_id'], attribute_key, required)
+            elif attribute_type == 'integer':
+                result = databases.create_integer_attribute(db_id, collection['collection_id'], attribute_key, required)
+            elif attribute_type == 'relationship':
                 result = databases.create_relationship_attribute(db_id, collection['collection_id'], attribute['related_collection'], attribute['relationship_type'], attribute['two_way'], two_way_key, attribute['on_delete'])
+            elif attribute_type == 'enum':
+                result = databases.create_enum_attribute(db_id, collection['collection_id'], attribute_key, attribute['enum'], required)
+            elif attribute_type == 'boolean':
+                result = databases.create_boolean_attribute(db_id, collection['collection_id'], attribute_key, required)
             else:
-                raise ValueError(f'Unknown attribute type: {attribute["type"]}')
+                raise ValueError(f'Unknown attribute type: {attribute_type}')
  
 # Add 'pollOptions' and 'pollResult' fields to the 'Posts' collection schema
 def add_poll_fields_to_posts(databases):
@@ -457,7 +618,10 @@ if __name__ == "__main__":
         add_poll_fields_to_posts(databases)
         create_sample_posts()
         create_event_like_index()
+        create_post_like_index()
+        create_comment_like_index()
         create_comments()
+        create_sample_surveys()
     except AppwriteException as e:
         print("Exception: ", e.message)
     
