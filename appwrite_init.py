@@ -70,7 +70,6 @@ sample_posts = [
         "authorTitle": "Vice Rector for Education",
         "pollQuestion": "How excited are you for this year?",  # Add pollQuestion
         "pollOptions": ", ".join(["Excited", "Very Excited", "Not Excited"]),
-        "createdAt": datetime.now().isoformat()
 
     },
     {
@@ -82,7 +81,6 @@ sample_posts = [
         "pollQuestion": "How excited are you for this year?",  # Add pollQuestion
         "pollOptions": ", ".join(["Excited", "Very Excited", "Not Excited"]),
         #"pollResult": "",  # This can be updated with the selected option or vote count
-        "createdAt": (datetime.now() - timedelta(days=2)).isoformat()
 
     },
     {
@@ -93,7 +91,6 @@ sample_posts = [
         "authorTitle": "International Student Coordinator",
         "pollQuestion": "How excited are you for this year?",  # Add pollQuestion
         "pollOptions": ", ".join(["Excited", "Very Excited", "Not Excited"]),
-        "createdAt": (datetime.now() - timedelta(days=5)).isoformat()
     },
     {
         "postTitle": "Vote Now! Help Us Plan the Perfect Summer Event",
@@ -103,7 +100,6 @@ sample_posts = [
         "authorTitle": "Vice Rector for Education",
         "pollQuestion": "What type of activities would you prefer for the upcoming Summer Event?",  # Add pollQuestion
         "pollOptions": ", ".join(["Beach Day", "Hiking and Nature Walks", "Outdoor Picnic", "Music Festival"]),
-        "createdAt": (datetime.now() - timedelta(days=5)).isoformat()
 
     }
 ]
@@ -238,9 +234,8 @@ collections_config = [
             {'type': 'string', 'key': 'authorName', 'size': 255, 'required': True},
             {'type': 'string', 'key': 'authorTitle', 'size': 255, 'required': True},
             {'type': 'string', 'key': 'pollQuestion', 'size': 255},
-            {'type': 'string', 'key': 'pollOptions', 'size': 1024},  # Store poll options as a string array
-            #{'type': 'string', 'key': 'pollResult', 'size': 1024},    # Optional: Store the selected poll result or vote count
-            {'type': 'datetime', 'key': 'createdAt', 'required': True}
+            {'type': 'string', 'key': 'pollOptions', 'size': 1024},
+            {'type': 'string', 'key': 'pollResult', 'size': 1024},
         ]
     },
     # Post likes
@@ -379,7 +374,6 @@ def create_sample_posts():
                 "content": post['content'],
                 "authorName": post['authorName'],
                 "authorTitle": post['authorTitle'],
-                "createdAt": post['createdAt'],
                 "pollQuestion": post['pollQuestion'],  # Include pollQuestion
                 "pollOptions": post.get('pollOptions', []),  # Ensure poll options are included
                 #"pollResult": post.get('pollResult', ''),    # Optional: Add poll result field
@@ -586,23 +580,6 @@ def add_poll_fields_to_posts(databases):
             size=1024,
             required=False
         )
-        # # Add 'pollOptions' as a string array attribute
-        # databases.create_string_attribute(
-        #     db_id,
-        #     'posts',
-        #     'pollOptions',
-        #     size=1024,
-        #     required=False
-        # )
-        
-        # # Add 'pollResult' as a string attribute
-        # databases.create_string_attribute(
-        #     db_id,
-        #     'posts',
-        #     'pollResult',
-        #     size=255,
-        #     required=False
-        # )
         print("Poll fields added successfully.")
     except AppwriteException as e:
         print(f"Error adding poll fields: {str(e)}")

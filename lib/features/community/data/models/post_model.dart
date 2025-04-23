@@ -1,5 +1,5 @@
+import 'dart:convert';
 import 'comment_model.dart';
-import 'dart:convert'; // Import this at the top
 
 class PostModel {
   final String id;
@@ -8,9 +8,9 @@ class PostModel {
   final String postTitle;
   final String content;
   final String imageUrl;
-  final String pollQuestion; // Add this field
-  List<CommentModel> comments;
-  List<PollOption> pollOptions;
+  final String pollQuestion;
+  final List<CommentModel> comments;
+  final List<PollOption> pollOptions;
   final bool isLiked;
   final int likeCount;
 
@@ -21,83 +21,87 @@ class PostModel {
     required this.postTitle,
     required this.content,
     required this.imageUrl,
-    required this.pollQuestion, // Initialize here
+    required this.pollQuestion,
     this.comments = const [],
     this.pollOptions = const [],
-  });
-
-  factory PostModel.fromJson(Map<String, dynamic> json) {
-    return PostModel(
-      id: json['\$id'],
-      authorName: json['authorName'] ?? '',
-      authorTitle: json['authorTitle'] ?? '',
-      postTitle: json['postTitle'] ?? '',
-      content: json['content'] ?? '',
-      imageUrl: json['imageUrl'] ?? '',
-      pollQuestion: json['pollQuestion'] ?? '',
-      comments: (json['comments'] as List<dynamic>?)
-              ?.map((commentJson) => CommentModel.fromJson(commentJson))
-              .toList() ??
-          [],
-      pollOptions: json['pollOptions'] is List
-          ? (json['pollOptions'] as List<dynamic>)
-              .map((optionJson) => optionJson is Map<String, dynamic>
-                  ? PollOption.fromJson(optionJson)
-                  : PollOption(option: optionJson.toString().trim()))
-              .toList()
-          : (json['pollOptions'] is String
-              ? (json['pollOptions'] as String)
-                  .split(',')
-                  .map((option) => PollOption(option: option.trim()))
-                  .toList()
-              : []),
-    );
-  }
     this.isLiked = false,
-    this.comments = const [],
     this.likeCount = 0,
   });
 
-  Map<String, dynamic> toJson() {
+  factory PostModel.fromMap(Map<String, dynamic> json) {
+    List<CommentModel> commentsList = [];
+    if (json['comments'] is List) {
+      commentsList = (json['comments'] as List<dynamic>)
+          .map((c) => CommentModel.fromMap(c as Map<String, dynamic>))
+          .toList();
+    } else if (json['comments'] is String) {
+      try {
+        final decodedComments = jsonDecode(json['comments'] as String);
+        if (decodedComments is List) {
+          commentsList = decodedComments
+              .map((c) => CommentModel.fromMap(c as Map<String, dynamic>))
+              .toList();
+        }
+      } catch (e) {
+        // Handle or log decoding error if necessary
+        print('Error decoding comments string: $e');
+      }
+    }
+
+    List<PollOption> pollOptionsList = [];
+    if (json['pollOptions'] is List) {
+      pollOptionsList = (json['pollOptions'] as List<dynamic>)
+          .map((o) => PollOption.fromJson(o is Map<String, dynamic> ? o : {}))
+          .toList();
+    } else if (json['pollOptions'] is String) {
+      try {
+        final decodedOptions = jsonDecode(json['pollOptions'] as String);
+        if (decodedOptions is List) {
+          pollOptionsList = decodedOptions
+              .map((o) => PollOption.fromJson(o is Map<String, dynamic> ? o : {}))
+              .toList();
+        }
+      } catch (e) {
+        // Handle or log decoding error if necessary
+        print('Error decoding pollOptions string: $e');
+      }
+    }
+
+    return PostModel(
+      id: json['\$id'] as String,
+      authorName: json['authorName'] as String? ?? '',
+      authorTitle: json['authorTitle'] as String? ?? '',
+      postTitle: json['postTitle'] as String? ?? '',
+      content: json['content'] as String? ?? '',
+      imageUrl: json['imageUrl'] as String? ?? '',
+      pollQuestion: json['pollQuestion'] as String? ?? '',
+      comments: commentsList, // Use the processed list
+      pollOptions: pollOptionsList, // Use the processed list
+      isLiked: json['isLiked'] as bool? ?? false,
+      likeCount: json['likeCount'] as int? ?? 0,
+    );
+  }
+
+  Map<String, dynamic> toMap() {
     return {
-      'id': id,
       'authorName': authorName,
       'authorTitle': authorTitle,
       'postTitle': postTitle,
       'content': content,
       'imageUrl': imageUrl,
-      'pollQuestion': pollQuestion, // Serialize pollQuestion
-      'comments': comments.map((comment) => comment.toJson()).toList(),
-      'pollOptions': pollOptions.map((option) => option.toJson()).toList(),
-    };
-  }
-
-  // Method to update the vote for a given poll option
-  void updateVote(int index) {
-    if (index >= 0 && index < pollOptions.length) {
-      pollOptions[index].votes += 1;
-    }
+      'pollQuestion': pollQuestion,
+      'comments': comments.map((c) => c.toJson()).toList(),
+      'pollOptions': pollOptions.map((o) => o.toJson()).toList(),
       'isLiked': isLiked,
       'likeCount': likeCount,
     };
   }
 
-  //from Map
-  factory PostModel.fromMap(Map<String, dynamic> map) {
-    return PostModel(
-      id: map['\$id'],
-      authorName: map['authorName'] ?? '',
-      authorTitle: map['authorTitle'] ?? '',
-      postTitle: map['postTitle'] ?? '',
-      content: map['content'] ?? '',
-      imageUrl: map['imageUrl'] ?? '',
-      comments: (map['comments'] as List<dynamic>?)
-              ?.map((commentJson) => CommentModel.fromMap(commentJson))
-              .toList() ??
-          [],
-      likeCount: map['likeCount'] ?? 0,
-      isLiked: map['isLiked'] ?? false,
-    );
+  /// Increment vote count for poll option at [index].
+  void updateVote(int index) {
+    if (index >= 0 && index < pollOptions.length) {
+      pollOptions[index].votes++;
+    }
   }
 
   PostModel copyWith({
@@ -107,7 +111,9 @@ class PostModel {
     String? postTitle,
     String? content,
     String? imageUrl,
+    String? pollQuestion,
     List<CommentModel>? comments,
+    List<PollOption>? pollOptions,
     bool? isLiked,
     int? likeCount,
   }) {
@@ -118,7 +124,9 @@ class PostModel {
       postTitle: postTitle ?? this.postTitle,
       content: content ?? this.content,
       imageUrl: imageUrl ?? this.imageUrl,
+      pollQuestion: pollQuestion ?? this.pollQuestion,
       comments: comments ?? this.comments,
+      pollOptions: pollOptions ?? this.pollOptions,
       isLiked: isLiked ?? this.isLiked,
       likeCount: likeCount ?? this.likeCount,
     );
@@ -133,8 +141,8 @@ class PollOption {
 
   factory PollOption.fromJson(Map<String, dynamic> json) {
     return PollOption(
-      option: json['option'] ?? '',
-      votes: json['votes'] ?? 0,
+      option: json['option'] as String? ?? '',
+      votes: json['votes'] as int? ?? 0,
     );
   }
 
