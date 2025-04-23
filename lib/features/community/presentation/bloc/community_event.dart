@@ -70,3 +70,13 @@ class ToggleCommentLike extends CommunityEvent {
   @override
   List<Object> get props => [commentId];
 }
+
+class VoteOnPoll extends CommunityEvent {
+  final String postId;
+  final int optionIndex;
+
+  const VoteOnPoll({required this.postId, required this.optionIndex});
+
+  @override
+  List<Object> get props => [postId, optionIndex];
+}

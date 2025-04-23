@@ -45,6 +45,7 @@ void main() {
           content: 'Test content',
           authorTitle: '',
           postTitle: '',
+          pollQuestion: '',
           imageUrl: '')
     ];
 

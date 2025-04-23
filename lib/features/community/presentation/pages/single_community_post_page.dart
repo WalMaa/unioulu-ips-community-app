@@ -1,456 +1,185 @@
 import 'package:community/core/services/dependency_injection.dart';
-import 'package:community/core/theme/theme_constants.dart';
 import 'package:community/features/auth/data/repositories/auth_repository_impl.dart';
+import 'package:community/features/community/data/models/post_model.dart';
 import 'package:community/features/community/presentation/bloc/community_bloc.dart';
 import 'package:community/features/community/presentation/widgets/comment_input_field.dart';
 import 'package:community/features/community/presentation/widgets/comment_section.dart';
 import 'package:community/features/community/service/community_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../data/models/post_model.dart';
-import 'package:get_it/get_it.dart';
 
-class SingleCommunityPostPage extends StatelessWidget {
+class SingleCommunityPostPage extends StatefulWidget {
   const SingleCommunityPostPage({
-    super.key,
-    required this.post, // Pass PostModel object
-  });
+    Key? key,
+    required this.post,
+  }) : super(key: key);
 
   final PostModel post;
 
   @override
-  _SingleCommunityPostPageState createState() =>
-      _SingleCommunityPostPageState();
+  _SingleCommunityPostPageState createState() => _SingleCommunityPostPageState();
 }
 
 class _SingleCommunityPostPageState extends State<SingleCommunityPostPage> {
-  final TextEditingController _commentController = TextEditingController();
-  late List<CommentModel> _comments = [];
   int? _selectedPollOption;
-
-  double _calculatePollPercentage(int index) {
-    final totalVotes = widget.post.pollOptions!.fold<int>(0, (sum, item) => sum + item.votes);
-    if (totalVotes == 0) return 0;
-    return widget.post.pollOptions![index].votes / totalVotes;
-  }
-
-  // Function to fetch comments for the post
-  Future<void> _fetchComments() async {
-    print(widget.post.id);
-    final appwriteService = AppwriteService();
-
-    final response = await appwriteService.listDocuments(
-      collectionId: "comments",
-  Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => CommunityBloc(
-        communityService: locator<CommunityService>(),
-        authRepository: locator<AuthRepositoryImpl>(),
-      )..add(LoadSinglePost(post: post)),
-      child: SingleCommunityPostPageView(post: post),
-
-    );
-  }
-}
-
-  // Function to add a comment
-  void _addComment() async {
-    if (_commentController.text.isNotEmpty) {
-      final authState = context.read<AuthBloc>().state;
-      final username =
-          authState is AuthAuthenticated ? authState.user.name : 'Anonymous';
-
-      final newComment = CommentModel(
-        text: _commentController.text,
-        username: username,
-        dateTime: DateTime.now(),
-        postId: widget.post.id, // Add this line
-      );
-
-      final appwriteService = AppwriteService();
-      final response = await appwriteService.createDocument(
-        collectionId: "comments",
-        documentId: 'unique()',
-        data: {
-          'documentId': 'unique()',
-          'data': newComment.toJson(),
-        },
-      );
-
-      if (response.isNotEmpty) {
-        setState(() {
-          _comments.add(newComment);
-        });
-        _commentController.clear();
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Failed to add comment')),
-        );
-      }
-    }
-  }
-
-  // // Function to handle vote selection
-  // Future<void> _voteOnPoll(int optionIndex) async {
-  //   setState(() {
-  //     _selectedPollOption = optionIndex;
-  //   });
-
-  //   // Handle the vote submission logic here (e.g., sending data to Appwrite or updating the local post object)
-  //   // ✅ Save vote to backend (e.g., Appwrite)
-  //   final appwriteService = GetIt.instance<AppwriteService>();
-  //   await appwriteService.updateDocument(
-  //     collectionId: 'posts', // or your actual post collection ID
-  //     documentId: widget.post.id,
-  //     data: widget.post.toJson(), // Send updated post with incremented votes
-  //   );
-  // }
-
-  void _voteOnPoll(int optionIndex) async {
-    setState(() {
-      // Update the selected poll option
-      _selectedPollOption = optionIndex;
-      // Increment the vote count for the selected option
-      widget.post.pollOptions![optionIndex].votes++;
-    });
-
-    // Handle the vote submission logic here (e.g., sending data to Appwrite or updating the local post object)
-    final appwriteService = GetIt.instance<AppwriteService>();
-    await appwriteService.updateDocument(
-      collectionId: 'posts', // or your actual post collection ID
-      documentId: widget.post.id,
-      data: widget.post.toJson(), // Send updated post with incremented votes
-    );
-  }
 
   @override
   void initState() {
     super.initState();
-    _fetchComments(); // Fetch comments when the page loads
   }
-class SingleCommunityPostPageView extends StatelessWidget {
-  const SingleCommunityPostPageView({
-    super.key,
-    required this.post,
-  });
 
-  final PostModel post;
+  Future<void> _voteOnPoll(int index) async {
+    if (_selectedPollOption != null) return;
+    setState(() {
+      _selectedPollOption = index;
+    });
+
+    context.read<CommunityBloc>().add(
+      VoteOnPoll(postId: widget.post.id, optionIndex: index),
+    );
+  }
+
+  double _pollPercentage(int index) {
+    final opts = widget.post.pollOptions;
+    final total = opts.fold<int>(0, (sum, o) => sum + o.votes);
+    return total > 0 ? opts[index].votes / total : 0;
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Community Post'),
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildPostCard(context, post),
-            CommentInputField(
-              postId: post.id,
-              onCommentSubmit: (postId, commentText) {
-                context.read<CommunityBloc>().add(
-                      AddComment(
-                        postId: postId,
-                        commentText: commentText,
-                      ),
-                    );
-              },
-            ),
-            CommentsSection(postId: post.id),
-          ],
+    return BlocProvider(
+      create: (_) => CommunityBloc(
+        communityService: locator<CommunityService>(),
+        authRepository: locator<AuthRepositoryImpl>(),
+      )..add(LoadSinglePost(post: widget.post)),
+      child: Scaffold(
+        appBar: AppBar(title: const Text('Community Post')),
+        body: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildPostCard(),
+              CommentInputField(
+                postId: widget.post.id,
+                onCommentSubmit: (_, commentText) => context.read<CommunityBloc>().add(
+                  AddComment(postId: widget.post.id, commentText: commentText),
+                ),
+              ),
+              CommentsSection(postId: widget.post.id),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  // Main post card
-  Widget _buildPostCard(BuildContext context, PostModel post) {
+  Widget _buildPostCard() {
     return BlocBuilder<CommunityBloc, CommunityState>(
-      buildWhen: (previous, current) {
-        return (current is PostLoaded) || (current is CommunityActionSuccess);
-      },
+      buildWhen: (prev, curr) => curr is PostLoaded || curr is CommunityActionSuccess || curr is CommunityLoading,
       builder: (context, state) {
-        // Get updated post data if available
-        final currentPost = (state is PostLoaded) ? state.post : post;
-        return Column(
-          children: [
-            Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-              margin: const EdgeInsets.all(12),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const CircleAvatar(
-                          radius: 28,
-                          // Replaced via.placeholder.com with dummyimage.com
-                          backgroundImage:
-                              NetworkImage('https://dummyimage.com/150x150/000/fff'),
-
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                post.authorName,
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              Text(
-                                post.authorTitle,
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.grey[600],
-                                ),
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    if (post.imageUrl.isNotEmpty)
-                      Image.network(
-                        post.imageUrl,
-                        width: double.infinity,
-                        height: 200,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
-                          return const Icon(Icons.broken_image, size: 100, color: Colors.grey);
-                        },
-                      )
-                    else
-                      Image.asset(
-                        'assets/default_avatar.png', // make sure this exists in pubspec.yaml
-                        width: double.infinity,
-                        height: 200,
-                        fit: BoxFit.cover,
-                      ),
-
-                    const SizedBox(height: 16),
-                    Text(
-                      post.postTitle,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      post.content,
-                      style: const TextStyle(fontSize: 14),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-            // Poll Section (if exists)
-            if (post.pollOptions != null && post.pollOptions!.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      post.pollQuestion,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-
-                    ...List.generate(post.pollOptions!.length, (index) {
-                      final option = post.pollOptions![index];
-                      final isSelected = _selectedPollOption == index;
-                      final percentage = _calculatePollPercentage(index) * 100;
-
-                      return GestureDetector(
-                        onTap: () {
-                          if (_selectedPollOption == null) {
-                            _voteOnPoll(index);
-                          }
-                        },
-                        child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 300),
-                          margin: const EdgeInsets.symmetric(vertical: 6),
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: isSelected ? Colors.blue.shade50 : Colors.grey.shade100,
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(
-                              color: isSelected ? Colors.blue : Colors.grey.shade300,
-                              width: 1.5,
-                            ),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                option.option,
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
-                                  color: isSelected ? Colors.blue : Colors.black87,
-                                ),
-                              ),
-                              const SizedBox(height: 6),
-                              LinearProgressIndicator(
-                                value: _calculatePollPercentage(index),
-                                minHeight: 8,
-                                backgroundColor: Colors.grey.shade300,
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                  isSelected ? Colors.blue : Colors.teal,
-                                ),
-                              ),
-                              const SizedBox(height: 6),
-                              Text(
-                                '${percentage.toStringAsFixed(1)}% (${option.votes} votes)',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.grey.shade600,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    }),
-                    const SizedBox(height: 8),
-                    if (_selectedPollOption != null)
-                      const Text(
-                        'Thanks for voting!',
-                        style: TextStyle(color: Colors.green, fontSize: 14),
-                      ),
-                  ],
-                ),
-              ),
-
-
-            const SizedBox(height: 16),
-            // Comment Input Field
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: SizedBox(
-                      height: 100, // Adjust as needed
-                      child: TextFormField(
-                        controller: _commentController,
-                        maxLines: 3,
-                        decoration: InputDecoration(
-                          hintText: "Add a comment...",
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                        ),
-            // Like button row
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
+        final post = state is PostLoaded ? state.post : widget.post;
+        return Card(
+          margin: const EdgeInsets.all(12),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  children: [
-                    IconButton(
-                      icon: Icon(
-                        currentPost.isLiked
-                            ? Icons.favorite
-                            : Icons.favorite_border,
-                        color: currentPost.isLiked ? Colors.red : null,
-                      ),
-                      onPressed: () {
-                        context.read<CommunityBloc>().add(
-                              TogglePostLike(postId: currentPost.id),
-                            );
-                      },
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  ElevatedButton(
-                    onPressed: _addComment,
-                    child: const Text('Post'),
-                  ),
+                _authorRow(post),
+                const SizedBox(height: 16),
+                _postImage(post),
+                const SizedBox(height: 16),
+                Text(post.postTitle, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 8),
+                Text(post.content, style: const TextStyle(fontSize: 14)),
+                if (post.pollOptions.isNotEmpty) ...[
+                  const SizedBox(height: 16),
+                  _pollSection(post),
                 ],
-              ),
-            ),
-            const SizedBox(height: 16),
-            // Comment Section
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.0),
-              child: Text(
-                'Comments',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-            ),
-            const SizedBox(height: 8),
-            ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: _comments.length,
-              itemBuilder: (context, index) {
-                final comment = _comments[index];
-                return ListTile(
-                  leading: const CircleAvatar(
-                    // Replaced via.placeholder.com with dummyimage.com
-                    backgroundImage:
-                        NetworkImage('https://dummyimage.com/150x150/000/fff'),
-                  ),
-                  title: Row(
-                    children: [
-                      Text(comment.username),
-                      const Spacer(),
-                      Text(
-                        _formatDateTime(comment.dateTime),
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey[600],
-                        ),
-                      ),
-                    ],
-                  ),
-                  subtitle: Text(comment.text),
-                );
-              },
-                    Text('${currentPost.likeCount}'),
-                  ],
-                ),
-                const SizedBox(width: AppSpacing.smallPadding),
+                const SizedBox(height: 16),
+                _likeRow(post),
               ],
             ),
-          ],
+          ),
         );
       },
     );
   }
+
+  Widget _authorRow(PostModel post) => Row(
+        children: [
+          const CircleAvatar(
+            radius: 28,
+            child: Icon(Icons.person),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(post.authorName, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                Text(post.authorTitle, style: TextStyle(fontSize: 14, color: Colors.grey[600])),
+              ],
+            ),
+          ),
+        ],
+      );
+
+  Widget _postImage(PostModel post) => post.imageUrl.isNotEmpty
+      ? Image.network(post.imageUrl, width: double.infinity, height: 200, fit: BoxFit.cover,
+          errorBuilder: (_, __, ___) => const Icon(Icons.broken_image, size: 100, color: Colors.grey),
+        )
+      : Image.asset('assets/default_avatar.png', width: double.infinity, height: 200, fit: BoxFit.cover);
+
+  Widget _pollSection(PostModel post) => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(post.pollQuestion, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 12),
+          ...List.generate(post.pollOptions.length, (i) {
+            final opt = post.pollOptions[i];
+            final isSel = _selectedPollOption == i;
+            final pct = _pollPercentage(i);
+            return GestureDetector(
+              onTap: () => _voteOnPoll(i),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 300),
+                margin: const EdgeInsets.symmetric(vertical: 6),
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: isSel ? Colors.blue.shade50 : Colors.grey.shade100,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: isSel ? Colors.blue : Colors.grey.shade300, width: 1.5),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(opt.option, style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: isSel ? Colors.blue : Colors.black87)),
+                    const SizedBox(height: 6),
+                    LinearProgressIndicator(value: pct, minHeight: 8),
+                    const SizedBox(height: 6),
+                    Text('${(pct * 100).toStringAsFixed(1)}% (${opt.votes} votes)', style: TextStyle(fontSize: 12, color: Colors.grey[600])),
+                  ],
+                ),
+              ),
+            );
+          }),
+          if (_selectedPollOption != null)
+            const Padding(
+              padding: EdgeInsets.only(top: 8),
+              child: Text('Thanks for voting!', style: TextStyle(color: Colors.green)),
+            ),
+        ],
+      );
+
+  Widget _likeRow(PostModel post) => Row(
+        children: [
+          IconButton(
+            icon: Icon(post.isLiked ? Icons.favorite : Icons.favorite_border, color: post.isLiked ? Colors.red : null),
+            onPressed: () => context.read<CommunityBloc>().add(TogglePostLike(postId: post.id)),
+          ),
+          Text('${post.likeCount}'),
+        ],
+      );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

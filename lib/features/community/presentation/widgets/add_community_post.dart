@@ -101,17 +101,15 @@ class CommunityPostFormState extends State<CommunityPostForm> {
           'imageUrl': imageUrl,
           'authorName': _authorNameController.text,
           'authorTitle': _authorTitleController.text,
-          'createdAt': DateTime.now().toIso8601String(),
-          'updatedAt': DateTime.now().toIso8601String(),
           'pollQuestion': _pollQuestionController.text,
-          'pollOptions': formattedPollOptions,
+          'pollOptions': formattedPollOptions.toString(),
         };
 
         print('Data being sent to Appwrite: ${jsonEncode(dataObj)}');
 
         final response = await appwriteService.createDocument(
           collectionId: "posts",
-          data: dataObj,
+          data: {"data": dataObj, "documentId": 'unique()'},
           documentId: 'unique()',
         );
         print('Document created: ${response['\$id']}');
@@ -207,8 +205,10 @@ class CommunityPostFormState extends State<CommunityPostForm> {
                   controller: _pollQuestionController,
                   decoration: const InputDecoration(
                     labelText: 'Poll Question',
-                    labelStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                    contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                    labelStyle:
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                    contentPadding:
+                        EdgeInsets.symmetric(vertical: 12, horizontal: 16),
                     border: OutlineInputBorder(),
                   ),
                   validator: (value) {
@@ -227,30 +227,35 @@ class CommunityPostFormState extends State<CommunityPostForm> {
                   controller: _pollOptionController,
                   decoration: const InputDecoration(
                     labelText: 'Poll Option',
-                    contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                    contentPadding:
+                        EdgeInsets.symmetric(vertical: 12, horizontal: 16),
                     border: OutlineInputBorder(),
                   ),
                 ),
               ),
-              
+
               // Add Poll Option button with space
               Padding(
                 padding: const EdgeInsets.only(bottom: 16.0),
                 child: ElevatedButton(
                   onPressed: _addPollOption,
                   style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(Colors.blueAccent),
+                    backgroundColor:
+                        MaterialStateProperty.all(Colors.blueAccent),
                   ),
-                  child: const Text('Add Poll Option', style: TextStyle(color: Colors.white)),
+                  child: const Text('Add Poll Option',
+                      style: TextStyle(color: Colors.white)),
                 ),
               ),
-              
+
               // Display Poll Options with space
               if (_pollOptions.isNotEmpty)
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('Poll Options:', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                    const Text('Poll Options:',
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold)),
                     const SizedBox(height: 10),
                     ..._pollOptions.map((option) {
                       return Card(
@@ -259,7 +264,8 @@ class CommunityPostFormState extends State<CommunityPostForm> {
                         shadowColor: Colors.grey.withOpacity(0.2),
                         child: ListTile(
                           title: Text(option, style: TextStyle(fontSize: 16)),
-                          trailing: Icon(Icons.check_circle, color: Colors.green),
+                          trailing:
+                              Icon(Icons.check_circle, color: Colors.green),
                         ),
                       );
                     }).toList(),
