@@ -260,6 +260,25 @@ class AppwriteService {
     }
   }
 
+  /// Updates a document in a collection
+  ///
+  /// [collectionId] - ID of the collection (e.g., 'posts')
+  /// [documentId] - ID of the document you want to update
+  /// [data] - Updated fields as a map
+  Future<http.Response> updateDocument({
+    required String collectionId,
+    required String documentId,
+    required Map<String, dynamic> data,
+  }) async {
+    final endpointPath = 'databases/$databaseId/collections/$collectionId/documents/$documentId';
+
+    return await makeRequest(
+      method: 'PATCH',
+      endpointPath: endpointPath,
+      data: data,
+    );
+  }
+
   /// Logs the API response for debugging purposes
   void _logResponse(http.Response response) {
     final statusPrefix =

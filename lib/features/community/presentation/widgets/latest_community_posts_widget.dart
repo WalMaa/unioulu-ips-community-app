@@ -7,6 +7,63 @@ class LatestCommunityPostsWidget extends StatelessWidget {
   const LatestCommunityPostsWidget({super.key});
 
   @override
+  LatestCommunityPostsWidgetState createState() =>
+      LatestCommunityPostsWidgetState();
+}
+
+class LatestCommunityPostsWidgetState
+    extends State<LatestCommunityPostsWidget> {
+  late AppwriteService _appwriteService;
+  List<PostModel> _posts = [];
+  bool _isLoading = true;
+  bool _hasError = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _appwriteService = AppwriteService();
+    _fetchLatestPosts();
+  }
+
+
+  Future<void> _fetchLatestPosts() async {
+  try {
+    final response = await _appwriteService.listDocuments(
+      collectionId: "posts",
+    );
+
+    if (!mounted) return;
+    
+    final List<dynamic> jsonData = response['documents'];
+    for (var json in jsonData) {
+      print('Post: ${json['postTitle']}, Poll Q: ${json['pollQuestion']}, Options: ${json['pollOptions']}');
+    }
+
+    // Sort by date if available (assumes you have an 'updatedAt' field in the API response)
+    final sortedPosts = jsonData
+      ..sort((a, b) => DateTime.parse(b['updatedAt'])
+          .compareTo(DateTime.parse(a['updatedAt'])));
+
+    // Limit to 5 latest posts
+    setState(() {
+      _posts = sortedPosts
+          .take(5)
+          .map((json) => PostModel.fromJson(json))
+          .toList();
+      _isLoading = false;
+    });
+  } catch (e) {
+    if (!mounted) return;
+    
+    setState(() {
+      _hasError = true;
+      _isLoading = false;
+    });
+    
+  }
+}
+
+  @override
   Widget build(BuildContext context) {
     // Dispatch an event to fetch latest posts when the widget is built
     // We'll add a special parameter to indicate we only want the latest posts

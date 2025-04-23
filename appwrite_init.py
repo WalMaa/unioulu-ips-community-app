@@ -66,29 +66,45 @@ sample_posts = [
         "postTitle": "Best Study Spots on Campus",
         "content": "Hey everyone! I'm a second-year student and I wanted to share some of my favorite study spots on campus. The library is great, but I also love the quiet corners in the new Student Technology Hub.",
         "imageUrl": "https://images.unsplash.com/photo-1564981797816-1043664bf78d?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-        "authorName": "John Doe",
-        "authorTitle": "Student",
+        "authorName": "Prof. Anna Virtanen",
+        "authorTitle": "Vice Rector for Education",
+        "pollQuestion": "How excited are you for this year?",  # Add pollQuestion
+        "pollOptions": ", ".join(["Excited", "Very Excited", "Not Excited"]),
+        "createdAt": datetime.now().isoformat()
+
     },
     {
         "postTitle": "Tips for Balancing Studies and Social Life",
         "content": "As a senior student, I've learned a lot about balancing studies and social life. My advice is to create a schedule and stick to it, but also make sure to take breaks and enjoy time with friends.",
         "imageUrl": "https://images.unsplash.com/photo-1564981797816-1043664bf78d?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-        "authorName": "Jane Smith",
-        "authorTitle": "Student",
+        "authorName": "Dr. Mikko Järvinen",
+        "authorTitle": "Head of IT Services",
+        "pollQuestion": "How excited are you for this year?",  # Add pollQuestion
+        "pollOptions": ", ".join(["Excited", "Very Excited", "Not Excited"]),
+        #"pollResult": "",  # This can be updated with the selected option or vote count
+        "createdAt": (datetime.now() - timedelta(days=2)).isoformat()
+
     },
     {
         "postTitle": "Faculty Insights: The Future of AI",
         "content": "Artificial Intelligence is rapidly evolving and has the potential to revolutionize many industries. In this post, I will discuss the future trends and the impact of AI on our society.",
         "imageUrl": "https://images.unsplash.com/photo-1564981797816-1043664bf78d?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-        "authorName": "Dr. Sarah Johnson",
-        "authorTitle": "Faculty Member",
+        "authorName": "Lisa Chen",
+        "authorTitle": "International Student Coordinator",
+        "pollQuestion": "How excited are you for this year?",  # Add pollQuestion
+        "pollOptions": ", ".join(["Excited", "Very Excited", "Not Excited"]),
+        "createdAt": (datetime.now() - timedelta(days=5)).isoformat()
     },
     {
-        "postTitle": "Exploring Quantum Computing",
-        "content": "Quantum computing is an exciting field that promises to solve complex problems that are currently unsolvable with classical computers. In this post, I will introduce the basics of quantum computing and its potential applications.",
+        "postTitle": "Vote Now! Help Us Plan the Perfect Summer Event",
+        "content": "We want to know what kind of activities you'd love to see. Whether you're into relaxing beach days, adventurous hikes, or exciting music festivals, your opinion matters!.",
         "imageUrl": "https://images.unsplash.com/photo-1564981797816-1043664bf78d?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-        "authorName": "Prof. David Lee",
-        "authorTitle": "Faculty Member",
+        "authorName": "Dr. Anna",
+        "authorTitle": "Vice Rector for Education",
+        "pollQuestion": "What type of activities would you prefer for the upcoming Summer Event?",  # Add pollQuestion
+        "pollOptions": ", ".join(["Beach Day", "Hiking and Nature Walks", "Outdoor Picnic", "Music Festival"]),
+        "createdAt": (datetime.now() - timedelta(days=5)).isoformat()
+
     }
 ]
 
@@ -221,6 +237,10 @@ collections_config = [
             {'type': 'string', 'key': 'imageUrl', 'size': 255,},
             {'type': 'string', 'key': 'authorName', 'size': 255, 'required': True},
             {'type': 'string', 'key': 'authorTitle', 'size': 255, 'required': True},
+            {'type': 'string', 'key': 'pollQuestion', 'size': 255},
+            {'type': 'string', 'key': 'pollOptions', 'size': 1024},  # Store poll options as a string array
+            #{'type': 'string', 'key': 'pollResult', 'size': 1024},    # Optional: Store the selected poll result or vote count
+            {'type': 'datetime', 'key': 'createdAt', 'required': True}
         ]
     },
     # Post likes
@@ -354,16 +374,28 @@ def create_sample_posts():
     try:
         print("Creating sample posts...")
         for post in sample_posts:
+            post_data = {
+                "postTitle": post['postTitle'],
+                "content": post['content'],
+                "authorName": post['authorName'],
+                "authorTitle": post['authorTitle'],
+                "createdAt": post['createdAt'],
+                "pollQuestion": post['pollQuestion'],  # Include pollQuestion
+                "pollOptions": post.get('pollOptions', []),  # Ensure poll options are included
+                #"pollResult": post.get('pollResult', ''),    # Optional: Add poll result field
+            }
+            print(f"Creating post with data: {post_data}") 
             result = databases.create_document(
                 db_id,
                 'posts',
-                'unique()',
-                post
+                'unique()',  # Auto-generate a unique ID
+                post_data
             )
             print(f"Created post: {result['postTitle']}")
                 
     except AppwriteException as e:
         print(f"Error creating posts: {str(e)}")
+
         
 
 def create_comments():
@@ -543,6 +575,38 @@ def create_collections(databases: Databases):
             else:
                 raise ValueError(f'Unknown attribute type: {attribute_type}')
  
+# Add 'pollOptions' and 'pollResult' fields to the 'Posts' collection schema
+def add_poll_fields_to_posts(databases):
+    try:
+        # Add 'pollQuestion' as a string attribute (for storing the poll question)
+        databases.create_string_attribute(
+            db_id,
+            'posts',
+            'pollQuestion',
+            size=1024,
+            required=False
+        )
+        # # Add 'pollOptions' as a string array attribute
+        # databases.create_string_attribute(
+        #     db_id,
+        #     'posts',
+        #     'pollOptions',
+        #     size=1024,
+        #     required=False
+        # )
+        
+        # # Add 'pollResult' as a string attribute
+        # databases.create_string_attribute(
+        #     db_id,
+        #     'posts',
+        #     'pollResult',
+        #     size=255,
+        #     required=False
+        # )
+        print("Poll fields added successfully.")
+    except AppwriteException as e:
+        print(f"Error adding poll fields: {str(e)}")
+
  
 if __name__ == "__main__":   
     try:
@@ -551,6 +615,7 @@ if __name__ == "__main__":
         create_collections(databases)
         create_sample_events()
         create_sample_topics()
+        add_poll_fields_to_posts(databases)
         create_sample_posts()
         create_event_like_index()
         create_post_like_index()

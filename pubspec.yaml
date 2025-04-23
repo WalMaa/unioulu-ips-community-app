@@ -61,7 +61,6 @@ flutter:
     - assets/default_avatar.png
     - .env
 
-
   fonts:
     - family: Montserrat
       fonts:
