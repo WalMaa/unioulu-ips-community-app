@@ -24,6 +24,10 @@ class ResetPasswordPage extends StatelessWidget {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               content: Text(state.message),
             ));
+          } else if (state is AuthResetPasswordSuccess) {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text(state.message),
+            ));
           }
         },
         child: SingleChildScrollView(
@@ -40,7 +44,7 @@ class ResetPasswordPage extends StatelessWidget {
                         color: Theme.of(context).primaryColor,
                       ),
                 ),
-                
+
                 const SizedBox(height: 16),
                 Text(
                   "Don't worry! It happens. Please enter the email associated with your account.",
@@ -48,7 +52,7 @@ class ResetPasswordPage extends StatelessWidget {
                         color: Colors.grey[600],
                       ),
                 ),
-                
+
                 const SizedBox(height: 32),
                 Text(
                   "Email address",
@@ -57,7 +61,7 @@ class ResetPasswordPage extends StatelessWidget {
                       ),
                 ),
                 const SizedBox(height: 8),
-                
+
                 // Email input field
                 CustomTextField(
                   controller: emailController,
@@ -65,9 +69,8 @@ class ResetPasswordPage extends StatelessWidget {
                   textInputAction: TextInputAction.done,
                   hintText: AppLocalizations.of(context)!.yourEmail,
                   prefixIcon: Icons.email_outlined,
-                  
                 ),
-                
+
                 // Reset button
                 const SizedBox(height: 32),
                 Center(
@@ -83,7 +86,7 @@ class ResetPasswordPage extends StatelessWidget {
                         );
                         return;
                       }
-                      
+
                       context.read<AuthBloc>().add(ResetPasswordEvent(
                             email: emailController.text,
                           ));
@@ -91,7 +94,7 @@ class ResetPasswordPage extends StatelessWidget {
                     text: AppLocalizations.of(context)!.resetPassword,
                   ),
                 ),
-                
+
                 // Additional info text
                 const SizedBox(height: 16),
                 Center(

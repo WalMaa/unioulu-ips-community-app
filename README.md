@@ -79,6 +79,22 @@ Appwrite requires you to add a platform to your project for CORS. You can add a 
 4. Select the correct platform and fill out the details (the package name should be the same as your Flutter app's package name. Current name is "community" and it is defined in pubspec.yaml).
 5. Click through the optional steps and press "Go to dashboard".
 
+### Enabling SMTP for password reset (optional)
+
+If you want to enable password reset functionality, you need to set up SMTP settings in Appwrite. 
+
+In the appwrite .env file, you should set the following variables:
+
+```bash
+_APP_SMTP_HOST=smtp.example.com
+_APP_SMTP_PORT=587
+_APP_SMTP_SECURE=tls
+_APP_SMTP_USERNAME=example@mail.com
+_APP_SMTP_PASSWORD=password
+```
+
+More information on SMTP settings can be found in the [Appwrite documentation](https://appwrite.io/docs/advanced/self-hosting/environment-variables#smtp).
+
 
 You need to set the following environment variables in the `.env` file in the root of the project:
 

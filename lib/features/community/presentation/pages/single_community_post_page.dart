@@ -17,7 +17,8 @@ class SingleCommunityPostPage extends StatefulWidget {
   final PostModel post;
 
   @override
-  _SingleCommunityPostPageState createState() => _SingleCommunityPostPageState();
+  _SingleCommunityPostPageState createState() =>
+      _SingleCommunityPostPageState();
 }
 
 class _SingleCommunityPostPageState extends State<SingleCommunityPostPage> {
@@ -35,8 +36,8 @@ class _SingleCommunityPostPageState extends State<SingleCommunityPostPage> {
     });
 
     context.read<CommunityBloc>().add(
-      VoteOnPoll(postId: widget.post.id, optionIndex: index),
-    );
+          VoteOnPoll(postId: widget.post.id, optionIndex: index),
+        );
   }
 
   double _pollPercentage(int index) {
@@ -61,9 +62,11 @@ class _SingleCommunityPostPageState extends State<SingleCommunityPostPage> {
               _buildPostCard(),
               CommentInputField(
                 postId: widget.post.id,
-                onCommentSubmit: (_, commentText) => context.read<CommunityBloc>().add(
-                  AddComment(postId: widget.post.id, commentText: commentText),
-                ),
+                onCommentSubmit: (_, commentText) =>
+                    context.read<CommunityBloc>().add(
+                          AddComment(
+                              postId: widget.post.id, commentText: commentText),
+                        ),
               ),
               CommentsSection(postId: widget.post.id),
             ],
@@ -75,12 +78,16 @@ class _SingleCommunityPostPageState extends State<SingleCommunityPostPage> {
 
   Widget _buildPostCard() {
     return BlocBuilder<CommunityBloc, CommunityState>(
-      buildWhen: (prev, curr) => curr is PostLoaded || curr is CommunityActionSuccess || curr is CommunityLoading,
+      buildWhen: (prev, curr) =>
+          curr is PostLoaded ||
+          curr is CommunityActionSuccess ||
+          curr is CommunityLoading,
       builder: (context, state) {
         final post = state is PostLoaded ? state.post : widget.post;
         return Card(
           margin: const EdgeInsets.all(12),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           child: Padding(
             padding: const EdgeInsets.all(16),
             child: Column(
@@ -90,7 +97,9 @@ class _SingleCommunityPostPageState extends State<SingleCommunityPostPage> {
                 const SizedBox(height: 16),
                 _postImage(post),
                 const SizedBox(height: 16),
-                Text(post.postTitle, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                Text(post.postTitle,
+                    style: const TextStyle(
+                        fontSize: 18, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 8),
                 Text(post.content, style: const TextStyle(fontSize: 14)),
                 if (post.pollOptions.isNotEmpty) ...[
@@ -118,8 +127,11 @@ class _SingleCommunityPostPageState extends State<SingleCommunityPostPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(post.authorName, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                Text(post.authorTitle, style: TextStyle(fontSize: 14, color: Colors.grey[600])),
+                Text(post.authorName,
+                    style: const TextStyle(
+                        fontSize: 16, fontWeight: FontWeight.bold)),
+                Text(post.authorTitle,
+                    style: TextStyle(fontSize: 14, color: Colors.grey[600])),
               ],
             ),
           ),
@@ -127,15 +139,23 @@ class _SingleCommunityPostPageState extends State<SingleCommunityPostPage> {
       );
 
   Widget _postImage(PostModel post) => post.imageUrl.isNotEmpty
-      ? Image.network(post.imageUrl, width: double.infinity, height: 200, fit: BoxFit.cover,
-          errorBuilder: (_, __, ___) => const Icon(Icons.broken_image, size: 100, color: Colors.grey),
+      ? Image.network(
+          post.imageUrl,
+          width: double.infinity,
+          height: 200,
+          fit: BoxFit.cover,
+          errorBuilder: (_, __, ___) =>
+              const Icon(Icons.broken_image, size: 100, color: Colors.grey),
         )
-      : Image.asset('assets/default_avatar.png', width: double.infinity, height: 200, fit: BoxFit.cover);
+      : Image.asset('assets/default_avatar.png',
+          width: double.infinity, height: 200, fit: BoxFit.cover);
 
   Widget _pollSection(PostModel post) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(post.pollQuestion, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          Text(post.pollQuestion,
+              style:
+                  const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           const SizedBox(height: 12),
           ...List.generate(post.pollOptions.length, (i) {
             final opt = post.pollOptions[i];
@@ -150,16 +170,25 @@ class _SingleCommunityPostPageState extends State<SingleCommunityPostPage> {
                 decoration: BoxDecoration(
                   color: isSel ? Colors.blue.shade50 : Colors.grey.shade100,
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: isSel ? Colors.blue : Colors.grey.shade300, width: 1.5),
+                  border: Border.all(
+                      color: isSel ? Colors.blue : Colors.grey.shade300,
+                      width: 1.5),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(opt.option, style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: isSel ? Colors.blue : Colors.black87)),
+                    Text(opt.option,
+                        style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                            color: isSel ? Colors.blue : Colors.black87)),
                     const SizedBox(height: 6),
                     LinearProgressIndicator(value: pct, minHeight: 8),
                     const SizedBox(height: 6),
-                    Text('${(pct * 100).toStringAsFixed(1)}% (${opt.votes} votes)', style: TextStyle(fontSize: 12, color: Colors.grey[600])),
+                    Text(
+                        '${(pct * 100).toStringAsFixed(1)}% (${opt.votes} votes)',
+                        style:
+                            TextStyle(fontSize: 12, color: Colors.grey[600])),
                   ],
                 ),
               ),
@@ -168,7 +197,8 @@ class _SingleCommunityPostPageState extends State<SingleCommunityPostPage> {
           if (_selectedPollOption != null)
             const Padding(
               padding: EdgeInsets.only(top: 8),
-              child: Text('Thanks for voting!', style: TextStyle(color: Colors.green)),
+              child: Text('Thanks for voting!',
+                  style: TextStyle(color: Colors.green)),
             ),
         ],
       );
@@ -176,8 +206,11 @@ class _SingleCommunityPostPageState extends State<SingleCommunityPostPage> {
   Widget _likeRow(PostModel post) => Row(
         children: [
           IconButton(
-            icon: Icon(post.isLiked ? Icons.favorite : Icons.favorite_border, color: post.isLiked ? Colors.red : null),
-            onPressed: () => context.read<CommunityBloc>().add(TogglePostLike(postId: post.id)),
+            icon: Icon(post.isLiked ? Icons.favorite : Icons.favorite_border,
+                color: post.isLiked ? Colors.red : null),
+            onPressed: () => context
+                .read<CommunityBloc>()
+                .add(TogglePostLike(postId: post.id)),
           ),
           Text('${post.likeCount}'),
         ],

@@ -12,6 +12,11 @@ class CommunityService {
   CommunityService({required AppwriteService appwriteService})
       : _appwriteService = appwriteService;
 
+  // Vote on a poll
+  Future<void> voteOnPoll(String postId, int optionIndex) async {
+    // TODO: Implement the voting logic
+  }
+
   // get users liked commentIds
   Future<List<dynamic>> getUserLikedCommentIds(String userId) async {
     if (userId == 'anonymous') {

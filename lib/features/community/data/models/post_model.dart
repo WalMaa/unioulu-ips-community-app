@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'package:community/features/community/data/models/poll_option.dart';
+
 import 'comment_model.dart';
 
 class PostModel {
@@ -48,24 +50,7 @@ class PostModel {
       }
     }
 
-    List<PollOption> pollOptionsList = [];
-    if (json['pollOptions'] is List) {
-      pollOptionsList = (json['pollOptions'] as List<dynamic>)
-          .map((o) => PollOption.fromJson(o is Map<String, dynamic> ? o : {}))
-          .toList();
-    } else if (json['pollOptions'] is String) {
-      try {
-        final decodedOptions = jsonDecode(json['pollOptions'] as String);
-        if (decodedOptions is List) {
-          pollOptionsList = decodedOptions
-              .map((o) => PollOption.fromJson(o is Map<String, dynamic> ? o : {}))
-              .toList();
-        }
-      } catch (e) {
-        // Handle or log decoding error if necessary
-        print('Error decoding pollOptions string: $e');
-      }
-    }
+    List<PollOption> pollOptionsList = PollOption.fromString(json['pollOptions'] as String? ?? '');
 
     return PostModel(
       id: json['\$id'] as String,
@@ -130,26 +115,5 @@ class PostModel {
       isLiked: isLiked ?? this.isLiked,
       likeCount: likeCount ?? this.likeCount,
     );
-  }
-}
-
-class PollOption {
-  final String option;
-  int votes;
-
-  PollOption({required this.option, this.votes = 0});
-
-  factory PollOption.fromJson(Map<String, dynamic> json) {
-    return PollOption(
-      option: json['option'] as String? ?? '',
-      votes: json['votes'] as int? ?? 0,
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'option': option,
-      'votes': votes,
-    };
   }
 }

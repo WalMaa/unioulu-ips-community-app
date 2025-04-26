@@ -1,4 +1,5 @@
 import 'package:appwrite/appwrite.dart';
+import 'package:community/core/utils/config.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../data/models/user_model.dart';
 import '../../domain/usecases/authenticate_anonymous.dart';
@@ -32,6 +33,21 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<UpdateProfileEvent>(_onUpdateProfile);
     on<AuthenticateAnonymousEvent>(_onAuthenticateAnonymous);
     on<CheckAuthenticationEvent>(_onCheckAuthentication);
+    on<ResetPasswordEvent>(_onResetPassword);
+  }
+
+  void _onResetPassword(ResetPasswordEvent event, Emitter<AuthState> emit) async {
+    emit(AuthLoading());
+    try {
+      developer.log('ResetPasswordEvent: ${event.email}');
+      // TODO: Make a reset password page through appwrite functions for example.
+      await account.createRecovery(email: event.email, url: "http://localhost:3000/recovery");
+
+      emit(AuthResetPasswordSuccess(message: 'Recovery email sent.'));
+
+    } catch (e) {
+      emit(AuthError(message: e.toString()));
+    }
   }
   
   void _onLogin(LoginEvent event, Emitter<AuthState> emit) async {
