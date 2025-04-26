@@ -5,12 +5,14 @@ import '../../features/events/presentation/pages/event_page.dart';
 import '../../features/home/presentation/pages/home_page.dart';
 import '../../features/more/presentation/pages/more_page.dart';
 import '../bloc/bottom_nav_bar_bloc.dart';
+import '../../features/chatbot/chatbot_screen.dart'; // Import the chatbot screen
 
 class MainPage extends StatelessWidget {
   static final List<Widget> _pages = <Widget>[
     const HomePage(),
     const EventsPage(),
     const CommunityPage(),
+    ChatbotScreen(),  // ChatbotScreen added to the list of pages
     const MorePage(),
   ];
 
@@ -39,20 +41,25 @@ class MainPage extends StatelessWidget {
             }
             return BottomNavigationBar(
               type: BottomNavigationBarType.fixed,
-              items: const <BottomNavigationBarItem>[
-                BottomNavigationBarItem(
+              items: <BottomNavigationBarItem>[
+                const BottomNavigationBarItem(
                   icon: Icon(Icons.home),
                   label: 'Home',
                 ),
-                BottomNavigationBarItem(
+                const BottomNavigationBarItem(
                   icon: Icon(Icons.event),
                   label: 'Event',
                 ),
-                BottomNavigationBarItem(
+                const BottomNavigationBarItem(
                   icon: Icon(Icons.group),
                   label: 'Community',
                 ),
+                // Chatbot Button in BottomNavigationBar
                 BottomNavigationBarItem(
+                  icon: Icon(Icons.chat_bubble),
+                  label: 'Chat',
+                ),
+                const BottomNavigationBarItem(
                   icon: Icon(Icons.more_horiz),
                   label: 'More',
                 ),
@@ -64,6 +71,7 @@ class MainPage extends StatelessWidget {
               unselectedItemColor:
                   Theme.of(context).textTheme.headlineSmall!.color,
               onTap: (index) {
+                // Change the tab view without pushing a new route
                 context.read<BottomNavBarBloc>().add(SelectTabEvent(index));
               },
             );
