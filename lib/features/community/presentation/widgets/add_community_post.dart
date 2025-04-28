@@ -20,7 +20,7 @@ class CommunityPostFormState extends State<CommunityPostForm> {
   final _authorTitleController = TextEditingController();
   final _pollQuestionController = TextEditingController();
   final _pollOptionController = TextEditingController();
-  List<String> _pollOptions = [];
+  final List<String> _pollOptions = [];
   File? _selectedImage;
 
   @override
@@ -241,7 +241,7 @@ class CommunityPostFormState extends State<CommunityPostForm> {
                   onPressed: _addPollOption,
                   style: ButtonStyle(
                     backgroundColor:
-                        MaterialStateProperty.all(Colors.blueAccent),
+                        WidgetStateProperty.all(Colors.blueAccent),
                   ),
                   child: const Text('Add Poll Option',
                       style: TextStyle(color: Colors.white)),
@@ -268,7 +268,7 @@ class CommunityPostFormState extends State<CommunityPostForm> {
                               Icon(Icons.check_circle, color: Colors.green),
                         ),
                       );
-                    }).toList(),
+                    }),
                   ],
                 ),
 

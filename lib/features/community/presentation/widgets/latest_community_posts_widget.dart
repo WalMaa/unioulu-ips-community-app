@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class LatestCommunityPostsWidget extends StatefulWidget {
-  const LatestCommunityPostsWidget({Key? key}) : super(key: key);
+  const LatestCommunityPostsWidget({super.key});
 
   @override
   _LatestCommunityPostsWidgetState createState() => _LatestCommunityPostsWidgetState();

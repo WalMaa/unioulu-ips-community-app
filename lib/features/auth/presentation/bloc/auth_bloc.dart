@@ -1,5 +1,4 @@
 import 'package:appwrite/appwrite.dart';
-import 'package:community/core/utils/config.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../data/models/user_model.dart';
 import '../../domain/usecases/authenticate_anonymous.dart';

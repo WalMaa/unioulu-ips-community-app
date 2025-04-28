@@ -10,9 +10,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SingleCommunityPostPage extends StatefulWidget {
   const SingleCommunityPostPage({
-    Key? key,
+    super.key,
     required this.post,
-  }) : super(key: key);
+  });
 
   final PostModel post;
 
