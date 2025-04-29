@@ -1,3 +1,4 @@
+import 'package:community/core/theme/theme_constants.dart';
 import 'package:community/features/community/presentation/bloc/community_bloc.dart';
 import 'package:community/features/community/presentation/widgets/community_post_card.dart';
 import 'package:flutter/material.dart';
@@ -7,10 +8,12 @@ class LatestCommunityPostsWidget extends StatefulWidget {
   const LatestCommunityPostsWidget({super.key});
 
   @override
-  _LatestCommunityPostsWidgetState createState() => _LatestCommunityPostsWidgetState();
+  _LatestCommunityPostsWidgetState createState() =>
+      _LatestCommunityPostsWidgetState();
 }
 
-class _LatestCommunityPostsWidgetState extends State<LatestCommunityPostsWidget> {
+class _LatestCommunityPostsWidgetState
+    extends State<LatestCommunityPostsWidget> {
   static const int _postLimit = 5;
 
   @override
@@ -36,14 +39,32 @@ class _LatestCommunityPostsWidgetState extends State<LatestCommunityPostsWidget>
             return const Center(child: Text('No posts available'));
           }
 
-          return ListView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: posts.length,
-            itemBuilder: (context, index) {
-              final post = posts[index];
-              return CommunityPostCard(post: post);
-            },
+          return Padding(
+            padding: const EdgeInsets.all(AppSpacing.smallPadding),
+            child: Column(
+              children: [
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: const Text(
+                    'Community',
+                    style: TextStyle(
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 10.0),
+                ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: posts.length,
+                  itemBuilder: (context, index) {
+                    final post = posts[index];
+                    return CommunityPostCard(post: post);
+                  },
+                ),
+              ],
+            ),
           );
         }
 

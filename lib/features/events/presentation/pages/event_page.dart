@@ -32,13 +32,7 @@ class EventsPage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'Topics',
-                style: TextStyle(
-                  fontSize: 16.0,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+
               TopicListWidget(
                 currentLocale: currentLocale,
                 appwriteService: appwriteService,
