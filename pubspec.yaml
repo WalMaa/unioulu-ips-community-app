@@ -36,6 +36,8 @@ dependencies:
   speech_to_text: ^7.0.0
   emoji_picker_flutter: ^4.3.0
 
+# Since appwrite has an outdated dependency that doesn't work with gradle build on flutter_web_auth, we need to override it to use the latest version.
+# This is a temporary fix until appwrite updates their dependency.
 dependency_overrides:
     flutter_web_auth_2: ^4.1.0
 
