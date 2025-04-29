@@ -261,7 +261,7 @@ class CommunityPostFormState extends State<CommunityPostForm> {
                       return Card(
                         margin: const EdgeInsets.only(bottom: 10),
                         elevation: 5,
-                        shadowColor: Colors.grey.withOpacity(0.2),
+                        shadowColor: Colors.grey.withValues(alpha: 0.2),
                         child: ListTile(
                           title: Text(option, style: TextStyle(fontSize: 16)),
                           trailing:
