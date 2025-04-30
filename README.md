@@ -1,10 +1,12 @@
-# unioulu-ips-community-app
+# WeConnect
 
 ## Description
 
-**unioulu-ips-community-app** is a mobile application developed for the Information Processing Science (IPS) faculty at the University of Oulu. This app was created as part of an internship project under the supervision of the **INTERACT Research Group**.
+**WeConnect** is a mobile application developed for the Information Processing Science (IPS) faculty at the University of Oulu. This app was created as part of an internship project under the supervision of the **INTERACT Research Group**.
 
 The primary aim of this app is to enhance community engagement within the IPS faculty by offering a platform where students and faculty members can share posts, view announcements, and explore upcoming events.
+
+![WeConnect Preview](./design/app-ui.png)
 
 ### Key Features:
 - **Community Posts**: A space where users can create and engage in posts, add comments, and participate in discussions.
@@ -13,11 +15,15 @@ The primary aim of this app is to enhance community engagement within the IPS fa
 
 This project is built using **Flutter** for the mobile frontend and **Appwrite** for backend services such as authentication, data storage, and real-time database interaction.
 
+### Architecture
+
+![Architecture Diagram](./design/Architecture%20Diagram.png)
+
 ---
 
 ## Installation
 
-To contribute to the **unioulu-ips-community-app**, follow these steps to set up the project locally on your machine. This guide will walk you through setting up the **Appwrite server** for backend services and **Flutter** for the mobile app.
+To contribute to the **WeConnect**, follow these steps to set up the project locally on your machine. This guide will walk you through setting up the **Appwrite server** for backend services and **Flutter** for the mobile app.
 
 ### Prerequisites
 
@@ -313,14 +319,20 @@ git push origin feature-or-bug-name
 This project is licensed under the MIT License.  
 For more details, please refer to the LICENSE file.
 
-## 7. UI Design
+## 7. Design
 
-The UI design for the app can be found in the `UI-Design` folder of the repository. It contains the following files:
+The Design documentation for the app can be found in the `design` folder of the repository. It contains the following files:
 
 - `App-UI-Design.fig`: The original UI design created in Figma.
 - `app-ui.png`: A preview image of the UI design.
+- `Architecture Diagram.jam`: A Figma file of the architecture of the app.
+- `Product roadmap.jam`: A Figma file of the product roadmap.
+- `Architecture Diagram.png`: A preview image of the architecture diagram.
+- `Product roadmap.png`: A preview image of the product roadmap.
 
-![App UI Preview](https://github.com/salscoding/unioulu-ips-community-app/raw/main/UI-Design/app-ui.png)
 
-You can view and download both files via the following link:  
-[UI-Design Folder](https://github.com/salscoding/unioulu-ips-community-app/tree/main/UI-Design)
+## 8. Product Roadmap
+
+The product roadmap outlines the future features and improvements planned for the app. It includes ideated of upcoming releases, feature enhancements, and bug fixes.
+
+![Product Roadmap](./design/Product%20roadmap.png)
