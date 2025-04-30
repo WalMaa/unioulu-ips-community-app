@@ -1,3 +1,4 @@
+import 'package:community/core/widgets/custom_app_bar.dart';
 import 'package:community/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:community/features/community/presentation/bloc/community_bloc.dart';
 import 'package:community/features/community/presentation/widgets/community_post_card.dart';
@@ -16,7 +17,8 @@ class CommunityPage extends StatelessWidget {
       create: (context) => CommunityBloc(
         communityService: locator<CommunityService>(),
         authRepository: locator<AuthRepositoryImpl>(),
-      )..add(const FetchCommunityPosts()), // Trigger loading when page is created
+      )..add(
+          const FetchCommunityPosts()), // Trigger loading when page is created
       child: const CommunityView(),
     );
   }
@@ -28,11 +30,12 @@ class CommunityView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Community'),
+      appBar: CustomAppBar(
+        title: 'Community',
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
+            color: Theme.of(context).scaffoldBackgroundColor,
             onPressed: () {
               // Refresh posts when the refresh button is tapped
               context.read<CommunityBloc>().add(const FetchCommunityPosts());
@@ -68,7 +71,6 @@ class CommunityView extends StatelessWidget {
                             TogglePostLike(postId: post.id),
                           );
                     },
-                    
                   );
                 },
               ),

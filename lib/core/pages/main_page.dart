@@ -59,10 +59,7 @@ class MainPage extends StatelessWidget {
                   icon: Icon(Icons.chat_bubble),
                   label: 'Chat',
                 ),
-                const BottomNavigationBarItem(
-                  icon: Icon(Icons.more_horiz),
-                  label: 'More',
-                ),
+               
               ],
               selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
               currentIndex: selectedIndex,

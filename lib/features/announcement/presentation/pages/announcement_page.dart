@@ -1,3 +1,4 @@
+import 'package:community/core/widgets/custom_app_bar.dart';
 import 'package:flutter/material.dart';
 import '../../../../core/services/http_appwrite_service.dart';
 import '../../data/models/announcement_model.dart';
@@ -29,9 +30,7 @@ class AnnouncementsPageState extends State<AnnouncementsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Announcements'),
-      ),
+      appBar: CustomAppBar(title: "Announcements"),
       body: FutureBuilder<List<AnnouncementModel>>(
         future: _fetchAnnouncements(),
         builder: (context, snapshot) {

@@ -1,3 +1,4 @@
+import 'package:community/core/widgets/custom_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -15,11 +16,12 @@ class MorePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.appName),
+      appBar: CustomAppBar(
+        title: "Settings",
+        showSettingsButton: false,
         actions: [
           IconButton(
-            color: Theme.of(context).textTheme.headlineSmall!.color,
+            color: Theme.of(context).scaffoldBackgroundColor,
             onPressed: () {
               Navigator.push(context, MaterialPageRoute(builder: (context) {
                 return const LanguagePage();
@@ -30,7 +32,7 @@ class MorePage extends StatelessWidget {
           BlocBuilder<ThemeBloc, ThemeState>(
             builder: (context, state) {
               return IconButton(
-                color: Theme.of(context).textTheme.headlineSmall!.color,
+                color: Theme.of(context).scaffoldBackgroundColor,
                 icon: Icon(
                   state is ThemeLoaded && state.theme == AppTheme.dark
                       ? Icons.wb_sunny

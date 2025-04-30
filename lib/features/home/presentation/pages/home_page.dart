@@ -1,4 +1,5 @@
 import 'package:community/core/theme/theme_constants.dart';
+import 'package:community/core/widgets/custom_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
@@ -45,6 +46,9 @@ class HomePage extends StatelessWidget {
 
         // If not authenticated, show a default scaffold or login prompt
         return const Scaffold(
+          appBar: CustomAppBar(
+            title: 'WeConnect',
+          ),
           body: Center(
             child: Text('Please log in to access the home page.'),
           ),
@@ -292,24 +296,7 @@ class HomePage extends StatelessWidget {
                     ),
                   ),
                 ),
-                Expanded(
-                  flex: 1,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        onPressed: () {},
-                        icon: const Icon(Icons.favorite),
-                      ),
-                      IconButton(
-                        onPressed: () {},
-                        icon: const Icon(Icons.settings),
-                      ),
-                    ],
-                  ),
-                ),
+                
               ],
             ),
             const SizedBox(height: 10.0),
@@ -343,6 +330,9 @@ class HomePage extends StatelessWidget {
   Widget _buildUserScaffold(BuildContext context, String currentLocale,
       AppwriteService appwriteService, String userName) {
     return Scaffold(
+      appBar: CustomAppBar(
+        title: 'WeConnect',
+      ),
       body: _buildUserContentView(
           context, currentLocale, appwriteService, userName),
     );

@@ -1,4 +1,5 @@
 
+import 'package:community/core/widgets/custom_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
@@ -25,6 +26,7 @@ class EventsPage extends StatelessWidget {
     final appwriteService = GetIt.instance<AppwriteService>();
 
     return Scaffold(
+      appBar: CustomAppBar(title: "Events",),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(8.0),
