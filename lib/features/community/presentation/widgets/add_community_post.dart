@@ -50,7 +50,7 @@ class CommunityPostFormState extends State<CommunityPostForm> {
     if (_selectedImage == null) return null;
 
     final response = await appwriteService.uploadFile(
-      bucketId: "buckekt_k",
+      bucketId: appwriteBucketId,
       file: _selectedImage!,
       fileId: 'unique()',
     );

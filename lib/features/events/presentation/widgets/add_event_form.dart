@@ -93,7 +93,7 @@ class EventFormState extends State<EventForm> {
 
     // Replace storage with the actual ID of your Appwrite storage bucket
     final response = await appwriteService.uploadFile(
-        bucketId: "storage",
+        bucketId: appwriteBucketId,
         file: _selectedPosterPhoto!,
         fileId: "unique()"
         );

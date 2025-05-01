@@ -64,6 +64,8 @@ Once the server is up and running, you can access the Appwrite dashboard at `htt
 
 You need to register a new account, create a new organization, add a platform and create a new project. Once the project is created, you will need to create an API key that you will use to interact with the Appwrite API.
 
+Adding a bucket through the Storage section is optional, but it is recommended for file storage. You can name the bucket anything you like, but make sure to update the `APPWRITE_BUCKET_ID` in your `.env` file accordingly.
+
 ### Creating an API Key
 
 You can create an API key by following these steps:
@@ -113,6 +115,7 @@ APPWRITE_PROJECT_ID=community-app
 # Your API key
 APPWRITE_API_KEY=xyz123 
 APPWRITE_DATABASE_ID=communitydb # Default value
+APPWRITE_BUCKET_ID=bucket # Name of the appwrite bucket for file storage
 ```
 
 ## Appwrite configuration with appwrite_init.py

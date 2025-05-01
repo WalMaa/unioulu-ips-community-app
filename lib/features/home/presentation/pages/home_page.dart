@@ -62,6 +62,10 @@ class HomePage extends StatelessWidget {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
+        appBar: CustomAppBar(
+          title: 'WeConnect'
+          
+        ),
         body: Column(
           children: [
             // Custom tab bar without an AppBar
