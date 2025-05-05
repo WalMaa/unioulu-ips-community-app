@@ -490,7 +490,34 @@ def create_sample_surveys():
         
 
         
+def create_sample_announcements():
+    # Create sample announcements
+    sample_announcements = [
+        {
+            "title": "Welcome to the New Semester!",
+            "content": "We are excited to welcome all students back for the new semester. Don't forget to check your course schedules!",
+            "date": datetime.now().isoformat()
+        },
+        {
+            "title": "Library Opening Hours",
+            "content": "The library will be open 24/7 during exam week. Good luck with your studies!",
+            "date": (datetime.now() + timedelta(days=1)).isoformat()
+        }
+    ]
     
+    try:
+        print("Creating sample announcements...")
+        for announcement in sample_announcements:
+            result = databases.create_document(
+                db_id,
+                'announcements',
+                'unique()',
+                announcement
+            )
+            print(f"Created announcement: {result['title']}")
+    except AppwriteException as e:
+        print(f"Error creating announcements: {str(e)}")
+
 
 
 def create_sample_events():
@@ -592,6 +619,7 @@ if __name__ == "__main__":
         create_collections(databases)
         create_sample_events()
         create_sample_topics()
+        create_sample_announcements()
         add_poll_fields_to_posts(databases)
         create_sample_posts()
         create_event_like_index()
