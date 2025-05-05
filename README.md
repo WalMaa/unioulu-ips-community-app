@@ -321,14 +321,7 @@ For more details, please refer to the LICENSE file.
 
 ## 7. Design
 
-The Design documentation for the app can be found in the `design` folder of the repository. It contains the following files:
-
-- `App-UI-Design.fig`: The original UI design created in Figma.
-- `app-ui.png`: A preview image of the UI design.
-- `Architecture Diagram.jam`: A Figma file of the architecture of the app.
-- `Product roadmap.jam`: A Figma file of the product roadmap.
-- `Architecture Diagram.png`: A preview image of the architecture diagram.
-- `Product roadmap.png`: A preview image of the product roadmap.
+The Design documentation for the app can be found in the `design` folder of the repository. It contains all of the Figma design and planning documents related to the app as well as the picture assets.
 
 
 ## 8. Product Roadmap
